@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   X,
@@ -28,6 +29,18 @@ interface CustomerDrawerProps {
 export function CustomerDrawer({ customer, isOpen, onClose }: CustomerDrawerProps) {
   const [copied, setCopied] = useState(false);
 
+  // Lock background scroll when drawer is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   if (!customer) return null;
 
   const handleCopyId = () => {
@@ -36,17 +49,17 @@ export function CustomerDrawer({ customer, isOpen, onClose }: CustomerDrawerProp
     setTimeout(() => setCopied(false), 2000);
   };
 
-  return (
+  const drawerElement = (
     <AnimatePresence>
       {isOpen && (
-        <>
+        <div className="fixed inset-0 z-[100] flex justify-end">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm"
           />
 
           {/* Drawer Panel */}
@@ -55,10 +68,10 @@ export function CustomerDrawer({ customer, isOpen, onClose }: CustomerDrawerProp
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-            className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-lg bg-[#090B09] border-l border-[#29332B] shadow-2xl flex flex-col overflow-hidden"
+            className="relative z-[101] w-full max-w-lg h-full bg-[#090B09] border-l border-[#29332B] shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-[#29332B] p-5 bg-[#111611]">
+            <div className="flex items-center justify-between border-b border-[#29332B] p-5 bg-[#111611] shrink-0">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#171D18] text-[#447A56] border border-[#29332B]">
                   <User className="h-5 w-5" />
@@ -71,7 +84,7 @@ export function CustomerDrawer({ customer, isOpen, onClose }: CustomerDrawerProp
                     </span>
                     <button
                       onClick={handleCopyId}
-                      className="text-[#A6AEA5] hover:text-[#F2F0E8] transition-colors"
+                      className="text-[#A6AEA5] hover:text-[#F2F0E8] transition-colors cursor-pointer"
                       title="Copy full Customer ID"
                     >
                       {copied ? <Check className="h-3.5 w-3.5 text-[#447A56]" /> : <Copy className="h-3.5 w-3.5" />}
@@ -239,14 +252,16 @@ export function CustomerDrawer({ customer, isOpen, onClose }: CustomerDrawerProp
             </div>
 
             {/* Footer */}
-            <div className="border-t border-[#29332B] p-4 bg-[#111611] flex justify-end">
+            <div className="border-t border-[#29332B] p-4 bg-[#111611] flex justify-end shrink-0">
               <Button variant="secondary" size="sm" onClick={onClose}>
                 Close
               </Button>
             </div>
           </motion.div>
-        </>
+        </div>
       )}
     </AnimatePresence>
   );
+
+  return typeof document !== 'undefined' ? createPortal(drawerElement, document.body) : drawerElement;
 }

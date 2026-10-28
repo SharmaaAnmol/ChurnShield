@@ -168,6 +168,9 @@ export function PredictionStudioPage() {
     'recency_days' | 'total_spend' | 'orders_recent_90d' | 'freight_ratio'
   >('recency_days');
 
+  // Deep Diagnostic Tab State ('waterfall' | 'reengagement' | 'sigmoid')
+  const [diagnosticTab, setDiagnosticTab] = useState<'waterfall' | 'reengagement' | 'sigmoid'>('waterfall');
+
   // Apply scenario preset
   const applyPreset = (preset: ScenarioPreset) => {
     setActivePreset(preset.id);
@@ -685,7 +688,7 @@ export function PredictionStudioPage() {
       {/* 4. Interactive Simulation Workspace */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Visual Timeline & Controls */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className="lg:col-span-5 space-y-6">
           {/* Card: Interactive Customer Lifecycle Timeline */}
           <Card className="p-6">
             <div className="flex items-center justify-between pb-4 border-b border-[#29332B]">
@@ -1074,7 +1077,7 @@ export function PredictionStudioPage() {
         </div>
 
         {/* Right Column: Visual Charts & Multidimensional Graphs */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="lg:col-span-7 space-y-6">
           {/* Stale Warning Banner */}
           {isStale && hasRunPrediction && (
             <motion.div
@@ -1084,10 +1087,10 @@ export function PredictionStudioPage() {
             >
               <div className="flex items-center gap-2">
                 <AlertCircle className="h-4 w-4 shrink-0 text-[#C48232]" />
-                <span>Variables modified. Click "Run Model Prediction" to update charts.</span>
+                <span>Variables modified. Recalculating live inference & radar footprint...</span>
               </div>
               <Badge variant="amber" size="sm">
-                Unsaved
+                Live Preview
               </Badge>
             </motion.div>
           )}
@@ -1101,9 +1104,7 @@ export function PredictionStudioPage() {
               <div>
                 <h3 className="font-serif text-lg font-medium text-[#F2F0E8]">Interactive Studio Ready</h3>
                 <p className="mt-2 text-xs text-[#A6AEA5] max-w-sm mx-auto leading-relaxed">
-                  Adjust the timeline, order cadence, and spend sliders, then click{' '}
-                  <span className="text-[#C82038] font-semibold">Run Model Prediction</span> to generate
-                  instant risk scores, feature impact waterfalls, radar footprints, and sigmoid curves.
+                  Adjust the timeline, order cadence, and spend sliders, then inspect real-time risk scores, radar footprints, sensitivity sweeps, and sigmoid curves.
                 </p>
               </div>
 
@@ -1334,19 +1335,22 @@ export function PredictionStudioPage() {
                   </Card>
                 )}
 
-                {/* 1. Primary Verdict Card with Risk Thermometer */}
-                <Card className="overflow-hidden border-[#29332B] shadow-2xl">
+                {/* 1. Flagship Executive Intelligence & Behavioral Radar Hub (Unified Top Card) */}
+                <Card className="overflow-hidden border-[#29332B] shadow-2xl bg-[#111611]">
                   <div
                     className={`h-2.5 w-full ${
                       predictionResult.predictedClass === 1 ? 'bg-[#447A56]' : 'bg-[#C82038]'
                     }`}
                   />
 
-                  <CardHeader className="pb-3">
+                  <CardHeader className="pb-3 border-b border-[#29332B]/80">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-tech uppercase tracking-wider text-[#A6AEA5]">
-                        Prediction Verdict
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-tech uppercase tracking-wider text-[#A6AEA5]">
+                          Executive Inference & Behavioral Posture
+                        </span>
+                        <span className="h-2 w-2 rounded-full bg-[#447A56] animate-pulse" />
+                      </div>
                       <Badge
                         variant={predictionResult.predictedClass === 1 ? 'forest' : 'crimson'}
                         size="md"
@@ -1356,66 +1360,136 @@ export function PredictionStudioPage() {
                           : 'Inactivity / Churn Risk'}
                       </Badge>
                     </div>
-
-                    <CardTitle className="text-xl text-[#F2F0E8] mt-1.5">
-                      {predictionResult.predictionLabel}
-                    </CardTitle>
                   </CardHeader>
 
-                  <CardContent className="space-y-5 pt-1">
-                    {/* Visual Probability Gauges */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B] space-y-1.5">
-                        <span className="text-[10px] text-[#A6AEA5] uppercase tracking-wide font-tech">
-                          Repeat Probability
-                        </span>
-                        <div className="font-tech text-3xl font-bold text-[#447A56]">
-                          {formatPercent(predictionResult.repeatPurchaseProbability, 1)}
+                  <CardContent className="p-5">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-stretch">
+                      {/* Column A: Prediction Verdict & Probability Metrics */}
+                      <div className="md:col-span-6 flex flex-col justify-between space-y-4">
+                        <div>
+                          <span className="text-[10px] font-tech uppercase tracking-wider text-[#A6AEA5]">
+                            Forecasted Verdict
+                          </span>
+                          <h3 className="text-xl font-serif font-semibold text-[#F2F0E8] mt-0.5 leading-snug">
+                            {predictionResult.predictionLabel}
+                          </h3>
                         </div>
-                        <div className="h-2 w-full rounded-full bg-[#171D18] overflow-hidden">
-                          <div
-                            className="h-full bg-[#447A56] rounded-full transition-all duration-700"
-                            style={{
-                              width: `${Math.min(100, Math.max(5, predictionResult.repeatPurchaseProbability * 100))}%`,
-                            }}
-                          />
+
+                        {/* Visual Probability Gauges */}
+                        <div className="space-y-3">
+                          <div className="rounded-xl bg-[#090B09] p-3.5 border border-[#29332B] space-y-1.5">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] text-[#A6AEA5] uppercase tracking-wide font-tech">
+                                Repeat Probability
+                              </span>
+                              <span className="text-[10px] text-[#447A56] font-tech font-semibold">Cutoff ≥ 50%</span>
+                            </div>
+                            <div className="font-tech text-3xl font-bold text-[#447A56]">
+                              {formatPercent(predictionResult.repeatPurchaseProbability, 1)}
+                            </div>
+                            <div className="h-2 w-full rounded-full bg-[#171D18] overflow-hidden">
+                              <div
+                                className="h-full bg-[#447A56] rounded-full transition-all duration-500"
+                                style={{
+                                  width: `${Math.min(100, Math.max(5, predictionResult.repeatPurchaseProbability * 100))}%`,
+                                }}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="rounded-xl bg-[#090B09] p-3.5 border border-[#29332B] space-y-1.5">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] text-[#A6AEA5] uppercase tracking-wide font-tech">
+                                Inactivity Risk Score
+                              </span>
+                              <span className="text-[10px] text-[#E33B4F] font-tech font-semibold">1 - P(repeat)</span>
+                            </div>
+                            <div className="font-tech text-3xl font-bold text-[#E33B4F]">
+                              {formatPercent(predictionResult.inactivityRiskScore, 1)}
+                            </div>
+                            <div className="h-2 w-full rounded-full bg-[#171D18] overflow-hidden">
+                              <div
+                                className="h-full bg-[#C82038] rounded-full transition-all duration-500"
+                                style={{
+                                  width: `${Math.min(100, Math.max(5, predictionResult.inactivityRiskScore * 100))}%`,
+                                }}
+                              />
+                            </div>
+                          </div>
                         </div>
-                        <span className="text-[10px] text-[#A6AEA5] font-tech">Cutoff: ≥50% for repeat</span>
+
+                        {/* Summary & Recommended Action */}
+                        <div className="rounded-xl bg-[#102016]/50 p-3.5 border border-[#214D35] text-xs text-[#A6AEA5] space-y-1.5">
+                          <span className="font-semibold text-[#447A56] flex items-center gap-1.5 text-xs">
+                            <Sparkles className="h-3.5 w-3.5" />
+                            Recommended Retention Play
+                          </span>
+                          <p className="text-xs leading-relaxed text-[#F2F0E8]/90">
+                            {predictionResult.recommendedAction}
+                          </p>
+                        </div>
                       </div>
 
-                      <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B] space-y-1.5">
-                        <span className="text-[10px] text-[#A6AEA5] uppercase tracking-wide font-tech">
-                          Inactivity Risk Score
-                        </span>
-                        <div className="font-tech text-3xl font-bold text-[#E33B4F]">
-                          {formatPercent(predictionResult.inactivityRiskScore, 1)}
+                      {/* Column B: Live Multidimensional Behavioral Radar Footprint */}
+                      <div className="md:col-span-6 flex flex-col justify-between rounded-xl bg-[#090B09] p-4 border border-[#29332B]">
+                        <div className="flex items-center justify-between pb-2 border-b border-[#29332B]/60">
+                          <div>
+                            <h4 className="text-xs font-semibold text-[#F2F0E8] flex items-center gap-1.5">
+                              <span>Behavioral Radar Footprint</span>
+                            </h4>
+                            <p className="text-[10px] text-[#A6AEA5]">
+                              Live multi-axial posture across customer dimensions
+                            </p>
+                          </div>
+                          <Badge variant="forest" size="sm">
+                            Live Reactive
+                          </Badge>
                         </div>
-                        <div className="h-2 w-full rounded-full bg-[#171D18] overflow-hidden">
-                          <div
-                            className="h-full bg-[#C82038] rounded-full transition-all duration-700"
-                            style={{
-                              width: `${Math.min(100, Math.max(5, predictionResult.inactivityRiskScore * 100))}%`,
-                            }}
-                          />
+
+                        {/* Live Radar Chart */}
+                        <div className="h-52 w-full py-1">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <RadarChart data={radarData}>
+                              <PolarGrid stroke="#29332B" />
+                              <PolarAngleAxis dataKey="subject" stroke="#A6AEA5" fontSize={9} />
+                              <PolarRadiusAxis domain={[0, 100]} stroke="#29332B" fontSize={8} />
+                              <Radar
+                                name="Customer"
+                                dataKey="score"
+                                stroke={predictionResult.predictedClass === 1 ? '#447A56' : '#C82038'}
+                                fill={predictionResult.predictedClass === 1 ? '#447A56' : '#C82038'}
+                                fillOpacity={0.3}
+                                isAnimationActive={true}
+                              />
+                            </RadarChart>
+                          </ResponsiveContainer>
                         </div>
-                        <span className="text-[10px] text-[#A6AEA5] font-tech">Formula: 1 - P(repeat)</span>
+
+                        {/* Dimension metric chips */}
+                        <div className="grid grid-cols-4 gap-1.5 pt-2 border-t border-[#29332B]/60 text-center">
+                          <div className="rounded bg-[#111611] p-1.5 border border-[#29332B]">
+                            <span className="text-[9px] text-[#A6AEA5] block font-tech">Recency</span>
+                            <span className="text-[11px] font-bold text-[#F2F0E8] font-tech">{recencyDays}d</span>
+                          </div>
+                          <div className="rounded bg-[#111611] p-1.5 border border-[#29332B]">
+                            <span className="text-[9px] text-[#A6AEA5] block font-tech">Orders</span>
+                            <span className="text-[11px] font-bold text-[#F2F0E8] font-tech">{orderCount}</span>
+                          </div>
+                          <div className="rounded bg-[#111611] p-1.5 border border-[#29332B]">
+                            <span className="text-[9px] text-[#A6AEA5] block font-tech">Spend</span>
+                            <span className="text-[11px] font-bold text-[#F2F0E8] font-tech">{formatCurrency(totalSpend)}</span>
+                          </div>
+                          <div className="rounded bg-[#111611] p-1.5 border border-[#29332B]">
+                            <span className="text-[9px] text-[#A6AEA5] block font-tech">Recent 90d</span>
+                            <span className="text-[11px] font-bold text-[#F2F0E8] font-tech">{ordersRecent90d}</span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-
-                    {/* Summary Text */}
-                    <div className="rounded-xl bg-[#111611] p-4 border border-[#29332B] text-xs text-[#A6AEA5] leading-relaxed">
-                      {predictionResult.summary}
-                    </div>
-
-                    {/* Actionable Playbook */}
-                    <div className="rounded-xl bg-[#102016]/40 p-4 border border-[#214D35] text-xs text-[#A6AEA5] space-y-1">
-                      <span className="font-semibold text-[#447A56] block">Recommended Retention Play</span>
-                      <p>{predictionResult.recommendedAction}</p>
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Stage 5: Feature Sensitivity Analysis Card */}
+                {/* 2. Feature Sensitivity Analysis Card */}
                 <Card className="p-5 border-[#29332B] bg-[#111611]">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#29332B] pb-3 mb-3">
                     <div>
@@ -1440,7 +1514,7 @@ export function PredictionStudioPage() {
                           key={tab.id}
                           type="button"
                           onClick={() => setSensitivityFeature(tab.id)}
-                          className={`px-2 py-1 rounded text-[11px] font-tech font-medium transition-colors cursor-pointer ${
+                          className={`px-2.5 py-1 rounded text-[11px] font-tech font-medium transition-colors cursor-pointer ${
                             sensitivityFeature === tab.id
                               ? 'bg-[#214D35] text-[#F2F0E8] border border-[#447A56]'
                               : 'bg-[#171D18] text-[#A6AEA5] border border-[#29332B] hover:text-[#F2F0E8]'
@@ -1453,7 +1527,7 @@ export function PredictionStudioPage() {
                   </div>
 
                   {/* Sensitivity Recharts Line Chart */}
-                  <div className="h-44 w-full pt-1">
+                  <div className="h-48 w-full pt-1">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart
                         data={sensitivityData.curve}
@@ -1559,226 +1633,248 @@ export function PredictionStudioPage() {
                   </div>
                 </Card>
 
-                {/* 2. Interactive What-If Simulation Card */}
-                <Card className="p-5 border-[#29332B] bg-[#111611] space-y-3">
-                  <div className="flex items-center justify-between border-b border-[#29332B] pb-2">
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="h-4 w-4 text-[#447A56]" />
-                      <h4 className="text-xs font-semibold text-[#F2F0E8]">Direct Coupon Re-engagement Scenario</h4>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setSimulateIntervention(!simulateIntervention)}
-                      className={`px-2.5 py-1 rounded text-xs font-tech font-medium border transition-colors cursor-pointer ${
-                        simulateIntervention
-                          ? 'bg-[#214D35] text-[#F2F0E8] border-[#447A56]'
-                          : 'bg-[#171D18] text-[#A6AEA5] border-[#29332B]'
-                      }`}
-                    >
-                      {simulateIntervention ? 'Simulation Active' : 'Simulate Re-engagement'}
-                    </button>
-                  </div>
+                {/* 3. Deep Explanatory & Simulation Diagnostics (Tabs) */}
+                <Card className="border-[#29332B] bg-[#111611] overflow-hidden">
+                  <div className="border-b border-[#29332B] bg-[#171D18]/50 p-3 sm:px-5">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <h4 className="text-xs font-semibold text-[#F2F0E8] flex items-center gap-2">
+                          <Layers className="h-4 w-4 text-[#447A56]" />
+                          <span>Deep Model Diagnostics & Explainability</span>
+                        </h4>
+                        <p className="text-[11px] text-[#A6AEA5] mt-0.5">
+                          Inspect mathematical contributions, coupon simulation, or sigmoid probability mapping
+                        </p>
+                      </div>
 
-                  {simulateIntervention && simulatedResult ? (
-                    <div className="space-y-3 pt-1">
-                      <p className="text-xs text-[#A6AEA5] leading-snug">
-                        Simulating customer response to an outreach coupon with an immediate re-order within 12 days:
-                      </p>
-
-                      <div className="grid grid-cols-2 gap-3 pt-1">
-                        <div className="rounded-lg bg-[#090B09] p-3 border border-[#29332B]">
-                          <span className="text-[10px] text-[#A6AEA5]">Current Inactivity Risk</span>
-                          <p className="font-tech text-lg font-bold text-[#E33B4F] mt-0.5">
-                            {formatPercent(predictionResult.inactivityRiskScore, 1)}
-                          </p>
-                        </div>
-
-                        <div className="rounded-lg bg-[#102016] p-3 border border-[#214D35]">
-                          <span className="text-[10px] text-[#447A56]">Post-Intervention Risk</span>
-                          <p className="font-tech text-lg font-bold text-[#F2F0E8] mt-0.5 flex items-center gap-1.5">
-                            <span>{formatPercent(simulatedResult.inactivityRiskScore, 1)}</span>
-                            <span className="text-xs text-[#447A56] font-semibold">
-                              (
-                              {formatPercent(
-                                simulatedResult.inactivityRiskScore - predictionResult.inactivityRiskScore,
-                                1
-                              )}
-                              )
-                            </span>
-                          </p>
-                        </div>
+                      <div className="flex items-center gap-1.5 bg-[#090B09] p-1 rounded-lg border border-[#29332B]">
+                        <button
+                          type="button"
+                          onClick={() => setDiagnosticTab('waterfall')}
+                          className={`px-3 py-1 rounded text-xs font-tech font-medium transition-colors cursor-pointer ${
+                            diagnosticTab === 'waterfall'
+                              ? 'bg-[#214D35] text-[#F2F0E8] shadow-sm'
+                              : 'text-[#A6AEA5] hover:text-[#F2F0E8]'
+                          }`}
+                        >
+                          Log-Odds Waterfall
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDiagnosticTab('reengagement')}
+                          className={`px-3 py-1 rounded text-xs font-tech font-medium transition-colors cursor-pointer ${
+                            diagnosticTab === 'reengagement'
+                              ? 'bg-[#214D35] text-[#F2F0E8] shadow-sm'
+                              : 'text-[#A6AEA5] hover:text-[#F2F0E8]'
+                          }`}
+                        >
+                          Coupon Simulation
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDiagnosticTab('sigmoid')}
+                          className={`px-3 py-1 rounded text-xs font-tech font-medium transition-colors cursor-pointer ${
+                            diagnosticTab === 'sigmoid'
+                              ? 'bg-[#214D35] text-[#F2F0E8] shadow-sm'
+                              : 'text-[#A6AEA5] hover:text-[#F2F0E8]'
+                          }`}
+                        >
+                          Logistic Sigmoid
+                        </button>
                       </div>
                     </div>
-                  ) : (
-                    <p className="text-[11px] text-[#A6AEA5]">
-                      Click "Simulate Re-engagement" to see how prompt customer re-activation cuts inactivity risk.
-                    </p>
-                  )}
-                </Card>
-
-                {/* 3. Feature Impact Waterfall Chart */}
-                <Card className="p-5">
-                  <div className="flex items-center justify-between mb-3 border-b border-[#29332B] pb-2">
-                    <div>
-                      <h4 className="text-xs font-semibold text-[#F2F0E8]">
-                        Feature Impact Waterfall (Log-Odds Contribution)
-                      </h4>
-                      <p className="text-[11px] text-[#A6AEA5]">
-                        Exact mathematical pull of each variable on model output
-                      </p>
-                    </div>
-                    <Badge variant="forest" size="sm">
-                      Explainability
-                    </Badge>
                   </div>
 
-                  <div className="h-56 w-full pt-2">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart
-                        data={predictionResult.contributions}
-                        layout="vertical"
-                        margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
-                      >
-                        <XAxis
-                          type="number"
-                          stroke="#4B554D"
-                          fontSize={10}
-                          tickFormatter={(val) => (val > 0 ? `+${val.toFixed(2)}` : val.toFixed(2))}
-                        />
-                        <YAxis
-                          type="category"
-                          dataKey="label"
-                          stroke="#A6AEA5"
-                          fontSize={10}
-                          width={140}
-                        />
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: '#111611',
-                            border: '1px solid #C82038',
-                            borderRadius: '8px',
-                            fontSize: '11px',
-                            color: '#E33B4F',
-                            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.75)',
-                          }}
-                          itemStyle={{
-                            color: '#E33B4F',
-                            fontWeight: 600,
-                          }}
-                          labelStyle={{
-                            color: '#F2F0E8',
-                            fontWeight: 600,
-                            marginBottom: '4px',
-                          }}
-                          formatter={(val: any, name: any, item: any) => [
-                            `${Number(val).toFixed(3)} log-odds impact (${item.payload.valueDisplay})`,
-                            item.payload.direction === 'repeat' ? 'Pushes to Repeat' : 'Pushes to Inactive',
-                          ]}
-                        />
-                        <ReferenceLine x={0} stroke="#29332B" strokeDasharray="3 3" />
-                        <Bar
-                          dataKey="impact"
-                          radius={[3, 3, 3, 3]}
-                          isAnimationActive={true}
-                          animationDuration={700}
-                          animationEasing="ease-out"
-                        >
-                          {predictionResult.contributions.map((entry, index) => (
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={entry.direction === 'repeat' ? '#447A56' : '#C82038'}
-                            />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
+                  <div className="p-5">
+                    {/* Tab 1: Feature Impact Waterfall */}
+                    {diagnosticTab === 'waterfall' && (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-[#A6AEA5]">
+                            Exact mathematical pull of each variable on model output (Log-Odds Contribution)
+                          </span>
+                          <Badge variant="forest" size="sm">
+                            Explainability
+                          </Badge>
+                        </div>
 
-                  <div className="flex justify-between items-center text-[10px] text-[#A6AEA5] pt-3 border-t border-[#29332B]">
-                    <span className="flex items-center gap-1.5 text-[#E33B4F]">
-                      <span className="h-2 w-2 rounded-full bg-[#C82038]" />
-                      Pushes to Inactivity / Churn
-                    </span>
-                    <span className="flex items-center gap-1.5 text-[#447A56]">
-                      <span className="h-2 w-2 rounded-full bg-[#447A56]" />
-                      Pushes to Repeat Purchase
-                    </span>
-                  </div>
-                </Card>
+                        <div className="h-64 w-full pt-2">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart
+                              data={predictionResult.contributions}
+                              layout="vertical"
+                              margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+                            >
+                              <XAxis
+                                type="number"
+                                stroke="#4B554D"
+                                fontSize={10}
+                                tickFormatter={(val) => (val > 0 ? `+${val.toFixed(2)}` : val.toFixed(2))}
+                              />
+                              <YAxis
+                                type="category"
+                                dataKey="label"
+                                stroke="#A6AEA5"
+                                fontSize={10}
+                                width={140}
+                              />
+                              <Tooltip
+                                contentStyle={{
+                                  backgroundColor: '#111611',
+                                  border: '1px solid #C82038',
+                                  borderRadius: '8px',
+                                  fontSize: '11px',
+                                  color: '#E33B4F',
+                                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.75)',
+                                }}
+                                itemStyle={{
+                                  color: '#E33B4F',
+                                  fontWeight: 600,
+                                }}
+                                labelStyle={{
+                                  color: '#F2F0E8',
+                                  fontWeight: 600,
+                                  marginBottom: '4px',
+                                }}
+                                formatter={(val: any, name: any, item: any) => [
+                                  `${Number(val).toFixed(3)} log-odds impact (${item.payload.valueDisplay})`,
+                                  item.payload.direction === 'repeat' ? 'Pushes to Repeat' : 'Pushes to Inactive',
+                                ]}
+                              />
+                              <ReferenceLine x={0} stroke="#29332B" strokeDasharray="3 3" />
+                              <Bar
+                                dataKey="impact"
+                                radius={[3, 3, 3, 3]}
+                                isAnimationActive={true}
+                                animationDuration={700}
+                                animationEasing="ease-out"
+                              >
+                                {predictionResult.contributions.map((entry, index) => (
+                                  <Cell
+                                    key={`cell-${index}`}
+                                    fill={entry.direction === 'repeat' ? '#447A56' : '#C82038'}
+                                  />
+                                ))}
+                              </Bar>
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
 
-                {/* 4. Multidimensional Radar Footprint */}
-                <Card className="p-5">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <h4 className="text-xs font-semibold text-[#F2F0E8]">
-                        Multidimensional Behavioral Footprint
-                      </h4>
-                      <p className="text-[11px] text-[#A6AEA5]">
-                        Customer posture across velocity, frequency, spend, and tenure
-                      </p>
-                    </div>
-                    <Badge variant="forest" size="sm">
-                      Radar Analysis
-                    </Badge>
-                  </div>
+                        <div className="flex justify-between items-center text-[10px] text-[#A6AEA5] pt-3 border-t border-[#29332B]">
+                          <span className="flex items-center gap-1.5 text-[#E33B4F]">
+                            <span className="h-2 w-2 rounded-full bg-[#C82038]" />
+                            Pushes to Inactivity / Churn
+                          </span>
+                          <span className="flex items-center gap-1.5 text-[#447A56]">
+                            <span className="h-2 w-2 rounded-full bg-[#447A56]" />
+                            Pushes to Repeat Purchase
+                          </span>
+                        </div>
+                      </div>
+                    )}
 
-                  <div className="h-52 w-full pt-2">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <RadarChart data={radarData}>
-                        <PolarGrid stroke="#29332B" />
-                        <PolarAngleAxis dataKey="subject" stroke="#A6AEA5" fontSize={10} />
-                        <PolarRadiusAxis domain={[0, 100]} stroke="#29332B" fontSize={8} />
-                        <Radar
-                          name="Customer"
-                          dataKey="score"
-                          stroke={predictionResult.predictedClass === 1 ? '#447A56' : '#C82038'}
-                          fill={predictionResult.predictedClass === 1 ? '#447A56' : '#C82038'}
-                          fillOpacity={0.25}
-                          isAnimationActive={true}
-                        />
-                      </RadarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </Card>
+                    {/* Tab 2: Coupon Re-engagement */}
+                    {diagnosticTab === 'reengagement' && (
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between pb-2 border-b border-[#29332B]">
+                          <div className="flex items-center gap-2">
+                            <Sparkles className="h-4 w-4 text-[#447A56]" />
+                            <span className="text-xs font-semibold text-[#F2F0E8]">Direct Coupon Re-engagement Scenario</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setSimulateIntervention(!simulateIntervention)}
+                            className={`px-3 py-1.5 rounded text-xs font-tech font-medium border transition-colors cursor-pointer ${
+                              simulateIntervention
+                                ? 'bg-[#214D35] text-[#F2F0E8] border-[#447A56]'
+                                : 'bg-[#171D18] text-[#A6AEA5] border-[#29332B]'
+                            }`}
+                          >
+                            {simulateIntervention ? 'Simulation Active' : 'Simulate Re-engagement'}
+                          </button>
+                        </div>
 
-                {/* 5. Real-Time Logistic Sigmoid Curve */}
-                <Card className="p-5">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <h4 className="text-xs font-semibold text-[#F2F0E8]">
-                        Logistic Sigmoid Probability Curve
-                      </h4>
-                      <p className="text-[11px] text-[#A6AEA5]">
-                        Customer log-odds: <span className="font-tech text-[#F2F0E8]">{predictionResult.logit}</span>
-                      </p>
-                    </div>
-                    <span className="font-tech text-xs text-[#447A56] bg-[#102016] border border-[#214D35] px-2 py-0.5 rounded">
-                      P = 1 / (1 + e^-z)
-                    </span>
-                  </div>
+                        {simulateIntervention && simulatedResult ? (
+                          <div className="space-y-4 pt-1">
+                            <p className="text-xs text-[#A6AEA5] leading-relaxed">
+                              Simulating customer response to an outreach coupon that drives an immediate repeat purchase within 12 days:
+                            </p>
 
-                  <div className="h-40 w-full pt-2">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart
-                        data={predictionResult.sigmoidPoints}
-                        margin={{ top: 5, right: 10, left: -10, bottom: 5 }}
-                      >
-                        <XAxis dataKey="z" stroke="#4B554D" fontSize={10} />
-                        <YAxis stroke="#4B554D" fontSize={10} domain={[0, 1]} tickFormatter={(val) => `${(val * 100).toFixed(0)}%`} />
-                        <ReferenceLine y={0.5} stroke="#C48232" strokeDasharray="3 3" label={{ value: '50% Cutoff', fill: '#C48232', fontSize: 10 }} />
-                        <ReferenceLine x={predictionResult.logit} stroke="#C82038" strokeWidth={2} label={{ value: 'Score', fill: '#E33B4F', fontSize: 10 }} />
-                        <Line
-                          type="monotone"
-                          dataKey="p"
-                          stroke="#447A56"
-                          strokeWidth={2}
-                          dot={false}
-                          isAnimationActive={true}
-                          animationDuration={700}
-                          animationEasing="ease-out"
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B]">
+                                <span className="text-[10px] text-[#A6AEA5] font-tech uppercase tracking-wider">Current Inactivity Risk</span>
+                                <p className="font-tech text-2xl font-bold text-[#E33B4F] mt-1">
+                                  {formatPercent(predictionResult.inactivityRiskScore, 1)}
+                                </p>
+                              </div>
+
+                              <div className="rounded-xl bg-[#102016] p-4 border border-[#214D35]">
+                                <span className="text-[10px] text-[#447A56] font-tech uppercase tracking-wider">Post-Intervention Risk</span>
+                                <p className="font-tech text-2xl font-bold text-[#F2F0E8] mt-1 flex items-center gap-2">
+                                  <span>{formatPercent(simulatedResult.inactivityRiskScore, 1)}</span>
+                                  <span className="text-xs text-[#447A56] font-semibold">
+                                    (
+                                    {formatPercent(
+                                      simulatedResult.inactivityRiskScore - predictionResult.inactivityRiskScore,
+                                      1
+                                    )}
+                                    )
+                                  </span>
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="p-6 text-center rounded-xl bg-[#090B09] border border-[#29332B] space-y-2">
+                            <Sparkles className="h-6 w-6 text-[#447A56] mx-auto" />
+                            <p className="text-xs text-[#F2F0E8] font-medium">Test hypothetical coupon outreach response</p>
+                            <p className="text-[11px] text-[#A6AEA5] max-w-md mx-auto">
+                              Click "Simulate Re-engagement" above to see how prompt customer re-activation cuts inactivity risk and restores repeat velocity.
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Tab 3: Logistic Sigmoid Probability Curve */}
+                    {diagnosticTab === 'sigmoid' && (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <span className="text-xs text-[#A6AEA5]">
+                              Customer log-odds score: <span className="font-tech text-[#F2F0E8]">{predictionResult.logit}</span>
+                            </span>
+                          </div>
+                          <span className="font-tech text-xs text-[#447A56] bg-[#102016] border border-[#214D35] px-2 py-0.5 rounded">
+                            P = 1 / (1 + e^-z)
+                          </span>
+                        </div>
+
+                        <div className="h-48 w-full pt-2">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <LineChart
+                              data={predictionResult.sigmoidPoints}
+                              margin={{ top: 5, right: 15, left: -10, bottom: 5 }}
+                            >
+                              <XAxis dataKey="z" stroke="#4B554D" fontSize={10} />
+                              <YAxis stroke="#4B554D" fontSize={10} domain={[0, 1]} tickFormatter={(val) => `${(val * 100).toFixed(0)}%`} />
+                              <ReferenceLine y={0.5} stroke="#C48232" strokeDasharray="3 3" label={{ value: '50% Cutoff', fill: '#C48232', fontSize: 10 }} />
+                              <ReferenceLine x={predictionResult.logit} stroke="#C82038" strokeWidth={2} label={{ value: 'Score', fill: '#E33B4F', fontSize: 10 }} />
+                              <Line
+                                type="monotone"
+                                dataKey="p"
+                                stroke="#447A56"
+                                strokeWidth={2}
+                                dot={false}
+                                isAnimationActive={true}
+                                animationDuration={700}
+                                animationEasing="ease-out"
+                              />
+                            </LineChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </Card>
               </motion.div>
