@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   --color-background: #090B09;
@@ -26,6 +30,25 @@
 
 :root {
   --background: #090B09;
+  --foreground: #F2F0E8;
+  --card: #111611;
+  --card-foreground: #F2F0E8;
+  --popover: #111611;
+  --popover-foreground: #F2F0E8;
+  --primary: #C82038;
+  --primary-foreground: #F2F0E8;
+  --secondary: #171D18;
+  --secondary-foreground: #F2F0E8;
+  --muted: #171D18;
+  --muted-foreground: #A6AEA5;
+  --accent: #214D35;
+  --accent-foreground: #F2F0E8;
+  --destructive: #C82038;
+  --border: #29332B;
+  --input: #171D18;
+  --ring: #447A56;
+  --radius: 0.625rem;
+  
   --surface: #111611;
   --surface-elevated: #171D18;
   --surface-forest: #102016;
@@ -40,97 +63,81 @@
 
 /* Custom editorial scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
-
 ::-webkit-scrollbar-track {
   background: #090B09;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #214D35;
-  border-radius: 9999px;
+  background: #29332B;
+  border-radius: 3px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #447A56;
+  background: #3A4A3D;
 }
 
-/* Editorial font classes */
-.font-editorial {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-}
-
-.font-ui {
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-.font-tech {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-}
-
-/* Cinematic surface treatments */
-.surface-card {
-  background: #111611;
-  border: 1px solid #29332B;
-  transition: border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
-}
-
-.surface-card:hover {
-  border-color: #3A4A3D;
-}
-
-.surface-elevated {
-  background: #171D18;
+/* Subtle hairline glass surface helpers */
+.editorial-surface {
+  background: rgba(17, 22, 17, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid #29332B;
 }
 
-.surface-forest-panel {
-  background: linear-gradient(135deg, #102016 0%, #111611 100%);
-  border: 1px solid #29332B;
+.editorial-surface-elevated {
+  background: rgba(23, 29, 24, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid #3A4A3D;
 }
 
-.glow-crimson {
-  box-shadow: 0 0 35px -8px rgba(200, 32, 56, 0.35);
+.editorial-glow-forest {
+  box-shadow: 0 0 35px -5px rgba(33, 77, 53, 0.28);
 }
 
-.glow-forest {
-  box-shadow: 0 0 35px -8px rgba(33, 77, 53, 0.45);
+.editorial-glow-crimson {
+  box-shadow: 0 0 35px -5px rgba(200, 32, 56, 0.22);
 }
 
-.crimson-line {
-  background: linear-gradient(90deg, #C82038 0%, rgba(200, 32, 56, 0) 100%);
+/* Hairline dividers */
+.hairline-b {
+  border-bottom: 1px solid #29332B;
+}
+.hairline-t {
+  border-top: 1px solid #29332B;
+}
+.hairline-r {
+  border-right: 1px solid #29332B;
 }
 
-.forest-line {
-  background: linear-gradient(90deg, #214D35 0%, rgba(33, 77, 53, 0) 100%);
+/* Keyframes for subtle ambient effects */
+@keyframes pulseSubtle {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
 }
 
-/* Shimmer animation for empty / loading states */
+@keyframes contourDrift {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(-8px, 6px) rotate(0.5deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
 @keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-pulse-subtle {
+  animation: pulseSubtle 4s ease-in-out infinite;
+}
+
+.animate-contour-drift {
+  animation: contourDrift 18s ease-in-out infinite;
 }
 
 .animate-shimmer {
-  position: relative;
-  overflow: hidden;
-}
-
-.animate-shimmer::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  transform: translateX(-100%);
-  background-image: linear-gradient(
+  background: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0) 0,
     rgba(68, 122, 86, 0.08) 20%,
@@ -138,4 +145,42 @@
     rgba(255, 255, 255, 0)
   );
   animation: shimmer 2.2s infinite;
+}
+
+@theme inline {
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-destructive: var(--destructive);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    background-color: #090B09;
+    color: #F2F0E8;
+  }
+  html {
+    @apply font-sans;
+  }
 }

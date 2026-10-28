@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 
-interface SplitTextProps {
+export interface SplitTextProps {
   text: string;
   className?: string;
   delay?: number;
