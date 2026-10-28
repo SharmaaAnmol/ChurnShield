@@ -1,0 +1,196 @@
+{
+  "project": "ChurnShield",
+  "dataset": "Brazilian E-Commerce Public Dataset by Olist",
+  "audit_timestamp": "2026-10-26 19:17:11 UTC",
+  "tables_profiled": {
+    "olist_orders_dataset.csv": {
+      "rows": 99441,
+      "columns": 8,
+      "column_names": [
+        "order_id",
+        "customer_id",
+        "order_status",
+        "order_purchase_timestamp",
+        "order_approved_at",
+        "order_delivered_carrier_date",
+        "order_delivered_customer_date",
+        "order_estimated_delivery_date"
+      ],
+      "exact_duplicate_rows": 0,
+      "columns_with_nulls": {
+        "order_approved_at": 160,
+        "order_delivered_carrier_date": 1783,
+        "order_delivered_customer_date": 2965
+      },
+      "null_percentages": {
+        "order_approved_at": 0.16,
+        "order_delivered_carrier_date": 1.79,
+        "order_delivered_customer_date": 2.98
+      }
+    },
+    "olist_customers_dataset.csv": {
+      "rows": 99441,
+      "columns": 5,
+      "column_names": [
+        "customer_id",
+        "customer_unique_id",
+        "customer_zip_code_prefix",
+        "customer_city",
+        "customer_state"
+      ],
+      "exact_duplicate_rows": 0,
+      "columns_with_nulls": {},
+      "null_percentages": {}
+    },
+    "olist_order_items_dataset.csv": {
+      "rows": 112650,
+      "columns": 7,
+      "column_names": [
+        "order_id",
+        "order_item_id",
+        "product_id",
+        "seller_id",
+        "shipping_limit_date",
+        "price",
+        "freight_value"
+      ],
+      "exact_duplicate_rows": 0,
+      "columns_with_nulls": {},
+      "null_percentages": {}
+    },
+    "olist_order_payments_dataset.csv": {
+      "rows": 103886,
+      "columns": 5,
+      "column_names": [
+        "order_id",
+        "payment_sequential",
+        "payment_type",
+        "payment_installments",
+        "payment_value"
+      ],
+      "exact_duplicate_rows": 0,
+      "columns_with_nulls": {},
+      "null_percentages": {}
+    },
+    "olist_order_reviews_dataset.csv": {
+      "rows": 99224,
+      "columns": 7,
+      "column_names": [
+        "review_id",
+        "order_id",
+        "review_score",
+        "review_comment_title",
+        "review_comment_message",
+        "review_creation_date",
+        "review_answer_timestamp"
+      ],
+      "exact_duplicate_rows": 0,
+      "columns_with_nulls": {
+        "review_comment_title": 87656,
+        "review_comment_message": 58247
+      },
+      "null_percentages": {
+        "review_comment_title": 88.34,
+        "review_comment_message": 58.7
+      }
+    },
+    "olist_products_dataset.csv": {
+      "rows": 32951,
+      "columns": 9,
+      "column_names": [
+        "product_id",
+        "product_category_name",
+        "product_name_lenght",
+        "product_description_lenght",
+        "product_photos_qty",
+        "product_weight_g",
+        "product_length_cm",
+        "product_height_cm",
+        "product_width_cm"
+      ],
+      "exact_duplicate_rows": 0,
+      "columns_with_nulls": {
+        "product_category_name": 610,
+        "product_name_lenght": 610,
+        "product_description_lenght": 610,
+        "product_photos_qty": 610,
+        "product_weight_g": 2,
+        "product_length_cm": 2,
+        "product_height_cm": 2,
+        "product_width_cm": 2
+      },
+      "null_percentages": {
+        "product_category_name": 1.85,
+        "product_name_lenght": 1.85,
+        "product_description_lenght": 1.85,
+        "product_photos_qty": 1.85,
+        "product_weight_g": 0.01,
+        "product_length_cm": 0.01,
+        "product_height_cm": 0.01,
+        "product_width_cm": 0.01
+      }
+    },
+    "olist_sellers_dataset.csv": {
+      "rows": 3095,
+      "columns": 4,
+      "column_names": [
+        "seller_id",
+        "seller_zip_code_prefix",
+        "seller_city",
+        "seller_state"
+      ],
+      "exact_duplicate_rows": 0,
+      "columns_with_nulls": {},
+      "null_percentages": {}
+    },
+    "olist_geolocation_dataset.csv": {
+      "rows": 1000163,
+      "columns": 5,
+      "column_names": [
+        "geolocation_zip_code_prefix",
+        "geolocation_lat",
+        "geolocation_lng",
+        "geolocation_city",
+        "geolocation_state"
+      ],
+      "exact_duplicate_rows": 261831,
+      "columns_with_nulls": {},
+      "null_percentages": {}
+    },
+    "product_category_name_translation.csv": {
+      "rows": 71,
+      "columns": 2,
+      "column_names": [
+        "product_category_name",
+        "product_category_name_english"
+      ],
+      "exact_duplicate_rows": 0,
+      "columns_with_nulls": {},
+      "null_percentages": {}
+    }
+  },
+  "join_integrity": {
+    "orders_pk_order_id_unique": true,
+    "customers_pk_customer_id_unique": true,
+    "items_pk_composite_unique": true,
+    "min_order_purchase_timestamp": "2016-09-04 21:15:19",
+    "max_order_purchase_timestamp": "2018-10-17 17:30:18",
+    "timestamp_parsing_nulls": 0,
+    "orders_to_customers_matched": 99441,
+    "orders_to_customers_unmatched": 0,
+    "items_to_orders_matched": 112650,
+    "items_to_orders_unmatched": 0,
+    "orders_with_qualifying_items": 98666,
+    "orders_without_items": 775,
+    "customer_ids_total": 99441,
+    "customer_unique_ids_distinct": 96096,
+    "post_aggregation_merge_rows": 98666,
+    "row_multiplication_detected": false
+  },
+  "key_findings": [
+    "customer_id is per-order specific (99,441 rows), whereas customer_unique_id represents the true customer entity (96,096 distinct individuals).",
+    "775 orders in olist_orders_dataset have no corresponding item records in olist_order_items_dataset (predominantly canceled/unavailable orders). These are cleanly excluded from qualifying transactions.",
+    "Aggregating order items to order level prior to merging guarantees 1:1 join integrity and prevents spurious row multiplication.",
+    "Date coverage spans 2016-09-04 to 2018-10-17, providing full historical lookback and full 90-day outcome follow-up for all 5 snapshot cohorts."
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "project_name": "ChurnShield",
+  "project_version": "1.0.0",
+  "full_title": "Explainable E-Commerce Customer Inactivity Prediction and Retention Intelligence",
+  "dataset_source": "Brazilian E-Commerce Public Dataset by Olist (Kaggle)",
+  "dataset_license": "CC BY-NC-SA 4.0",
+  "target_variable": "repeat_purchase_next_90d",
+  "target_definition": "Binary indicator: 1 if customer places at least one qualifying order in [observation_date, observation_date + 90 days), 0 otherwise.",
+  "inactivity_score_definition": "inactivity_risk_score = 1.0 - predicted_probability_of_repeat_purchase",
+  "observation_window_days": 180,
+  "prediction_horizon_days": 90,
+  "cohort_schedule": {
+    "training_cohorts": [
+      "2017-06-01",
+      "2017-09-01",
+      "2017-12-01"
+    ],
+    "validation_cohort": "2018-03-01",
+    "final_test_cohort": "2018-06-01"
+  },
+  "feature_schema": {
+    "numerical_features": [
+      "order_count",
+      "total_spend",
+      "avg_order_value",
+      "median_order_value",
+      "order_value_std",
+      "total_items",
+      "avg_items_per_order",
+      "total_freight",
+      "distinct_products",
+      "distinct_sellers",
+      "orders_recent_90d",
+      "spend_recent_90d",
+      "freight_ratio",
+      "recency_days",
+      "tenure_days",
+      "has_multiple_orders",
+      "avg_inter_order_days",
+      "std_inter_order_days",
+      "order_ratio_recent_vs_earlier",
+      "spend_ratio_recent_vs_earlier"
+    ],
+    "categorical_features": [
+      "customer_state"
+    ],
+    "audit_fields_excluded_from_model": [
+      "customer_unique_id",
+      "observation_date"
+    ]
+  },
+  "champion_model": {
+    "model_type": "Balanced Logistic Regression",
+    "hyperparameters": {
+      "C": 1.0,
+      "class_weight": "balanced",
+      "solver": "lbfgs",
+      "max_iter": 1000,
+      "random_state": 42
+    },
+    "primary_selection_metric": "Average Precision (PR-AUC)",
+    "validation_cohort_pr_auc": 0.0112,
+    "test_cohort_pr_auc": 0.0117,
+    "test_pr_auc_lift_over_dummy": 1.7
+  },
+  "retention_prioritization_policy": {
+    "frozen_policy_name": "Top 20% highest inactivity risk",
+    "outreach_capacity_pct": 20.0,
+    "test_cohort_inactivity_capture_rate": 0.2005,
+    "test_cohort_lift": 1.0026
+  },
+  "business_impact_scenario": {
+    "assumptions": {
+      "outreach_cost_per_customer_brl": 5.0,
+      "assumed_intervention_success_rate": 0.05,
+      "monthly_contribution_margin_brl": 40.0,
+      "months_of_value_preserved": 3.0
+    },
+    "test_cohort_scenario_results": {
+      "customers_contacted": 7833,
+      "total_campaign_expenditure_brl": 39165.0,
+      "estimated_retained_customers": 390.0,
+      "gross_contribution_margin_preserved_brl": 46800.0,
+      "net_financial_benefit_brl": 7635.0,
+      "estimated_roi_ratio": 0.19
+    },
+    "cautionary_note": "These financial outcomes are scenario estimates under stated assumptions. Historical observational data does not prove that outreach causes retention."
+  },
+  "environment": {
+    "python_version": "1.9.1",
+    "pandas_version": "2.3.1",
+    "numpy_version": "2.3.2",
+    "scikit_learn_version": "1.9.1",
+    "joblib_version": "1.6.0"
+  },
+  "known_limitations": [
+    "Inactivity is a proxy for churn, not conclusive proof of permanent customer abandonment.",
+    "The Olist marketplace exhibits high one-off purchase frequency (<1% 90-day repeat rate).",
+    "Observational retention policies require causal validation via randomized controlled A/B testing prior to commercial deployment."
+  ]
+}

@@ -1,0 +1,29 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Virtual environments
+venv/
+env/
+.env
+
+# Matplotlib cache
+.matplotlib/
+
+# Backup files
+*_backup.ipynb
+
+# Raw dataset (auto-downloaded via kagglehub in notebook)
+data/*.csv
+data/*.zip
+!data/.gitkeep
