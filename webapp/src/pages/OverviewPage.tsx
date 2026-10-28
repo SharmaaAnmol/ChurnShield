@@ -533,7 +533,7 @@ export function OverviewPage() {
                     step="5"
                     value={operationalCutoff}
                     onChange={(e) => setOperationalCutoff(parseInt(e.target.value, 10))}
-                    className="w-full accent-[#447A56] cursor-pointer"
+                    className="w-full slider-crimson accent-[#C82038] cursor-pointer"
                   />
                   <div className="flex justify-between text-[10px] text-[#A6AEA5] font-tech">
                     <span>30% (High Volume)</span>

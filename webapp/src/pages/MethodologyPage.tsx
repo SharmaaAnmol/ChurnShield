@@ -278,7 +278,7 @@ export function MethodologyPage() {
                 step="0.5"
                 value={outreachCost}
                 onChange={(e) => setOutreachCost(parseFloat(e.target.value))}
-                className="w-full accent-[#447A56] cursor-pointer"
+                className="w-full slider-crimson accent-[#C82038] cursor-pointer"
               />
               <span className="text-[10px] text-[#A6AEA5]">e.g. Email ($1) vs SMS ($5) vs Voucher ($15)</span>
             </div>
@@ -296,7 +296,7 @@ export function MethodologyPage() {
                 step="0.005"
                 value={conversionRate}
                 onChange={(e) => setConversionRate(parseFloat(e.target.value))}
-                className="w-full accent-[#447A56] cursor-pointer"
+                className="w-full slider-crimson accent-[#C82038] cursor-pointer"
               />
               <span className="text-[10px] text-[#A6AEA5]">Benchmark retail re-order conversion</span>
             </div>
@@ -314,7 +314,7 @@ export function MethodologyPage() {
                 step="5"
                 value={marginPerMonth}
                 onChange={(e) => setMarginPerMonth(parseFloat(e.target.value))}
-                className="w-full accent-[#447A56] cursor-pointer"
+                className="w-full slider-crimson accent-[#C82038] cursor-pointer"
               />
               <span className="text-[10px] text-[#A6AEA5]">Preserved gross contribution for 3 months</span>
             </div>
@@ -332,7 +332,7 @@ export function MethodologyPage() {
                 step="500"
                 value={targetCount}
                 onChange={(e) => setTargetCount(parseInt(e.target.value, 10))}
-                className="w-full accent-[#C82038] cursor-pointer"
+                className="w-full slider-crimson accent-[#C82038] cursor-pointer"
               />
               <span className="text-[10px] text-[#A6AEA5]">20% capacity = 7,833 customers</span>
             </div>

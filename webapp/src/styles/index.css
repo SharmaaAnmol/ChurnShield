@@ -219,3 +219,100 @@
   color: #E33B4F !important;
   font-weight: 600 !important;
 }
+
+/* Tactile Crimson Slider Range Controls */
+.slider-crimson {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #171D18;
+  height: 7px;
+  border-radius: 9999px;
+  border: 1px solid #29332B;
+  outline: none;
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+.slider-crimson:focus {
+  outline: none;
+  border-color: #C82038;
+}
+
+.slider-crimson:active {
+  cursor: grabbing;
+}
+
+.slider-crimson::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #FF4D64 0%, #C82038 60%, #8B0E1E 100%);
+  border: 2.5px solid #FFFFFF;
+  box-shadow: 0 0 12px rgba(200, 32, 56, 0.8), 0 2px 6px rgba(0, 0, 0, 0.6);
+  cursor: grab;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.slider-crimson::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #FF4D64 0%, #C82038 60%, #8B0E1E 100%);
+  border: 2.5px solid #FFFFFF;
+  box-shadow: 0 0 12px rgba(200, 32, 56, 0.8), 0 2px 6px rgba(0, 0, 0, 0.6);
+  cursor: grab;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.slider-crimson::-webkit-slider-thumb:hover {
+  transform: scale(1.22);
+  background: radial-gradient(circle at 35% 35%, #FF6B7D 0%, #E33B4F 60%, #A31224 100%);
+  box-shadow: 0 0 20px rgba(227, 59, 79, 0.95), 0 3px 8px rgba(0, 0, 0, 0.7);
+}
+
+.slider-crimson::-moz-range-thumb:hover {
+  transform: scale(1.22);
+  background: radial-gradient(circle at 35% 35%, #FF6B7D 0%, #E33B4F 60%, #A31224 100%);
+  box-shadow: 0 0 20px rgba(227, 59, 79, 0.95), 0 3px 8px rgba(0, 0, 0, 0.7);
+}
+
+.slider-crimson:active::-webkit-slider-thumb {
+  transform: scale(1.35);
+  cursor: grabbing;
+  box-shadow: 0 0 28px rgba(227, 59, 79, 1), 0 0 10px #FFFFFF;
+}
+
+.slider-crimson:active::-moz-range-thumb {
+  transform: scale(1.35);
+  cursor: grabbing;
+  box-shadow: 0 0 28px rgba(227, 59, 79, 1), 0 0 10px #FFFFFF;
+}
+
+/* Hazard diagonal stripes animation */
+@keyframes hazardPulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+.hazard-stripes-crimson {
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(200, 32, 56, 0.22),
+    rgba(200, 32, 56, 0.22) 10px,
+    rgba(200, 32, 56, 0.10) 10px,
+    rgba(200, 32, 56, 0.10) 20px
+  );
+  animation: hazardPulse 3s ease-in-out infinite;
+}
+
+.hazard-stripes-amber {
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(196, 130, 50, 0.20),
+    rgba(196, 130, 50, 0.20) 10px,
+    rgba(196, 130, 50, 0.08) 10px,
+    rgba(196, 130, 50, 0.08) 20px
+  );
+}
