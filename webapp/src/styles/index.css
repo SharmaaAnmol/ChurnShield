@@ -185,6 +185,17 @@
   }
 }
 
+/* Luxury Editorial Matte Paper & Architectural Grid Texture */
+.bg-canvas-texture {
+  background-color: #090B09;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(33, 77, 53, 0.16) 0%, transparent 55%),
+    radial-gradient(circle at 100% 40%, rgba(200, 32, 56, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 0% 70%, rgba(33, 77, 53, 0.10) 0%, transparent 40%),
+    radial-gradient(rgba(41, 51, 43, 0.38) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px;
+}
+
 /* Recharts Tooltip Crimson Red Global Theme Override */
 .recharts-default-tooltip {
   background-color: #111611 !important;

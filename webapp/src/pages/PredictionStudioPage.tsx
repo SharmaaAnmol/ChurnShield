@@ -22,6 +22,7 @@ import {
   ChevronRight,
   Plus,
   Minus,
+  MapPin,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -46,6 +47,40 @@ import { Badge } from '../components/ui/Badge';
 import { runLocalModelInference, ClientInferenceResult } from '../lib/data/model-inference-engine';
 import { predictCustomer } from '../lib/api/prediction-client';
 import { formatPercent, formatCurrency } from '../lib/utils';
+
+// Complete Brazilian Federative Units dictionary with full names, regions, economic role, and volume share
+const BRAZILIAN_STATES_METADATA: Record<
+  string,
+  { name: string; region: string; role: string; share: string }
+> = {
+  SP: { name: 'São Paulo', region: 'Southeast', role: 'Commercial & financial hub; dominant order volume', share: '41.8%' },
+  RJ: { name: 'Rio de Janeiro', region: 'Southeast', role: 'Major coastal metro market; 2nd largest volume', share: '12.8%' },
+  MG: { name: 'Minas Gerais', region: 'Southeast', role: 'Key inland manufacturing & consumer hub', share: '11.6%' },
+  RS: { name: 'Rio Grande do Sul', region: 'South', role: 'Southern industrial & agribusiness center', share: '5.5%' },
+  PR: { name: 'Paraná', region: 'South', role: 'Southern trade & agricultural corridor', share: '5.0%' },
+  SC: { name: 'Santa Catarina', region: 'South', role: 'Southern high-income coastal region', share: '3.6%' },
+  BA: { name: 'Bahia', region: 'Northeast', role: 'Northeastern economic & cultural center', share: '3.4%' },
+  DF: { name: 'Distrito Federal (Brasília)', region: 'Central-West', role: 'National capital territory; highest per-capita GDP', share: '2.1%' },
+  ES: { name: 'Espírito Santo', region: 'Southeast', role: 'Southeastern coastal port & shipping corridor', share: '2.0%' },
+  GO: { name: 'Goiás', region: 'Central-West', role: 'Central agribusiness & transportation crossroads', share: '2.0%' },
+  PE: { name: 'Pernambuco', region: 'Northeast', role: 'Northeastern commercial & technology center', share: '1.7%' },
+  CE: { name: 'Ceará', region: 'Northeast', role: 'Northeastern maritime & manufacturing hub', share: '1.3%' },
+  PA: { name: 'Pará', region: 'North', role: 'Northern Amazonian economic & mineral gateway', share: '1.0%' },
+  MT: { name: 'Mato Grosso', region: 'Central-West', role: 'National agricultural export powerhouse', share: '0.9%' },
+  MA: { name: 'Maranhão', region: 'Northeast', role: 'Northeastern coastal transit corridor', share: '0.7%' },
+  MS: { name: 'Mato Grosso do Sul', region: 'Central-West', role: 'Southern central-west trading hub', share: '0.7%' },
+  PB: { name: 'Paraíba', region: 'Northeast', role: 'Northeastern commercial & coastal state', share: '0.5%' },
+  PI: { name: 'Piauí', region: 'Northeast', role: 'Northeastern agricultural transition territory', share: '0.5%' },
+  RN: { name: 'Rio Grande do Norte', region: 'Northeast', role: 'Northeastern coastal & renewable energy hub', share: '0.5%' },
+  AL: { name: 'Alagoas', region: 'Northeast', role: 'Northeastern coastal state', share: '0.4%' },
+  SE: { name: 'Sergipe', region: 'Northeast', role: 'Smallest northeastern federative unit', share: '0.3%' },
+  TO: { name: 'Tocantins', region: 'North', role: 'Central-northern inland crossroads', share: '0.3%' },
+  RO: { name: 'Rondônia', region: 'North', role: 'Western Amazonian trade corridor', share: '0.3%' },
+  AM: { name: 'Amazonas', region: 'North', role: 'Northern industrial free trade zone (Manaus)', share: '0.2%' },
+  AC: { name: 'Acre', region: 'North', role: 'Western border Amazonian territory', share: '0.1%' },
+  AP: { name: 'Amapá', region: 'North', role: 'Northern equatorial coastal territory', share: '0.1%' },
+  RR: { name: 'Roraima', region: 'North', role: 'Northernmost federal territory', share: '0.1%' },
+};
 
 // Common Brazilian states for quick selection
 const POPULAR_STATES = [
@@ -170,6 +205,18 @@ export function PredictionStudioPage() {
 
   // Deep Diagnostic Tab State ('waterfall' | 'reengagement' | 'sigmoid')
   const [diagnosticTab, setDiagnosticTab] = useState<'waterfall' | 'reengagement' | 'sigmoid'>('waterfall');
+
+  // Customer State Hover Exploration
+  const [hoveredState, setHoveredState] = useState<string | null>(null);
+  const activeStateInfo = useMemo(() => {
+    const target = hoveredState || customerState;
+    return BRAZILIAN_STATES_METADATA[target] || {
+      name: target,
+      region: 'Brazil',
+      role: 'Federative Unit',
+      share: '—',
+    };
+  }, [hoveredState, customerState]);
 
   // Apply scenario preset
   const applyPreset = (preset: ScenarioPreset) => {
@@ -980,38 +1027,112 @@ export function PredictionStudioPage() {
               </div>
             </div>
 
-            {/* Geographic State Selection */}
-            <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B] space-y-2">
+            {/* Geographic State Selection with Full Forms & Interactive Tooltips */}
+            <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B] space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#F2F0E8]">Customer State (UF)</span>
-                <span className="font-tech text-xs text-[#447A56]">{customerState}</span>
+                <div>
+                  <span className="text-xs font-semibold text-[#F2F0E8] flex items-center gap-1.5">
+                    <MapPin className="h-3.5 w-3.5 text-[#447A56]" />
+                    <span>Customer State (Federative Unit — UF)</span>
+                  </span>
+                  <span className="text-[10px] text-[#A6AEA5]">
+                    Hover over or click any acronym to reveal full state name & regional profile
+                  </span>
+                </div>
+                <Badge variant="forest" size="sm">
+                  {customerState}
+                </Badge>
               </div>
-              <div className="flex flex-wrap gap-2 pt-1">
-                {POPULAR_STATES.map((st) => (
-                  <button
-                    key={st.uf}
-                    type="button"
-                    onClick={() => setCustomerState(st.uf)}
-                    className={`px-3 py-1.5 rounded-md text-xs font-tech font-medium border transition-colors cursor-pointer ${
-                      customerState === st.uf
-                        ? 'bg-[#214D35] text-[#F2F0E8] border-[#447A56]'
-                        : 'bg-[#171D18] text-[#A6AEA5] border-[#29332B] hover:border-[#447A56]/60 hover:text-[#F2F0E8]'
-                    }`}
+
+              {/* State Buttons with Full Tooltips & Hover Callouts */}
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                {POPULAR_STATES.map((st) => {
+                  const meta = BRAZILIAN_STATES_METADATA[st.uf] || { name: st.name, region: 'Brazil', role: '', share: '' };
+                  const isSelected = customerState === st.uf;
+
+                  return (
+                    <div key={st.uf} className="relative group">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCustomerState(st.uf);
+                          setIsStale(true);
+                        }}
+                        onMouseEnter={() => setHoveredState(st.uf)}
+                        onMouseLeave={() => setHoveredState(null)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-tech font-medium border transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#214D35] text-[#F2F0E8] border-[#447A56] shadow-[0_0_12px_rgba(68,122,86,0.3)]'
+                            : 'bg-[#171D18] text-[#A6AEA5] border-[#29332B] hover:border-[#447A56]/70 hover:text-[#F2F0E8] hover:bg-[#111611]'
+                        }`}
+                        title={`${st.uf}: ${meta.name} (${meta.region}) — ${meta.role}`}
+                      >
+                        {st.uf}
+                      </button>
+
+                      {/* Floating Hover Popover */}
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-30 pointer-events-none">
+                        <div className="rounded-lg bg-[#111611] border border-[#447A56] px-2.5 py-1.5 shadow-2xl text-center whitespace-nowrap min-w-[130px]">
+                          <div className="text-[11px] font-semibold text-[#F2F0E8] font-tech">
+                            {st.uf} — {meta.name}
+                          </div>
+                          <div className="text-[9.5px] text-[#447A56] font-medium">
+                            {meta.region} Region • {meta.share}
+                          </div>
+                          <div className="text-[8.5px] text-[#A6AEA5] max-w-[170px] truncate">
+                            {meta.role}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Dropdown for All 27 States with Full Names */}
+                <div className="relative">
+                  <select
+                    value={customerState}
+                    onChange={(e) => {
+                      setCustomerState(e.target.value);
+                      setIsStale(true);
+                    }}
+                    onFocus={() => setHoveredState(null)}
+                    className="rounded-lg bg-[#171D18] px-3 py-1.5 text-xs text-[#F2F0E8] border border-[#29332B] font-tech cursor-pointer hover:border-[#447A56]/70 focus:outline-none"
+                    aria-label="Select from all 27 Brazilian States"
                   >
-                    {st.uf}
-                  </button>
-                ))}
-                <select
-                  value={customerState}
-                  onChange={(e) => setCustomerState(e.target.value)}
-                  className="rounded-md bg-[#171D18] px-2 py-1 text-xs text-[#F2F0E8] border border-[#29332B] font-tech cursor-pointer"
-                >
-                  {ALL_STATES.map((s) => (
-                    <option key={s} value={s} className="bg-[#111611] text-[#F2F0E8]">
-                      {s}
-                    </option>
-                  ))}
-                </select>
+                    {ALL_STATES.map((s) => {
+                      const meta = BRAZILIAN_STATES_METADATA[s];
+                      return (
+                        <option key={s} value={s} className="bg-[#111611] text-[#F2F0E8]">
+                          {s} — {meta?.name || s} ({meta?.region || 'Brazil'})
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+              </div>
+
+              {/* Dynamic State Descriptor Card (Shows upon Click or Hover) */}
+              <div className="rounded-lg bg-[#111611] p-3 border border-[#29332B] text-xs flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#171D18] border border-[#29332B] text-[#447A56] font-tech font-bold text-xs">
+                    {hoveredState || customerState}
+                  </div>
+                  <div>
+                    <div className="font-semibold text-[#F2F0E8] text-xs flex items-center gap-1.5">
+                      <span>{activeStateInfo.name} ({hoveredState || customerState})</span>
+                      <span className="text-[10px] text-[#447A56] font-tech">[{activeStateInfo.region}]</span>
+                    </div>
+                    <p className="text-[10px] text-[#A6AEA5] leading-snug mt-0.5">
+                      {activeStateInfo.role}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="text-right shrink-0">
+                  <span className="text-[9px] text-[#A6AEA5] block font-tech uppercase tracking-wider">E-Commerce Share</span>
+                  <span className="font-tech text-xs font-semibold text-[#F2F0E8]">{activeStateInfo.share}</span>
+                </div>
               </div>
             </div>
 
