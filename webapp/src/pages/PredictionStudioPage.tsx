@@ -620,13 +620,25 @@ export function PredictionStudioPage() {
 
   // Visual Timeline Metric Coordinate Mapping
   const cutoffPct = 65;
-  const recencyPct = useMemo(() => {
-    return Math.max(0.5, Math.min(cutoffPct - 0.2, cutoffPct - (recencyDays / lookbackWindow) * cutoffPct));
-  }, [recencyDays, lookbackWindow]);
-
-  const tenurePct = useMemo(() => {
-    return Math.max(0, Math.min(cutoffPct - 0.2, cutoffPct - (tenureDays / lookbackWindow) * cutoffPct));
+  // Normalized 0%..100% position along the lookback rail (from -lookbackWindow up to Day 0)
+  const tenureRailPct = useMemo(() => {
+    return Math.max(0, Math.min(100, 100 - (tenureDays / lookbackWindow) * 100));
   }, [tenureDays, lookbackWindow]);
+
+  const recencyRailPct = useMemo(() => {
+    const raw = 100 - (recencyDays / lookbackWindow) * 100;
+    // Guaranteed constraint: last order cannot occur before joining
+    return Math.max(tenureRailPct, Math.min(100, raw));
+  }, [recencyDays, lookbackWindow, tenureRailPct]);
+
+  // Absolute percentages across the entire 100% track width (Lookback = 65%, Forecast = 35%)
+  const tenurePct = useMemo(() => {
+    return Math.max(0.5, (tenureRailPct / 100) * cutoffPct);
+  }, [tenureRailPct, cutoffPct]);
+
+  const safeRecencyPct = useMemo(() => {
+    return Math.max(tenurePct, Math.min(cutoffPct - 0.2, (recencyRailPct / 100) * cutoffPct));
+  }, [recencyRailPct, cutoffPct, tenurePct]);
 
   return (
     <div className="space-y-8">
@@ -825,21 +837,23 @@ export function PredictionStudioPage() {
                 </div>
 
                 {/* Active Lifespan Fill (Tenure to Last Order) */}
-                <div
-                  className="absolute top-0.5 bottom-0.5 rounded-sm bg-gradient-to-r from-[#214D35]/35 to-[#447A56]/50 border-y border-[#447A56]/60 flex items-center justify-center transition-all duration-75"
-                  style={{
-                    left: `${(tenurePct / 0.65) * 100}%`,
-                    width: `${Math.max(1, ((recencyPct - tenurePct) / 0.65) * 100)}%`,
-                  }}
-                >
-                  <span className="text-[8.5px] font-tech text-[#F2F0E8]/90 font-medium whitespace-nowrap px-1 truncate">
-                    Active ({Math.max(0, tenureDays - recencyDays)}d)
-                  </span>
-                </div>
+                {tenureDays > recencyDays && (
+                  <div
+                    className="absolute top-0.5 bottom-0.5 rounded-sm bg-gradient-to-r from-[#214D35]/40 to-[#447A56]/60 border-y border-[#447A56]/70 flex items-center justify-center transition-all duration-75 overflow-hidden"
+                    style={{
+                      left: `${tenureRailPct}%`,
+                      width: `${Math.max(0, recencyRailPct - tenureRailPct)}%`,
+                    }}
+                  >
+                    <span className="text-[8.5px] font-tech text-[#F2F0E8]/90 font-medium whitespace-nowrap px-1 truncate">
+                      Active ({tenureDays - recencyDays}d)
+                    </span>
+                  </div>
+                )}
 
                 {/* Dormancy / Inactivity Hazard Gap (Last Order to Day 0 Cutoff) */}
                 <div
-                  className={`absolute top-0.5 bottom-0.5 right-0 rounded-sm flex items-center justify-center transition-all duration-75 ${
+                  className={`absolute top-0.5 bottom-0.5 right-0 rounded-sm flex items-center justify-center transition-all duration-75 overflow-hidden ${
                     recencyDays <= 30
                       ? 'bg-[#447A56]/25 border border-[#447A56]/70'
                       : recencyDays <= 90
@@ -847,7 +861,7 @@ export function PredictionStudioPage() {
                       : 'hazard-stripes-crimson border border-[#C82038]/80 shadow-[inset_0_0_10px_rgba(200,32,56,0.3)]'
                   }`}
                   style={{
-                    left: `${(recencyPct / 0.65) * 100}%`,
+                    left: `${recencyRailPct}%`,
                   }}
                 >
                   <span
@@ -881,23 +895,23 @@ export function PredictionStudioPage() {
               </div>
             </div>
 
-            {/* Account Join Pin (Tenure) */}
+            {/* Account Join Pin (Tenure) - Centered at tenurePct */}
             <div
-              className="absolute top-2 bottom-2 pointer-events-none flex flex-col items-center z-10 transition-all duration-75"
+              className="absolute top-0 bottom-0 pointer-events-none flex flex-col items-center -translate-x-1/2 z-15 transition-all duration-75"
               style={{ left: `${tenurePct}%` }}
             >
-              <div className="h-2.5 w-2.5 rounded-full bg-[#102016] border border-[#447A56] flex items-center justify-center shadow">
+              <div className="h-2.5 w-2.5 rounded-full bg-[#102016] border-2 border-[#447A56] flex items-center justify-center shadow mt-0.5">
                 <div className="h-1 w-1 rounded-full bg-[#447A56]" />
               </div>
-              <div className="w-px h-full bg-[#447A56]/50 mt-0.5" />
-              <span className="text-[8px] font-tech text-[#A6AEA5] bg-[#090B09] px-1 rounded border border-[#29332B] whitespace-nowrap -mt-0.5 shadow">
+              <div className="w-px h-full bg-[#447A56]/60 shadow-[0_0_4px_#447A56]" />
+              <span className="text-[8px] font-tech font-bold text-[#A6AEA5] bg-[#090B09] px-1 py-0.5 rounded border border-[#29332B] whitespace-nowrap -mb-1 shadow">
                 Joined -{tenureDays}d
               </span>
             </div>
 
             {/* Day 0 Cutoff Beam (65%) */}
             <div
-              className="absolute top-0 bottom-0 pointer-events-none flex flex-col items-center z-20"
+              className="absolute top-0 bottom-0 pointer-events-none flex flex-col items-center -translate-x-1/2 z-20"
               style={{ left: '65%' }}
             >
               <div className="absolute -top-5 -translate-x-1/2 flex items-center gap-1 bg-[#171D18] px-1.5 py-0.5 rounded border border-[#C82038] shadow-[0_0_8px_rgba(200,32,56,0.3)]">
@@ -914,7 +928,7 @@ export function PredictionStudioPage() {
             <div
               className="absolute -top-7 -translate-x-1/2 pointer-events-none transition-all duration-75 z-30"
               style={{
-                left: `${Math.max(12, Math.min(54, recencyPct))}%`,
+                left: `${Math.max(12, Math.min(54, safeRecencyPct))}%`,
               }}
             >
               <div className="rounded-md bg-[#090B09]/95 border border-[#C82038] px-2 py-0.5 shadow-xl backdrop-blur-md flex items-center gap-1.5 whitespace-nowrap text-[10px] font-tech font-bold text-[#F2F0E8]">
@@ -932,17 +946,17 @@ export function PredictionStudioPage() {
               <div className="w-0 h-0 border-x-[3px] border-x-transparent border-t-[3px] border-t-[#C82038] mx-auto" />
             </div>
 
-            {/* TACTILE CRIMSON DRAGGER PIN */}
+            {/* TACTILE CRIMSON DRAGGER PIN - Centered at safeRecencyPct */}
             <div
-              className="absolute top-0 bottom-0 z-20 transition-all duration-75 flex flex-col items-center pointer-events-none"
-              style={{ left: `${recencyPct}%` }}
+              className="absolute top-0 bottom-0 z-25 transition-all duration-75 flex flex-col items-center -translate-x-1/2 pointer-events-none"
+              style={{ left: `${safeRecencyPct}%` }}
             >
               {/* Vertical Laser Hairline */}
-              <div className="w-px h-full bg-[#E33B4F]/90 shadow-[0_0_6px_#E33B4F]" />
+              <div className="w-px h-full bg-[#E33B4F] shadow-[0_0_8px_#E33B4F]" />
 
               {/* Precision Crimson Dragger Head */}
               <div
-                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-6 w-6 rounded-full border-2 border-white shadow-[0_0_14px_rgba(200,32,56,0.95)] cursor-grab active:cursor-grabbing hover:scale-120 transition-transform flex items-center justify-center pointer-events-auto"
+                className="absolute top-1/2 -translate-y-1/2 h-6 w-6 rounded-full border-2 border-white shadow-[0_0_14px_rgba(200,32,56,0.95)] cursor-grab active:cursor-grabbing hover:scale-120 transition-transform flex items-center justify-center pointer-events-auto"
                 style={{
                   background: 'radial-gradient(circle at 35% 35%, #FF5A70 0%, #C82038 60%, #7A0B1A 100%)',
                 }}
