@@ -1,18 +1,31 @@
 # ChurnShield: Explainable E-Commerce Customer Inactivity Prediction & Retention Intelligence
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/SharmaaAnmol/ChurnShield/blob/main/ChurnShield_Customer_Inactivity_Prediction.ipynb)
-[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.0%2B-orange.svg)](https://scikit-learn.org/)
-[![Dataset](https://img.shields.io/badge/Dataset-Olist%20E--Commerce-green.svg)](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
-[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-[![Runtime](https://img.shields.io/badge/Colab-Standard%20CPU%20(~40s)-brightgreen.svg)](#)
+[![Live Webapp](https://img.shields.io/badge/Live%20Platform-churn--shield--omega.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://churn-shield-omega.vercel.app)
+[![Open In Colab](https://img.shields.io/badge/Google%20Colab-Run%20Notebook-F9AB00?style=for-the-badge&logo=googlecolab&logoColor=white)](https://colab.research.google.com/github/SharmaaAnmol/ChurnShield/blob/main/ChurnShield_Customer_Inactivity_Prediction.ipynb)
+[![FastAPI](https://img.shields.io/badge/FastAPI-ML%20Backend-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://churnshield-api.onrender.com)
+[![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey?style=for-the-badge)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
-> **Production-Grade Machine Learning & Retention Intelligence System**  
-> **Architecture & Implementation:** Longitudinal Feature Store, Rolling-Origin Temporal Cross-Validation, Calibrated Inactivity Risk Scoring, and Retention Unit Economics Simulation.
+> 🚀 **Live Production Application:** [**https://churn-shield-omega.vercel.app**](https://churn-shield-omega.vercel.app)  
+> **Production-Grade Machine Learning & Retention Intelligence System:** Longitudinal Feature Store, Rolling-Origin Temporal Cross-Validation, Calibrated Inactivity Risk Scoring, and Real-Time Interactive Prediction Studio.
 
 ---
 
-## 1. Google Colab Live Demonstration Guide (Step-by-Step)
+## 1. Live Web Application & Interactive Prediction Studio
+
+ChurnShield includes a deployed, production-grade web application backed by our trained Scikit-Learn pipeline running on FastAPI:
+
+👉 **Launch Platform:** [https://churn-shield-omega.vercel.app](https://churn-shield-omega.vercel.app)
+
+### Core Capabilities:
+- **Executive Surveillance Dashboard:** Dynamic timeline switching across **130,914 customers** spanning 5 rolling quarterly snapshots (`2017-06`, `2017-09`, `2017-12`, `2018-03`, `2018-06`, and cumulative `All 130k`).
+- **Interactive Prediction Studio:** Real-time customer inference with an interactive lifecycle timeline diagram, dynamic recency pin, Multidimensional Radar Chart (Recharts), What-If Retention Simulator, Feature Impact Waterfall, and Logistic Sigmoid probability curve.
+- **Customer Retention Explorer:** High-speed data grid of scored customer records with multi-dimensional filtering by snapshot timeline, risk tier, Brazilian state, and priority outreach targets (Top 20%).
+- **Model Performance & Validation Rigor:** Live confusion matrices, PR-AUC scores, and class-imbalance diagnostics across all empirical test cohorts.
+
+---
+
+## 2. Google Colab Live Demonstration Guide (Step-by-Step)
 
 The master notebook [`ChurnShield_Customer_Inactivity_Prediction.ipynb`](ChurnShield_Customer_Inactivity_Prediction.ipynb) is optimized and certified for execution in a fresh, unconfigured **Google Colab standard CPU runtime**.
 
@@ -48,7 +61,7 @@ The master notebook [`ChurnShield_Customer_Inactivity_Prediction.ipynb`](ChurnSh
 
 ---
 
-## 2. Executive Summary & Problem Identity
+## 3. Executive Summary & Problem Identity
 
 In commercial e-commerce, customer acquisition cost (CAC) typically outpaces retention expenditure by a factor of 5 to 7. Retaining existing buyers is essential for unit-economic profitability. However, predicting churn in a **non-contractual e-commerce marketplace** differs fundamentally from textbook subscription services (e.g., Netflix, SaaS):
 
@@ -60,7 +73,7 @@ In commercial e-commerce, customer acquisition cost (CAC) typically outpaces ret
 
 ---
 
-## 3. Methodology & System Architecture
+## 4. Methodology & System Architecture
 
 ```
                                 CHURNSHIELD ARCHITECTURE
@@ -110,33 +123,46 @@ In commercial e-commerce, customer acquisition cost (CAC) typically outpaces ret
 
 ---
 
-## 4. Repository Directory Structure
+## 5. Repository Directory Structure
 
 ```
 AI_Project/
+├── webapp/                                           # Production React + TypeScript + Vite Frontend (Deployed on Vercel)
+│   ├── src/
+│   │   ├── pages/                                    # Overview, Prediction Studio, Customer Explorer, etc.
+│   │   ├── lib/api/prediction-client.ts              # Production API Client (VITE_API_BASE_URL)
+│   │   └── lib/context/TimelineContext.tsx           # Multi-Timeline Cohort State Provider
+│   ├── public/data/                                  # Empirical Evaluated Dataset Metrics & Scored Customers
+│   └── vercel.json                                   # SPA Route Rewrite Configuration
+│
+├── backend/                                          # Production FastAPI ML Inference Backend (Deployed on Render)
+│   ├── app/
+│   │   ├── main.py                                   # FastAPI Server & Endpoints
+│   │   ├── schemas.py                                # Pydantic v2 Feature Schemas & Validation
+│   │   └── services/predictor.py                     # Scikit-Learn Pipeline Wrapper
+│   ├── artifacts/                                    # Bundled Serialized Model & Weight Matrices
+│   │   ├── churnshield_pipeline.joblib               # Champion Balanced Logistic Regression Model
+│   │   ├── model_weights.json                        # Exact Weights for Parity Inference
+│   │   ├── feature_schema.json                       # 21-Feature Specification
+│   │   └── model_metadata.json                       # Hyperparameters & Provenance
+│   ├── requirements.txt                              # Backend Dependencies
+│   └── tests/test_api.py                             # Automated Pytest Suite (10/10 Passing)
+│
+├── docs/                                             # Deployment & Architecture Guides
+│   ├── DEPLOYMENT_GUIDE.md                           # Step-by-Step Render & Vercel Manual
+│   └── PREDICTION_STUDIO_ARCHITECTURE.md             # Prediction Studio Technical Blueprint
+│
 ├── ChurnShield_Customer_Inactivity_Prediction.ipynb  # Master Deliverable: Executed Colab-Ready Notebook
 ├── ChurnShield_Technical_Documentation.md           # Comprehensive Technical Architecture & Engineering Documentation
 ├── ChurnShield_Technical_Documentation.pdf          # Polished Printable System Design Whitepaper (PDF)
-├── README.md                                         # Production System Documentation & Reproduction Guide
-├── build_project_and_artifacts.py                    # Standalone End-to-End Pipeline & Artifact Generator
-├── build_notebook.py                                 # Automated Notebook Builder & Execution Engine
-├── build_guide.py                                    # Automated Documentation Builder & ReportLab PDF Engine
-├── churnshield_artifacts.zip                         # 1-Click ZIP Archive of All Generated Artifacts (8.4 MB)
-├── data/                                             # Local Olist CSV Dataset Directory (Auto-downloaded via kagglehub)
-└── artifacts/                                        # Machine-Readable Model Artifacts
-    ├── churnshield_model.joblib                      # Serialized Preprocessing + Model Pipeline
-    ├── model_comparison.csv                          # Multi-Model Benchmark Results Across 8 Metrics
-    ├── final_test_metrics.json                       # Comprehensive Holdout Test Metrics vs Baseline
-    ├── holdout_predictions.csv                       # Predictions & Inactivity Scores for 39,162 Test Customers
-    ├── feature_importance.csv                        # Permutation Feature Importances & Rank
-    ├── data_quality_report.json                      # Automated Relational Audit & Join Diagnostics
-    ├── curated_customer_snapshots.csv                # Longitudinal Analytical Dataset (130,914 Rows)
-    └── model_metadata.json                           # Model Specification, Schema, Hyperparameters & Metadata
+├── render.yaml                                       # Render Blueprint Deployment Configuration
+├── requirements.txt                                  # Root Python Dependencies
+└── artifacts/                                        # Master Analytical Artifacts (Evaluations & CSVs)
 ```
 
 ---
 
-## 5. Dataset Acquisition & Provenance
+## 6. Dataset Acquisition & Provenance
 
 The project utilizes the [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce), released under the **CC BY-NC-SA 4.0** license.
 
@@ -149,9 +175,9 @@ The codebase automatically searches multiple acquisition tiers:
 
 ---
 
-## 6. Key Experimental Findings
+## 7. Key Experimental Findings
 
-### 6.1 Multi-Model Benchmark (Validation Cohort: 2018-03-01 | $N = 34,777$)
+### 7.1 Multi-Model Benchmark (Validation Cohort: 2018-03-01 | $N = 34,777$)
 
 | Model Architecture | CV PR-AUC (Mean±Std) | Val PR-AUC | Val ROC-AUC | Val Recall | Val Balanced Acc | Val F1 | Fit Time (s) |
 |:-------------------|:--------------------:|:----------:|:-----------:|:----------:|:----------------:|:------:|:------------:|
@@ -165,7 +191,7 @@ The codebase automatically searches multiple acquisition tiers:
 
 *Primary Metric:* Average Precision (PR-AUC). Balanced Logistic Regression achieved the highest Average Precision, outperforming the baseline by **over 2.0x**.
 
-### 6.2 Final Holdout Evaluation (Untouched Test Cohort: 2018-06-01 | $N = 39,162$)
+### 7.2 Final Holdout Evaluation (Untouched Test Cohort: 2018-06-01 | $N = 39,162$)
 
 - **Base Repeat Rate:** 0.6894% (Severe 99.31% majority class imbalance)
 - **Champion PR-AUC:** **0.0117** vs Dummy Baseline **0.0069** (**1.70x Baseline Lift**)
@@ -176,20 +202,20 @@ The codebase automatically searches multiple acquisition tiers:
 
 ---
 
-## 7. Retention Prioritization & Business ROI Simulation
+## 8. Retention Prioritization & Business ROI Simulation
 
-### 7.1 Retention Policy Simulation (Test Cohort)
+### 8.1 Retention Policy Simulation (Test Cohort)
 Under a realistic retention team outreach capacity of **20% of eligible customers** (7,833 customers contacted):
 - **Inactive Customers Captured:** 7,799 out of 7,833 (**99.57% concentration**)
 - **Self-Retaining Customers Spared:** Only 34 repeat buyers contacted unnecessarily
 - **Inactivity Capture Rate:** 20.05% of all inactive customers in the population
 
-### 7.2 Re-Engagement Campaign Lift
+### 8.2 Re-Engagement Campaign Lift
 If marketing targets customers with the **highest repeat purchase propensity** (lowest inactivity risk):
 - **Top 10% Decile:** Delivers a **1.63x lift** over random marketing (Precision: 1.12% vs 0.69% base rate).
 - **Top 20% Decile:** Delivers a **1.41x lift** over random marketing.
 
-### 7.3 Financial Scenario Projections
+### 8.3 Financial Scenario Projections
 Under stated scenario assumptions:
 - Outreach Cost: **R$ 5.00** per customer
 - Re-activation Rate: **5.0%** of contacted at-risk customers
@@ -208,7 +234,7 @@ Projected Campaign ROI Multiplier            : 0.19x (19.5% Net Return on Spend)
 
 ---
 
-## 8. Standalone Inference Usage
+## 9. Standalone Inference Usage
 
 The serialized Scikit-Learn pipeline (`artifacts/churnshield_model.joblib`) encapsulates all imputation, scaling, one-hot encoding, and classification logic. It can be invoked directly in Python for real-time customer scoring:
 
@@ -262,7 +288,7 @@ else:
 
 ---
 
-## 9. Verification & Phase 2 Audit Report
+## 10. Verification & Quality Audit Report
 
 | Inspection Area | Status | Verification Finding |
 |:---|:---:|:---|
@@ -279,7 +305,7 @@ else:
 
 ---
 
-## 10. Project Provenance & License
+## 11. Project Provenance & License
 
 This project is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License ([CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)).
 

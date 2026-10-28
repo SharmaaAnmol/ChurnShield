@@ -112,11 +112,11 @@ Under the **Environment Variables** section, add:
 
 ## 4. Part C: Post-Deployment Security Lockdown (Optional but Recommended)
 
-Once Vercel has assigned your frontend domain (e.g., `https://churnshield.vercel.app`):
+Now that Vercel has assigned your frontend domain: `https://churn-shield-omega.vercel.app`:
 1. Go back to your [Render Dashboard](https://dashboard.render.com) $\to$ `churnshield-api` $\to$ **Environment Variables**.
-2. Update `ALLOWED_ORIGINS` from `*` to your exact frontend domain:
+2. Update `ALLOWED_ORIGINS` to your exact frontend domain:
    ```text
-   ALLOWED_ORIGINS=https://churnshield.vercel.app,http://localhost:5173
+   ALLOWED_ORIGINS=https://churn-shield-omega.vercel.app,http://localhost:5173
    ```
 3. Render will automatically redeploy the backend with strict CORS protection.
 
