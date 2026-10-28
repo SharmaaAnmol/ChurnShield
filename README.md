@@ -7,8 +7,8 @@
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![Runtime](https://img.shields.io/badge/Colab-Standard%20CPU%20(~40s)-brightgreen.svg)](#)
 
-> **B.Tech Artificial Intelligence & Machine Learning Final Exhibition Project**  
-> **Phase 1 & 2 Complete:** Machine Learning Fundamentals, Rolling-Origin Evaluation, Google Colab Verification, and Retention Prioritization.
+> **Production-Grade Machine Learning & Retention Intelligence System**  
+> **Architecture & Implementation:** Longitudinal Feature Store, Rolling-Origin Temporal Cross-Validation, Calibrated Inactivity Risk Scoring, and Retention Unit Economics Simulation.
 
 ---
 
@@ -30,7 +30,7 @@ The master notebook [`ChurnShield_Customer_Inactivity_Prediction.ipynb`](ChurnSh
   └─────────────────────────┘     └────────────────────────┘     └────────────────────────┘
 ```
 
-### Exact 10-Step Instructions for Evaluators:
+### Quickstart & Reproduction Guide:
 
 1. **Launch Colab:** Open your web browser and navigate to [https://colab.research.google.com/](https://colab.research.google.com/).
 2. **Upload Notebook:** Click the **Upload** tab, select [`ChurnShield_Customer_Inactivity_Prediction.ipynb`](ChurnShield_Customer_Inactivity_Prediction.ipynb), and open it.
@@ -114,31 +114,24 @@ In commercial e-commerce, customer acquisition cost (CAC) typically outpaces ret
 
 ```
 AI_Project/
-├── ChurnShield_Customer_Inactivity_Prediction.ipynb         # Master Deliverable: Executed Colab-Ready Notebook
-├── ChurnShield_Customer_Inactivity_Prediction_backup.ipynb  # Certified Backup Copy of Master Notebook
-├── README.md                                                # Complete Project & Google Colab Demonstration Guide
-├── build_project_and_artifacts.py                           # Standalone End-to-End Pipeline & Artifact Generator
-├── build_notebook.py                                        # Automated Notebook Builder & Execution Engine
-├── churnshield_artifacts.zip                                # 1-Click ZIP Archive of All Generated Artifacts (8.4 MB)
-├── data/                                                    # Local Olist CSV Dataset Directory (~42 MB)
-│   ├── olist_orders_dataset.csv
-│   ├── olist_customers_dataset.csv
-│   ├── olist_order_items_dataset.csv
-│   ├── olist_order_payments_dataset.csv
-│   ├── olist_order_reviews_dataset.csv
-│   ├── olist_products_dataset.csv
-│   ├── olist_sellers_dataset.csv
-│   ├── olist_geolocation_dataset.csv
-│   └── product_category_name_translation.csv
-└── artifacts/                                               # Machine-Readable Model Artifacts
-    ├── churnshield_model.joblib                             # Serialized Preprocessing + Model Pipeline
-    ├── model_comparison.csv                                 # Multi-Model Benchmark Results Across 8 Metrics
-    ├── final_test_metrics.json                              # Comprehensive Holdout Test Metrics vs Baseline
-    ├── holdout_predictions.csv                              # Predictions & Inactivity Scores for 39,162 Test Customers
-    ├── feature_importance.csv                               # Permutation Feature Importances & Rank
-    ├── data_quality_report.json                             # Automated Relational Audit & Join Diagnostics
-    ├── curated_customer_snapshots.csv                       # Longitudinal Analytical Dataset (130,914 Rows)
-    └── model_metadata.json                                  # Model Specification, Schema, Hyperparameters & Metadata
+├── ChurnShield_Customer_Inactivity_Prediction.ipynb  # Master Deliverable: Executed Colab-Ready Notebook
+├── ChurnShield_Technical_Documentation.md           # Comprehensive Technical Architecture & Engineering Documentation
+├── ChurnShield_Technical_Documentation.pdf          # Polished Printable System Design Whitepaper (PDF)
+├── README.md                                         # Production System Documentation & Reproduction Guide
+├── build_project_and_artifacts.py                    # Standalone End-to-End Pipeline & Artifact Generator
+├── build_notebook.py                                 # Automated Notebook Builder & Execution Engine
+├── build_guide.py                                    # Automated Documentation Builder & ReportLab PDF Engine
+├── churnshield_artifacts.zip                         # 1-Click ZIP Archive of All Generated Artifacts (8.4 MB)
+├── data/                                             # Local Olist CSV Dataset Directory (Auto-downloaded via kagglehub)
+└── artifacts/                                        # Machine-Readable Model Artifacts
+    ├── churnshield_model.joblib                      # Serialized Preprocessing + Model Pipeline
+    ├── model_comparison.csv                          # Multi-Model Benchmark Results Across 8 Metrics
+    ├── final_test_metrics.json                       # Comprehensive Holdout Test Metrics vs Baseline
+    ├── holdout_predictions.csv                       # Predictions & Inactivity Scores for 39,162 Test Customers
+    ├── feature_importance.csv                        # Permutation Feature Importances & Rank
+    ├── data_quality_report.json                      # Automated Relational Audit & Join Diagnostics
+    ├── curated_customer_snapshots.csv                # Longitudinal Analytical Dataset (130,914 Rows)
+    └── model_metadata.json                           # Model Specification, Schema, Hyperparameters & Metadata
 ```
 
 ---
@@ -286,7 +279,7 @@ else:
 
 ---
 
-## 10. Academic Citation & License
+## 10. Project Provenance & License
 
 This project is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License ([CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)).
 
@@ -295,7 +288,7 @@ This project is licensed under the Creative Commons Attribution-NonCommercial-Sh
   title={ChurnShield: Explainable E-Commerce Customer Inactivity Prediction and Retention Intelligence},
   author={Sharma, Anmol},
   year={2026},
-  publisher={B.Tech AI & ML Capstone Project},
-  url={https://github.com/anmolsharma/ChurnShield}
+  publisher={Machine Learning Engineering Portfolio},
+  url={https://github.com/SharmaaAnmol/E-commerece-inactivity-predictor}
 }
 ```

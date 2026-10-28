@@ -1,5 +1,5 @@
 """
-Part 1 to Part 3 of the ChurnShield Live Demo & Viva Guide
+Part 1 to Part 3 of the ChurnShield Technical Architecture & Engineering Documentation
 """
 
 def get_part_one():
@@ -25,7 +25,7 @@ However, retention marketing teams cannot afford to send expensive discounts or 
 ---
 
 ## 3. Why the Olist E-Commerce Dataset Instead of Telecom Churn?
-Most machine learning university courses use synthetic or simplistic "Telecom Churn" datasets (such as Telco Churn from IBM). While convenient for tutorials, telecom churn is fundamentally unrepresentative of modern e-commerce:
+Most machine learning introductory machine learning tutorials use synthetic or simplistic "Telecom Churn" datasets (such as Telco Churn from IBM). While convenient for tutorials, telecom churn is fundamentally unrepresentative of modern e-commerce:
 
 | Dimension | Textbook Telecom Churn | Real-World E-Commerce (Olist) |
 | :--- | :--- | :--- |
@@ -35,7 +35,7 @@ Most machine learning university courses use synthetic or simplistic "Telecom Ch
 | **Temporal Dynamics** | Static cross-sectional snapshot (often ignoring dates entirely). | **Strictly Temporal:** Longitudinal customer trajectories over multiple years requiring rigorous rolling-origin evaluation. |
 | **Data Architecture** | Single, clean, pre-flattened CSV table. | **Relational Normalized Schema:** 9 separate relational tables requiring multi-table joins and aggregation. |
 
-Choosing the Olist dataset demonstrates to university professors and industry evaluators that you understand how machine learning operates on messy, complex, non-contractual production data.
+Choosing the Olist dataset demonstrates to senior engineers and industry stakeholders that you understand how machine learning operates on messy, complex, non-contractual production data.
 
 ---
 
@@ -215,7 +215,7 @@ Below is the complete, sequential walkthrough of all **21 Code Cells** and **24 
   ```
 * **Why it matters:** Setting `MPLCONFIGDIR` eliminates matplotlib font cache rebuild delays. `RANDOM_STATE = 42` guarantees identical train/validation splits across different runs. The dynamic Colab check ensures the notebook runs automatically in Google Colab without manual user installation.
 * **Inputs & Outputs:** Input: OS environment. Output: Directory creation (`data/`, `artifacts/`) and system version banner (Python 3.13, Scikit-Learn 1.9+, Pandas 2.3+).
-* **Likely Viva Question:** *Why did you set a random state seed, and why is `os.environ['MPLCONFIGDIR']` configured?*  
+* **System Design & Implementation Rationale:** *Why did you set a random state seed, and why is `os.environ['MPLCONFIGDIR']` configured?*  
   *Answer:* Random seed (42) guarantees deterministic, reproducible splits and stochastic initialization. Configuring `MPLCONFIGDIR` to `/tmp/matplotlib` prevents matplotlib from failing or pausing to index system fonts when running in restricted/sandboxed user directories.
 
 ---
@@ -243,7 +243,7 @@ Below is the complete, sequential walkthrough of all **21 Code Cells** and **24 
   ```
 * **Why it matters:** Hardcoded paths break when sharing notebooks. Recursive discovery finds the CSV files wherever Colab or Kagglehub places them.
 * **Inputs & Outputs:** Discovers all 9 CSV files totaling ~124 MB uncompressed.
-* **Likely Viva Question:** *Why did you implement a multi-tier fallback instead of a simple hardcoded `pd.read_csv('/content/...')`?*  
+* **System Design & Implementation Rationale:** *Why did you implement a multi-tier fallback instead of a simple hardcoded `pd.read_csv('/content/...')`?*  
   *Answer:* A hardcoded path fails if the notebook is moved across local machines, Kaggle kernels, or fresh Google Colab instances. The multi-tier engine guarantees seamless execution anywhere.
 
 ---
@@ -269,7 +269,7 @@ Below is the complete, sequential walkthrough of all **21 Code Cells** and **24 
   ```
 * **Why it matters:** Orders have multiple line items. If you join `raw_items` directly with `raw_orders` without aggregation, a single order with 3 items multiplies into 3 rows, catastrophically inflating order counts and revenue. Aggregating items first guarantees an exact 1:1 merge (98,666 valid orders).
 * **Inputs & Outputs:** Inputs: 99,441 orders, 112,650 items, 99,441 customers. Outputs: 98,666 verified merged records with 0 orphaned keys and 0 duplicate rows.
-* **Likely Viva Question:** *Why are there 99,441 rows in `orders` but only 98,666 in your merged table?*  
+* **System Design & Implementation Rationale:** *Why are there 99,441 rows in `orders` but only 98,666 in your merged table?*  
   *Answer:* Exactly 775 orders in the raw dataset have no associated items in `olist_order_items_dataset.csv` (orders that were canceled or unavailable before merchant item assignment). An inner join correctly drops these orphaned orders.
 
 ---
@@ -292,7 +292,7 @@ Below is the complete, sequential walkthrough of all **21 Code Cells** and **24 
   ```
 * **Why it matters:** Prevents temporal leakage. Past features only see past data; future targets only see future data.
 * **Inputs & Outputs:** Output: Curated analytical dataset of **130,914 customer-snapshot rows and 24 columns** saved to `artifacts/curated_customer_snapshots.csv`.
-* **Likely Viva Question:** *Why did you pool multiple snapshot dates instead of just taking one single snapshot?*  
+* **System Design & Implementation Rationale:** *Why did you pool multiple snapshot dates instead of just taking one single snapshot?*  
   *Answer:* A single snapshot would introduce severe seasonal bias and limit training data. Creating 5 quarterly snapshot cohorts captures seasonal variation across different quarters and provides 130,914 customer snapshots for robust training and validation.
 
 ---
@@ -306,7 +306,7 @@ Below is the complete, sequential walkthrough of all **21 Code Cells** and **24 
 * **Purpose:** Executes 10 assertions before modeling: checks shape (130,914 x 24), target prevalence range (0.5% - 2.0%), zero null values, zero infinities, uniqueness of `(customer_unique_id, observation_date)`, exclusion of ID fields from features, schema consistency, valid spend ranges, non-negative recency/tenure, and audit tracking columns.
 * **Why it matters:** Acts as a production unit test for data engineering. If any data leakage or null values exist, the script raises an error before modeling begins.
 * **Inputs & Outputs:** All 10 checks return `PASS [OK]`.
-* **Likely Viva Question:** *How did you handle missing values in `avg_inter_order_days` and `std_inter_order_days` for one-time buyers?*  
+* **System Design & Implementation Rationale:** *How did you handle missing values in `avg_inter_order_days` and `std_inter_order_days` for one-time buyers?*  
   *Answer:* A customer with only 1 order has no interval between orders. We impute `avg_inter_order_days = 180.0` (the maximum observation window duration, signaling no repeat event) and `std_inter_order_days = 0.0`. This ensures 100% zero-null integrity without dropping records.
 
 ---
@@ -397,7 +397,7 @@ Below is the complete, sequential walkthrough of all **21 Code Cells** and **24 
   )
   ```
 * **Why it matters:** Encoding and scaling parameters (mean, std, median) are learned *exclusively* from the training set, eliminating data leakage into validation or test sets.
-* **Likely Viva Question:** *Why did you set `handle_unknown='ignore'` in `OneHotEncoder`?*  
+* **System Design & Implementation Rationale:** *Why did you set `handle_unknown='ignore'` in `OneHotEncoder`?*  
   *Answer:* If an unseen category (e.g., a customer from a new state or invalid postal code) appears in future inference data, `handle_unknown='ignore'` encodes it as all zeros rather than crashing the pipeline with a ValueError.
 
 ---
@@ -410,7 +410,7 @@ Below is the complete, sequential walkthrough of all **21 Code Cells** and **24 
 ### Cell 24 [CODE #11]: Multi-Model Benchmark Execution & Rolling-Origin CV
 * **Purpose:** Benchmarks 7 classification algorithms: Dummy Classifier, Balanced Logistic Regression, Decision Tree, Random Forest, Extra Trees, Gradient Boosting, and HistGradientBoosting. Evaluates each on rolling-origin folds and validation cohort across 8 metrics: PR-AUC, ROC-AUC, Precision, Recall, F1, Balanced Accuracy, Overall Accuracy, and MCC.
 * **Outputs:** Generates `artifacts/model_comparison.csv`.
-* **Likely Viva Question:** *What is rolling-origin cross-validation and why is it better than standard K-Fold CV here?*  
+* **System Design & Implementation Rationale:** *What is rolling-origin cross-validation and why is it better than standard K-Fold CV here?*  
   *Answer:* Standard K-Fold CV shuffles rows randomly, allowing the model to train on future records to predict past transactions (temporal data leakage). Rolling-origin CV respects time: Fold 1 trains on June 2017 to validate on Sept 2017; Fold 2 trains on June+Sept 2017 to validate on Dec 2017.
 
 ---
@@ -454,7 +454,7 @@ Below is the complete, sequential walkthrough of all **21 Code Cells** and **24 
   - Minority Class Recall: **42.59%** (115 out of 270 returning customers caught)
   - Confusion Matrix: TN=26,802, FP=12,090, FN=155, TP=115.
   - Saves `artifacts/final_test_metrics.json` and `artifacts/holdout_predictions.csv`.
-* **Likely Viva Question:** *Why is precision so low (0.0094) while recall is high (42.59%)?*  
+* **System Design & Implementation Rationale:** *Why is precision so low (0.0094) while recall is high (42.59%)?*  
   *Answer:* Because repeat purchase is an extreme 0.69% minority event. Balanced weighting intentionally trades off precision to achieve high recall, ensuring the retention team captures 42.6% of returning buyers rather than missing all of them. For retention campaigns, ranking by probability is far more important than raw binary thresholding.
 
 ---
@@ -474,7 +474,7 @@ Below is the complete, sequential walkthrough of all **21 Code Cells** and **24 
 * **Outputs:**
   - Inactivity outreach at top 20% capacity contacts 7,832 customers, capturing 7,798 inactive buyers (**99.57% concentration**).
   - Re-engagement campaign on top 10% repeat propensity yields **1.63x lift** over random outreach.
-* **Likely Viva Question:** *What does "Lift" mean in your retention evaluation?*  
+* **System Design & Implementation Rationale:** *What does "Lift" mean in your retention evaluation?*  
   *Answer:* Lift measures how much better the model performs compared to random guessing. A lift of 1.63x means the top 10% model-selected group contains 63% more repeat buyers than a randomly selected 10% group.
 
 ---
@@ -499,7 +499,7 @@ Below is the complete, sequential walkthrough of all **21 Code Cells** and **24 
   - Gross margin preserved: R$ 40/month over 3 months = R$ 120 per preserved customer
   - Preserved margin: $389.9 \times \text{R\$} 120 = \text{R\$} 46,788.00$
   - **Net Financial Benefit:** $\text{R\$} 46,788 - \text{R\$} 39,160 = \mathbf{+\text{R\$} 7,628.00}$ (**19.5% ROI**).
-* **Likely Viva Question:** *Is this ROI guaranteed in production?*  
+* **System Design & Implementation Rationale:** *Is this ROI guaranteed in production?*  
   *Answer:* No. This is a business scenario simulation based on standard e-commerce benchmarks. Actual ROI must be validated via an A/B test with a randomized holdout control group.
 
 ---
@@ -512,7 +512,7 @@ Below is the complete, sequential walkthrough of all **21 Code Cells** and **24 
 ### Cell 37 [CODE #18]: Permutation Importance & Model Coefficients
 * **Purpose:** Computes permutation feature importance on the validation set (`scoring='average_precision'`, `n_repeats=5`, `n_jobs=1`) and extracts standardized regression coefficients from the champion pipeline.
 * **Outputs:** Saves `artifacts/feature_importance.csv`. Top 3 drivers: `orders_recent_90d`, `spend_ratio_recent_vs_earlier`, and `order_count`.
-* **Likely Viva Question:** *Why did you use Permutation Importance instead of relying only on regression coefficients?*  
+* **System Design & Implementation Rationale:** *Why did you use Permutation Importance instead of relying only on regression coefficients?*  
   *Answer:* Permutation importance directly measures the drop in the model's actual evaluation metric (PR-AUC) when a feature's values are randomly shuffled, providing a model-agnostic, non-linear assessment of feature utility.
 
 ---
@@ -539,7 +539,7 @@ Below is the complete, sequential walkthrough of all **21 Code Cells** and **24 
   - Persona A: Repeat Prob = 0.4232, Inactivity Risk = 0.5768 (MODERATE RISK)
   - Persona B: Repeat Prob = 0.9865, Inactivity Risk = 0.0135 (LOW RISK)
   - Persona C: Repeat Prob = 0.6078, Inactivity Risk = 0.3922 (LOW RISK)
-* **Likely Viva Question:** *Why does your inference function take raw customer statistics rather than pre-scaled numbers?*  
+* **System Design & Implementation Rationale:** *Why does your inference function take raw customer statistics rather than pre-scaled numbers?*  
   *Answer:* Because the full `Pipeline` includes the `ColumnTransformer`. Raw data enters the pipeline, which automatically applies the exact median imputation, scaling, and one-hot encoding learned during training, preventing training-serving skew.
 
 ---
@@ -552,13 +552,13 @@ Below is the complete, sequential walkthrough of all **21 Code Cells** and **24 
 ### Cell 43 [CODE #21]: Pipeline Serialization, Verification & 1-Click Packaging
 * **Purpose:** Serializes the fitted champion pipeline to `artifacts/churnshield_model.joblib`. Reloads it immediately and asserts `np.allclose(orig_probs, reloaded_probs, atol=1e-8)`. Compiles all 8 artifacts into `churnshield_artifacts.zip` (8.4 MB) and triggers a 1-click Colab browser download.
 * **Outputs:** `Assertion Passed: Reloaded pipeline produces 100% bit-for-bit identical outputs.`
-* **Likely Viva Question:** *Why did you save the entire pipeline rather than just the classifier?*  
+* **System Design & Implementation Rationale:** *Why did you save the entire pipeline rather than just the classifier?*  
   *Answer:* If you only save the classifier, you cannot make predictions on new data without manually re-applying identical scaling, imputation, and encoding. Saving the entire pipeline packages preprocessing and estimator together into an atomic, deployment-ready object.
 
 ---
 
-### Cell 44 [Markdown]: Section 17 Header — Project Synthesis & Viva Preparation
-* **Purpose:** Comprehensive technical summary and viva exam preparation notes.
+### Cell 44 [Markdown]: Section 17 Header — Project Synthesis & Technical Architecture Specifications
+* **Purpose:** Comprehensive technical summary and production engineering specifications.
 
 ---
 """

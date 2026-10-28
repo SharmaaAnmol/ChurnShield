@@ -99,12 +99,11 @@ print("Building Notebook Cells for Google Colab Compatibility...")
 # TITLE, BADGES & GOOGLE COLAB QUICKSTART
 # -----------------------------------------------------------------------------
 add_md(r"""# ChurnShield: Explainable E-Commerce Customer Inactivity Prediction & Retention Intelligence
-### Phase 1 & 2: Machine Learning Fundamentals, Feature Engineering, Chronological Evaluation, and Google Colab Execution
-**B.Tech Artificial Intelligence & Machine Learning Final Exhibition Project**
+### Production-Grade Machine Learning & Retention Intelligence System
 
 ---
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/anmolsharma/ChurnShield/blob/main/ChurnShield_Customer_Inactivity_Prediction.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/SharmaaAnmol/E-commerece-inactivity-predictor/blob/main/ChurnShield_Customer_Inactivity_Prediction.ipynb)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.0%2B-orange.svg)](https://scikit-learn.org/)
 [![Dataset](https://img.shields.io/badge/Dataset-Olist%20E--Commerce-green.svg)](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
@@ -113,7 +112,7 @@ add_md(r"""# ChurnShield: Explainable E-Commerce Customer Inactivity Prediction 
 
 ---
 
-> ### 🚀 Google Colab Quickstart & Live Exhibition Guide
+> ### 🚀 Google Colab Quickstart & Reproduction Guide
 > To run this complete machine learning system in a fresh **Google Colab** session:
 > 1. **Open in Google Colab:** Click the **Open In Colab** badge above or upload this `.ipynb` file to [colab.research.google.com](https://colab.research.google.com/).
 > 2. **Verify CPU Runtime:** Go to **Runtime → Change runtime type** → select **Python 3** and **CPU** (a paid GPU is **not** required; execution takes ~40 seconds on standard CPU).
@@ -156,7 +155,7 @@ In commercial e-commerce, customer retention is paramount. Acquiring a new custo
 14. [Model Explainability & Permutation Importance](#14-model-explainability--permutation-importance)
 15. [Production-Ready Interactive Prediction Function](#15-production-ready-interactive-prediction-function)
 16. [Model Serialization, Artifact Storage & Verification](#16-model-serialization-artifact-storage--verification)
-17. [Project Synthesis & ML Viva Examination Preparation](#17-project-synthesis--ml-viva-examination-preparation)
+17. [Project Synthesis & Technical Architecture Specifications](#17-project-synthesis--technical-architecture-specifications)
 """)
 
 # -----------------------------------------------------------------------------
@@ -1323,7 +1322,7 @@ print(f"Projected Campaign ROI Multiplier  : {roi_multiplier:.2f}x ({roi_multipl
 # -----------------------------------------------------------------------------
 add_md(r"""## 14. Model Explainability & Permutation Importance
 
-To make the model interpretable for business executives and exhibition judges, we inspect:
+To make the model interpretable for business executives and engineering stakeholders, we inspect:
 1. **Permutation Feature Importance:** Measures the drop in validation PR-AUC when each feature is randomly shuffled.
 2. **Standardized Coefficients:** Measures the directional weight assigned to each normalized input feature.
 """)
@@ -1544,11 +1543,11 @@ else:
 ''', exec_globals)
 
 # -----------------------------------------------------------------------------
-# SECTION 17: CONCLUSION & ML VIVA PREPARATION
+# SECTION 17: CONCLUSION & TECHNICAL ARCHITECTURE SPECIFICATIONS
 # -----------------------------------------------------------------------------
-add_md(r"""## 17. Project Synthesis & ML Viva Examination Preparation
+add_md(r"""## 17. Project Synthesis & Technical Architecture Specifications
 
-### 17.1 Evidence-Based Synthesis (11 Core Project Questions)
+### 17.1 Core Engineering & Modeling Synthesis
 
 1. **What makes this problem different from textbook churn prediction?**
    In contract-based subscription services (e.g., telecom, SaaS), customers explicitly notify the provider of cancellation. In non-contractual e-commerce, customers simply cease buying. Churn is a latent state, and repeat purchase is an extreme minority event (<1%).
@@ -1570,53 +1569,53 @@ add_md(r"""## 17. Project Synthesis & ML Viva Examination Preparation
    Because marketing contact capacity is finite, the retention team targets the Top 20% highest inactivity risk, capturing over 99.5% inactive customers and avoiding wasted marketing spend on self-retaining buyers.
 10. **What can the analysis establish, and what remains uncertain?**
     The model establishes strong predictive associations between purchasing momentum and 90-day return likelihood. It does not establish causal proof that retention campaigns will prevent churn.
-11. **How could the project be extended in Phase 2 & beyond?**
+11. **How could the project be extended in production & beyond?**
     Real-time feature serving via Redis/Hopsworks, containerized REST API endpoints via FastAPI, SHAP waterfall explanation widgets, and randomized controlled A/B testing.
 
 ---
 
-### 17.2 ML Viva Examination Preparation (20 Rigorous Questions & Answers)
+### 17.2 Technical Architecture & System Design Decisions (Production FAQ)
 
-1. **Q: Why is Average Precision (PR-AUC) preferred over ROC-AUC for this dataset?**
-   *A:* With extreme class imbalance (99:1), the False Positive Rate in ROC-AUC ($FP / (FP + TN)$) remains artificially low because $TN$ is massive. PR-AUC focuses exclusively on minority class Precision ($TP / (TP + FP)$) and Recall ($TP / (TP + FN)$), making it sensitive to false alarms.
-2. **Q: Why is Overall Accuracy completely misleading here?**
-   *A:* A trivial dummy model that predicts every customer will become inactive achieves 99.31% accuracy while capturing 0 repeat customers. Accuracy rewards majority-class bias.
-3. **Q: What is the purpose of `class_weight='balanced'` in Logistic Regression?**
-   *A:* It inversely weights the loss function by class prevalence: $w_j = N / (2 \times N_j)$. Errors on the minority class are penalized 120x more heavily than errors on the majority class.
-4. **Q: Why must order items be aggregated before joining with orders?**
-   *A:* `olist_order_items_dataset` is one-to-many. Joining without prior aggregation duplicates order rows, artificially inflating revenue and order counts.
-5. **Q: What is data lookahead bias (temporal leakage)?**
-   *A:* Computing features using information that occurred after the prediction point $T$.
-6. **Q: Why use rolling-origin cross-validation instead of standard time-series split?**
-   *A:* Rolling origin mimics real-world retraining cadences, evaluating models trained on past data on the immediately subsequent historical cohort.
-7. **Q: Why did Logistic Regression outperform Random Forest and Gradient Boosting?**
-   *A:* Complex tree models can overfit noise in rare positive classes. Standardized linear boundaries with $L_2$ regularization provide smooth, robust probability gradients.
-8. **Q: How are undefined inter-order statistics handled for single-order customers?**
-   *A:* Deterministic imputation: `avg_inter_order_days` is set to 180.0 (maximum lookback duration) and `std_inter_order_days` to 0.0, complemented by an explicit `has_multiple_orders` binary indicator.
-9. **Q: What is the difference between `customer_id` and `customer_unique_id`?**
-   *A:* `customer_id` is a transient token generated per order. `customer_unique_id` is the permanent entity identifier across orders.
-10. **Q: What is the Brier score, and what does it measure?**
-    *A:* Mean squared difference between predicted probabilities and actual binary outcomes. It quantifies probability calibration.
-11. **Q: What is Permutation Feature Importance?**
-    *A:* Measuring the reduction in model performance when a specific feature's values are randomly shuffled, breaking its relationship with the target.
-12. **Q: Can this model prove that a 10% discount coupon will cause customer retention?**
-    *A:* No. Machine learning identifies observational correlation, not causal counterfactuals. Causal impact requires randomized controlled A/B testing.
-13. **Q: How does the business impact simulator convert model probabilities to ROI?**
-    *A:* It applies outreach cost, assumed conversion rate, and customer contribution margin across targeted risk deciles to calculate net preserved margin.
-14. **Q: Why are `customer_unique_id` and `observation_date` kept as audit fields?**
-    *A:* They are necessary for cohort tracking, join validation, and auditing, but must never be fed into model training to prevent identifier memorization.
-15. **Q: What does Matthews Correlation Coefficient (MCC) measure?**
-    *A:* A balanced correlation coefficient between true and predicted binary classes ($[-1, +1]$), robust to severe class imbalance.
-16. **Q: Why is one-hot encoding fitted inside `ColumnTransformer` rather than globally on pandas?**
-    *A:* Fitting globally causes data leakage (held-out test categories become known). Fitting inside the pipeline ensures unseen categories are handled safely via `handle_unknown='ignore'`.
-17. **Q: What is the difference between Recency, Frequency, and Monetary (RFM) analysis and ML churn prediction?**
-    *A:* RFM is a heuristic segmentation framework. Machine learning unifies RFM features with non-linear interactions, logistics data, and trend momentum to output calibrated probabilities.
-18. **Q: What is the risk of using final order status (`delivered`, `canceled`) in feature engineering?**
-    *A:* Order status can change after the snapshot date $T$. Using purchase placement timestamp ensures features reflect only facts known at time $T$.
-19. **Q: How does probability calibration affect retention ranking?**
-    *A:* Monotonic rank-ordering (AUC) does not require calibration, but financial scenario planning and probability cutoffs require true empirical probabilities.
-20. **Q: What are the main limitations of the Olist dataset for retention modeling?**
-    *A:* Low baseline repeat rate (<1%), absence of customer demographic data, and lack of web browsing session logs.
+1. **Evaluation Metric Selection (PR-AUC vs. ROC-AUC):**
+   With extreme class imbalance (99:1), the False Positive Rate in ROC-AUC ($FP / (FP + TN)$) remains artificially low because $TN$ is massive. PR-AUC focuses exclusively on minority class Precision ($TP / (TP + FP)$) and Recall ($TP / (TP + FN)$), making it sensitive to false alarms.
+2. **The Accuracy Paradox in Severe Imbalance:**
+   A trivial dummy model that predicts every customer will become inactive achieves 99.31% accuracy while capturing 0 repeat customers. Accuracy rewards majority-class bias; PR-AUC and Recall measure true minority detection.
+3. **Loss Weighting Strategy (`class_weight='balanced'`):**
+   Inversely weights the loss function by class prevalence: $w_j = N / (2 \times N_j)$. Errors on the minority class are penalized ~110x more heavily than errors on the majority class.
+4. **Relational Aggregation Prior to Merging:**
+   `olist_order_items_dataset` is one-to-many. Joining without prior aggregation duplicates order rows, artificially inflating revenue and order counts.
+5. **Data Lookahead Bias & Temporal Leakage:**
+   Computing features using information that occurred after the prediction point $T$ invalidates offline evaluations. Strict timestamp filtering at $T$ guarantees causal integrity.
+6. **Rolling-Origin Cross-Validation Architecture:**
+   Rolling origin mimics real-world retraining cadences, evaluating models trained on past data on the immediately subsequent historical cohort.
+7. **Occam's Razor & Linear Model Dominance:**
+   Complex tree models overfit noise in rare positive classes. Standardized linear boundaries with $L_2$ regularization provide smooth, robust probability gradients.
+8. **Deterministic Handling of Single-Order Intervals:**
+   `avg_inter_order_days` is set to 180.0 (maximum lookback duration) and `std_inter_order_days` to 0.0, complemented by an explicit `has_multiple_orders` binary indicator.
+9. **Entity Identifier Disambiguation:**
+   `customer_id` is a transient token generated per order. `customer_unique_id` is the permanent entity identifier across orders.
+10. **Probability Calibration Assessment:**
+    Mean squared difference between predicted probabilities and actual binary outcomes (Brier score loss: 0.2279) quantifies probability calibration.
+11. **Model-Agnostic Feature Permutation Importance:**
+    Measures the reduction in model performance (PR-AUC) when a specific feature's values are randomly shuffled, breaking its relationship with the target.
+12. **Causal Validity vs. Observational Correlation:**
+    Machine learning identifies observational correlation, not causal counterfactuals. Causal impact of marketing interventions requires randomized controlled A/B testing.
+13. **Financial ROI Translation Engine:**
+    Applies outreach cost, assumed conversion rate, and customer contribution margin across targeted risk deciles to calculate net preserved margin.
+14. **Audit Field Isolation:**
+    `customer_unique_id` and `observation_date` are kept strictly for cohort tracking, join validation, and auditing, but never fed into model training.
+15. **Matthews Correlation Coefficient (MCC):**
+    A balanced correlation coefficient between true and predicted binary classes ($[-1, +1]$), robust to severe class imbalance.
+16. **Pipeline Encapsulation of Categorical Encoders:**
+    Fitting globally causes data leakage (held-out test categories become known). Fitting inside the pipeline ensures unseen categories are handled safely via `handle_unknown='ignore'`.
+17. **RFM Heuristics vs. Supervised ML:**
+    RFM is a heuristic segmentation framework. Machine learning unifies RFM features with non-linear interactions, logistics data, and trend momentum to output calibrated probabilities.
+18. **Transaction Placement vs. Delivery Timestamps:**
+    Order status can change after snapshot date $T$. Using purchase placement timestamp ensures features reflect only facts known at time $T$.
+19. **Probability Calibration in Decile Prioritization:**
+    Monotonic rank-ordering (AUC) does not require calibration, but financial scenario planning and probability cutoffs require true empirical probabilities.
+20. **Dataset Limitations & Future Production Extensions:**
+    Low baseline repeat rate (<1%), absence of customer demographic data, and lack of web browsing clickstream logs. Future enhancements include real-time feature streaming and NLP on review text.
 """)
 
 # -----------------------------------------------------------------------------

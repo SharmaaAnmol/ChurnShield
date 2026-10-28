@@ -1,5 +1,5 @@
 """
-Assembly script to compile ChurnShield_Live_Demo_Guide.md and ChurnShield_Live_Demo_Guide.pdf
+Assembly script to compile ChurnShield_Technical_Documentation.md and ChurnShield_Technical_Documentation.pdf
 """
 
 import os
@@ -12,21 +12,21 @@ from guide_parts_10_to_13 import get_part_ten, get_part_eleven, get_part_twelve,
 from guide_parts_14_to_17 import get_part_fourteen, get_part_fifteen, get_part_sixteen, get_part_seventeen
 
 def build_markdown_guide(output_md_path):
-    print(f"Assembling comprehensive Markdown guide to: {output_md_path}...")
+    print(f"Assembling technical documentation to: {output_md_path}...")
     
     sections = [
         # Title and Meta Header
-        """# CHURNSHIELD: COMPLETE CODE EXPLANATION, LIVE DEMONSTRATION & VIVA PREPARATION GUIDE
+        """# CHURNSHIELD: END-TO-END MACHINE LEARNING ARCHITECTURE, DATA ENGINEERING & PRODUCTION SYSTEM DOCUMENTATION
 
-**Full Project Title:** Explainable E-Commerce Customer Inactivity Prediction and Retention Intelligence  
-**Student Specialization:** B.Tech Computer Engineering (Artificial Intelligence & Machine Learning)  
+**System Title:** Explainable E-Commerce Customer Inactivity Prediction and Retention Intelligence  
+**Engineering Portfolio:** Production Machine Learning & Applied AI Architecture  
 **Primary Executable Notebook:** `ChurnShield_Customer_Inactivity_Prediction.ipynb`  
 **Dataset:** Brazilian E-Commerce Public Dataset by Olist (CC BY-NC-SA 4.0)  
-**Status:** 100% Verified, Top-to-Bottom Execution Tested, Production-Grade  
+**Status:** 100% Verified, Top-to-Bottom Executed, Production-Grade  
 
 ---
 
-## Guide Table of Contents
+## Technical Documentation Table of Contents
 1. [Part One — Understand the Complete Project](#part-one--understand-the-complete-project)
 2. [Part Two — Explain Every Notebook Section & Code Cell](#part-two--explain-every-notebook-section--code-cell)
 3. [Part Three — Dataset and Data Engineering](#part-three--dataset-and-data-engineering)
@@ -40,10 +40,10 @@ def build_markdown_guide(output_md_path):
 11. [Part Eleven — Model Explainability & Feature Importance](#part-eleven--model-explainability--feature-importance)
 12. [Part Twelve — Predictions & Business Intelligence](#part-twelve--predictions--business-intelligence)
 13. [Part Thirteen — Model Serialization & Artifact Storage](#part-thirteen--model-serialization--artifact-storage)
-14. [Part Fourteen — 5-to-7-Minute Live Demonstration Script](#part-fourteen--5-to-7-minute-live-demonstration-script)
-15. [Part Fifteen — Comprehensive Viva Questions and Answers](#part-fifteen--comprehensive-viva-questions-and-answers)
-16. [Part Sixteen — Common Errors & Troubleshooting Guide](#part-sixteen--common-errors--troubleshooting-guide)
-17. [Part Seventeen — Final Rapid Revision Sheet](#part-seventeen--final-rapid-revision-sheet)
+14. [Part Fourteen — Executive Product Walkthrough & Technical Demonstration](#part-fourteen--executive-product-walkthrough--technical-demonstration)
+15. [Part Fifteen — Production System Design & MLOps Architecture](#part-fifteen--production-system-design--mlops-architecture)
+16. [Part Sixteen — Common Runtime Errors & Troubleshooting Guide](#part-sixteen--common-runtime-errors--troubleshooting-guide)
+17. [Part Seventeen — Production Deployment Checklist & Model Summary](#part-seventeen--production-deployment-checklist--model-summary)
 
 ---
 """,
@@ -70,11 +70,10 @@ def build_markdown_guide(output_md_path):
         for sec in sections:
             f.write(sec.strip() + "\n\n---\n\n")
             
-    print(f"Markdown guide compiled successfully: {os.path.getsize(output_md_path):,d} bytes.")
+    print(f"Technical documentation compiled successfully: {os.path.getsize(output_md_path):,d} bytes.")
 
 def format_inline_md(text):
     text = text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-    # handle bold **text**
     parts = text.split('**')
     if len(parts) > 1:
         res = []
@@ -84,7 +83,6 @@ def format_inline_md(text):
             else:
                 res.append(p)
         text = ''.join(res)
-    # handle code `text`
     parts = text.split('`')
     if len(parts) > 1:
         res = []
@@ -97,7 +95,7 @@ def format_inline_md(text):
     return text
 
 def build_pdf_guide(input_md_path, output_pdf_path):
-    print(f"Generating polished PDF guide to: {output_pdf_path} using ReportLab...")
+    print(f"Generating polished PDF documentation to: {output_pdf_path} using ReportLab...")
     try:
         from reportlab.lib.pagesizes import letter
         from reportlab.lib import colors
@@ -116,7 +114,7 @@ def build_pdf_guide(input_md_path, output_pdf_path):
 
         styles = getSampleStyleSheet()
         
-        # Custom Typography
+        # Professional Engineering Typography
         title_style = ParagraphStyle(
             'DocTitle',
             parent=styles['Normal'],
@@ -218,17 +216,14 @@ def build_pdf_guide(input_md_path, output_pdf_path):
                 code_buffer.append(line_str)
                 continue
 
-            # Skip empty lines
             if not line_str.strip():
                 continue
 
-            # Dividers
             if line_str == '---':
                 story.append(Spacer(1, 3))
                 story.append(HRFlowable(width="100%", thickness=0.6, color=colors.HexColor('#e2e8f0'), spaceAfter=4, spaceBefore=3))
                 continue
 
-            # Headings
             if line_str.startswith('# '):
                 story.append(Paragraph(format_inline_md(line_str[2:]), title_style))
             elif line_str.startswith('## '):
@@ -242,19 +237,18 @@ def build_pdf_guide(input_md_path, output_pdf_path):
             elif line_str.startswith('> '):
                 story.append(Paragraph(f"<i>{format_inline_md(line_str[2:])}</i>", body_style))
             elif line_str.startswith('|'):
-                # Simple table line representation
                 clean_text = line_str.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
                 story.append(Paragraph(f"<font face='Courier' size=6.5>{clean_text}</font>", body_style))
             else:
                 story.append(Paragraph(format_inline_md(line_str), body_style))
 
         doc.build(story)
-        print(f"PDF guide generated successfully: {output_pdf_path} ({os.path.getsize(output_pdf_path):,d} bytes).")
+        print(f"PDF documentation generated successfully: {output_pdf_path} ({os.path.getsize(output_pdf_path):,d} bytes).")
     except Exception as e:
         print(f"PDF generation encountered error: {e}")
 
 if __name__ == "__main__":
-    md_file = "ChurnShield_Live_Demo_Guide.md"
-    pdf_file = "ChurnShield_Live_Demo_Guide.pdf"
+    md_file = "ChurnShield_Technical_Documentation.md"
+    pdf_file = "ChurnShield_Technical_Documentation.pdf"
     build_markdown_guide(md_file)
     build_pdf_guide(md_file, pdf_file)

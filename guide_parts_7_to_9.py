@@ -1,5 +1,5 @@
 """
-Part 7 to Part 9 of the ChurnShield Live Demo & Viva Guide
+Part 7 to Part 9 of the ChurnShield Technical Architecture & Engineering Documentation
 """
 
 def get_part_seven():
@@ -7,7 +7,7 @@ def get_part_seven():
 
 ## 1. The Catastrophic Flaw of Random Train/Test Splits
 
-In introductory ML courses, students typically use `train_test_split(test_size=0.2, random_state=42)` to randomly partition data. In non-contractual e-commerce forecasting, **a random split is a catastrophic methodological error**.
+In naive baseline workflows, developers often use `train_test_split(test_size=0.2, random_state=42)` to randomly partition data. In non-contractual e-commerce forecasting, **a random split is a catastrophic methodological error**.
 
 ### Why Random Splitting Causes Catastrophic Leakage:
 1. **Temporal Inversion (Looking into the Future):** A random split places orders from August 2018 into the training set and orders from February 2017 into the test set. The model trains on future market conditions to "predict" the past.
@@ -124,7 +124,7 @@ The notebook benchmarks **7 distinct classification architectures** (Cell 24 / C
 
 ## 8. Why Complex Tree Models Did Not Beat Simple Logistic Regression
 
-A frequent viva question: *Why did sophisticated gradient boosting or random forest fail to dramatically outperform a simple linear Logistic Regression?*
+Core Systems Question: *Why did sophisticated gradient boosting or random forest fail to dramatically outperform a simple linear Logistic Regression?*
 
 ### The Scientific Reason (Occam's Razor & Minority Noise):
 1. **Extreme Class Imbalance (99:1):** There are only 519 positive repeat buyers in the 56,975 training instances. High-capacity non-linear models (gradient boosting, deep trees) have high degrees of freedom and easily overfit the random idiosyncrasies of those 519 individuals.

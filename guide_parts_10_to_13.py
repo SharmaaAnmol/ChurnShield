@@ -1,5 +1,5 @@
 """
-Part 10 to Part 13 of the ChurnShield Live Demo & Viva Guide
+Part 10 to Part 13 of the ChurnShield Technical Architecture & Engineering Documentation
 """
 
 def get_part_ten():
@@ -103,7 +103,7 @@ Because all numerical features were normalized using `StandardScaler`, the regre
 
 ## 3. Critical Academic Distinction: Importance vs Causation
 
-In a university viva, examiners will ask:  
+In technical design reviews, stakeholders often ask:  
 *"Does high permutation importance mean `orders_recent_90d` causes a customer to repeat?"*
 
 **The Scientifically Accurate Answer:**  

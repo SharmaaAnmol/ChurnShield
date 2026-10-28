@@ -1,5 +1,5 @@
 """
-Part 4 to Part 6 of the ChurnShield Live Demo & Viva Guide
+Part 4 to Part 6 of the ChurnShield Technical Architecture & Engineering Documentation
 """
 
 def get_part_four():
@@ -183,11 +183,11 @@ The notebook executes 15 distinct visualization panels organized across 4 figure
 
 ## 4. Correlation vs Association vs Causation
 
-A critical distinction required for university viva examinations:
+A critical distinction in production predictive systems:
 * **Correlation:** A linear statistical association between two numeric variables (e.g., $r = 0.82$ between `order_count` and `total_items`).
 * **Association (Predictive Utility):** When knowledge of feature $X$ helps narrow the probability distribution of outcome $Y$ (e.g., customers with recency < 30 days are more likely to buy again).
 * **Causation:** Proving that changing $X$ directly forces $Y$ to change (e.g., "Giving a customer R$ 10 discount *causes* them to buy").
-* *Crucial Examination Note: Machine learning models discover associations, NOT causation. A model can accurately rank dormant customers without proving that sending them a marketing email will causally force them to make a purchase.*
+* *Critical Production Note: Machine learning models discover associations, NOT causation. A model can accurately rank dormant customers without proving that sending them a marketing email will causally force them to make a purchase.*
 
 ---
 """
@@ -265,7 +265,7 @@ Raw Customer Feature Row (21 Features)
 
 ## 4. `fit` vs `transform` vs `fit_transform`
 
-This is one of the most frequently asked viva questions:
+A fundamental distinction in Scikit-Learn pipeline design:
 
 | Method | What It Does | Where It Must Be Called |
 | :--- | :--- | :--- |
