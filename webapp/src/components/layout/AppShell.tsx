@@ -24,55 +24,6 @@ export function AppShell({ isDataConnected = true, isBackendConnected = true }: 
         <div className="absolute top-[40%] -left-[10%] w-[500px] h-[500px] bg-gradient-to-r from-[#214D35]/10 to-transparent rounded-full blur-3xl" />
       </div>
 
-      {/* Flank Architectural Side Rails — Elegant edge telemetry on widescreen displays */}
-      <aside
-        aria-hidden="true"
-        className="fixed left-3 top-24 bottom-12 hidden 2xl:flex flex-col justify-between pointer-events-none z-20 text-[9px] font-tech text-[#A6AEA5]/40 select-none border-l border-[#29332B]/40 pl-2.5"
-      >
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-1.5 text-[#447A56]/70">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#447A56] animate-pulse" />
-            <span className="font-semibold tracking-wider">SYS.MONITOR // 01</span>
-          </div>
-          <div className="text-[8px] text-[#A6AEA5]/30 tracking-widest font-mono">
-            LAT: -23.5505 S
-          </div>
-        </div>
-
-        <div className="transform -rotate-90 origin-left translate-y-24 translate-x-1 tracking-[0.25em] uppercase text-[8px] text-[#A6AEA5]/25 whitespace-nowrap">
-          LATAM_BR // NON-CONTRACTUAL RETENTION MATRIX
-        </div>
-
-        <div className="space-y-1 font-mono text-[8px] text-[#A6AEA5]/30">
-          <div>COHORT: 130K</div>
-          <div className="text-[#447A56]/50">PR-AUC: 0.0117</div>
-        </div>
-      </aside>
-
-      <aside
-        aria-hidden="true"
-        className="fixed right-3 top-24 bottom-12 hidden 2xl:flex flex-col justify-between items-end pointer-events-none z-20 text-[9px] font-tech text-[#A6AEA5]/40 select-none border-r border-[#29332B]/40 pr-2.5"
-      >
-        <div className="space-y-1.5 text-right">
-          <div className="flex items-center gap-1.5 text-[#E33B4F]/70 justify-end">
-            <span className="font-semibold tracking-wider">ML.CORE // ACTIVE</span>
-            <span className="h-1.5 w-1.5 rounded-full bg-[#C82038] animate-ping" />
-          </div>
-          <div className="text-[8px] text-[#A6AEA5]/30 tracking-widest font-mono">
-            LONG: -46.6333 W
-          </div>
-        </div>
-
-        <div className="transform rotate-90 origin-right translate-y-[-24px] -translate-x-1 tracking-[0.25em] uppercase text-[8px] text-[#A6AEA5]/25 whitespace-nowrap">
-          LOOKBACK: 180D • HORIZON: 90D • DECISION: 0.50
-        </div>
-
-        <div className="space-y-1 font-mono text-[8px] text-[#A6AEA5]/30 text-right">
-          <div>LIFT: +120%</div>
-          <div className="text-[#C82038]/50">BALANCED_LOGISTIC</div>
-        </div>
-      </aside>
-
       {/* Slim Editorial Top Navigation */}
       <TopBar
         isDataConnected={isDataConnected}

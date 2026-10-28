@@ -69,15 +69,9 @@ export function TopBar({ isDataConnected = true, isBackendConnected = true }: To
                   <span className="text-[#F2F0E8] group-hover:text-white transition-colors">CHURN</span>
                   <span className="text-[#E33B4F] drop-shadow-[0_0_12px_rgba(200,32,56,0.4)]">SHIELD</span>
                 </span>
-                <span className="rounded-full bg-[#102016] px-2 py-0.5 text-[9px] font-tech font-semibold text-[#447A56] border border-[#214D35] flex items-center gap-1 shadow-sm">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#447A56] animate-pulse" />
-                  ML v1.0
-                </span>
               </div>
-              <p className="hidden sm:flex items-center gap-2 text-[10px] font-tech uppercase tracking-[0.24em] text-[#A6AEA5] mt-1">
-                <span>RETENTION INTELLIGENCE</span>
-                <span className="text-[#29332B]">•</span>
-                <span className="text-[#447A56]">ENTERPRISE CORE</span>
+              <p className="hidden sm:block text-[10px] font-tech uppercase tracking-[0.24em] text-[#A6AEA5] mt-1">
+                Retention Intelligence
               </p>
             </div>
           </NavLink>
