@@ -1,18 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { motion } from 'motion/react';
 import {
   Search,
-  Filter,
   Users,
   ChevronLeft,
   ChevronRight,
   ArrowUpDown,
   RotateCcw,
-  SlidersHorizontal,
-  FileSpreadsheet,
   Calendar,
 } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
+import { Card, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { RiskBadge } from '../components/shared/RiskBadge';
@@ -156,18 +152,23 @@ export function CustomerExplorerPage() {
   return (
     <div className="space-y-6">
       {/* Header and Controls */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-[#29332B]">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-white">Customer Retention Explorer</h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <span className="text-[10px] font-tech uppercase tracking-[0.2em] text-[#C82038]">
+            Cohort Micro-Analysis
+          </span>
+          <h1 className="font-serif text-2xl sm:text-3xl font-normal text-[#F2F0E8] mt-1">
+            Customer Retention Explorer
+          </h1>
+          <p className="text-xs text-[#A6AEA5] mt-1 max-w-2xl">
             Individual empirical customer records from the selected dataset timeline. Click any customer to inspect RFM traits and retention risk.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge variant="violet" size="md">
-            <Users className="h-3.5 w-3.5" />
-            <span>{formatNumber(filteredCustomers.length)} Customers Found</span>
+          <Badge variant="forest" size="md">
+            <Users className="h-3.5 w-3.5 mr-1" />
+            <span className="font-tech">{formatNumber(filteredCustomers.length)}</span> Customers Filtered
           </Badge>
         </div>
       </div>
@@ -181,13 +182,13 @@ export function CustomerExplorerPage() {
           isRetrying={retrying}
         />
       ) : (
-        <Card>
+        <Card className="overflow-hidden">
           {/* Filter Bar */}
-          <div className="p-4 border-b border-white/5 space-y-3 bg-[#0B1020]/60">
+          <div className="p-4 border-b border-[#29332B] space-y-3 bg-[#111611]">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
               {/* Search Bar */}
               <div className="lg:col-span-3 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#A6AEA5]" />
                 <input
                   type="text"
                   placeholder="Search customer ID..."
@@ -196,23 +197,23 @@ export function CustomerExplorerPage() {
                     setSearchQuery(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full rounded-lg bg-[#11182A] pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 border border-white/10 focus:border-[#8B7CFF] focus:outline-none transition-colors font-mono"
+                  className="w-full rounded-md bg-[#171D18] pl-9 pr-3 py-2 text-xs text-[#F2F0E8] placeholder-[#A6AEA5]/50 border border-[#29332B] focus:border-[#447A56] focus:outline-none transition-colors font-tech"
                 />
               </div>
 
               {/* Timeline Snapshot Filter */}
               <div className="lg:col-span-3 relative">
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#8B7CFF]" />
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#447A56]" />
                 <select
                   value={activeTimeline}
                   onChange={(e) => {
                     setActiveTimeline(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full rounded-lg bg-[#11182A] pl-9 pr-3 py-2 text-xs text-slate-200 border border-white/10 focus:border-[#8B7CFF] focus:outline-none transition-colors"
+                  className="w-full rounded-md bg-[#171D18] pl-9 pr-3 py-2 text-xs text-[#F2F0E8] border border-[#29332B] focus:border-[#447A56] focus:outline-none transition-colors cursor-pointer"
                 >
                   {TIMELINE_OPTIONS.map((opt) => (
-                    <option key={opt.id} value={opt.id}>
+                    <option key={opt.id} value={opt.id} className="bg-[#111611] text-[#F2F0E8]">
                       Timeline: {opt.quarterLabel}
                     </option>
                   ))}
@@ -227,12 +228,12 @@ export function CustomerExplorerPage() {
                     setSelectedRiskTier(e.target.value as any);
                     setCurrentPage(1);
                   }}
-                  className="w-full rounded-lg bg-[#11182A] px-3 py-2 text-xs text-slate-200 border border-white/10 focus:border-[#8B7CFF] focus:outline-none transition-colors"
+                  className="w-full rounded-md bg-[#171D18] px-3 py-2 text-xs text-[#F2F0E8] border border-[#29332B] focus:border-[#447A56] focus:outline-none transition-colors cursor-pointer"
                 >
-                  <option value="all">All Risk Tiers</option>
-                  <option value="high">High Risk (≥70%)</option>
-                  <option value="moderate">Moderate (40-69%)</option>
-                  <option value="low">Low Risk (&lt;40%)</option>
+                  <option value="all" className="bg-[#111611] text-[#F2F0E8]">All Risk Tiers</option>
+                  <option value="high" className="bg-[#111611] text-[#F2F0E8]">High Risk (≥70%)</option>
+                  <option value="moderate" className="bg-[#111611] text-[#F2F0E8]">Moderate (40-69%)</option>
+                  <option value="low" className="bg-[#111611] text-[#F2F0E8]">Low Risk (&lt;40%)</option>
                 </select>
               </div>
 
@@ -244,11 +245,11 @@ export function CustomerExplorerPage() {
                     setSelectedState(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full rounded-lg bg-[#11182A] px-3 py-2 text-xs text-slate-200 border border-white/10 focus:border-[#8B7CFF] focus:outline-none transition-colors"
+                  className="w-full rounded-md bg-[#171D18] px-3 py-2 text-xs text-[#F2F0E8] border border-[#29332B] focus:border-[#447A56] focus:outline-none transition-colors cursor-pointer"
                 >
-                  <option value="all">All States</option>
+                  <option value="all" className="bg-[#111611] text-[#F2F0E8]">All States</option>
                   {availableStates.map((st) => (
-                    <option key={st} value={st}>
+                    <option key={st} value={st} className="bg-[#111611] text-[#F2F0E8]">
                       State: {st}
                     </option>
                   ))}
@@ -264,10 +265,10 @@ export function CustomerExplorerPage() {
                     setPriorityOnly(!priorityOnly);
                     setCurrentPage(1);
                   }}
-                  className={`w-full flex items-center justify-center gap-1 rounded-lg px-2 py-2 text-xs font-medium border transition-colors ${
+                  className={`w-full flex items-center justify-center rounded-md px-2 py-2 text-xs font-medium border transition-colors cursor-pointer ${
                     priorityOnly
-                      ? 'bg-[#8B7CFF]/20 text-[#8B7CFF] border-[#8B7CFF]/40'
-                      : 'bg-[#11182A] text-slate-300 border-white/10 hover:border-white/20'
+                      ? 'bg-[#214D35] text-[#F2F0E8] border-[#447A56]'
+                      : 'bg-[#171D18] text-[#A6AEA5] border-[#29332B] hover:border-[#447A56]/60 hover:text-[#F2F0E8]'
                   }`}
                 >
                   <span>Top 20%</span>
@@ -280,7 +281,7 @@ export function CustomerExplorerPage() {
                   variant="outline"
                   size="sm"
                   onClick={handleResetFilters}
-                  className="w-full text-xs text-slate-400 hover:text-white px-2"
+                  className="w-full text-xs text-[#A6AEA5] hover:text-[#F2F0E8] px-2"
                 >
                   <RotateCcw className="h-3.5 w-3.5 mr-1" />
                   Reset
@@ -293,11 +294,11 @@ export function CustomerExplorerPage() {
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-[#0B1020] text-slate-400 uppercase text-[10px] tracking-wider border-b border-white/5">
+                <thead className="bg-[#090B09] text-[#A6AEA5] uppercase text-[10px] tracking-wider border-b border-[#29332B]">
                   <tr>
                     <th className="px-5 py-3">Customer Unique ID</th>
                     <th
-                      className="px-5 py-3 cursor-pointer hover:text-white transition-colors"
+                      className="px-5 py-3 cursor-pointer hover:text-[#F2F0E8] transition-colors"
                       onClick={() => {
                         if (sortBy === 'inactivityRisk') {
                           setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -313,7 +314,7 @@ export function CustomerExplorerPage() {
                       </div>
                     </th>
                     <th
-                      className="px-5 py-3 cursor-pointer hover:text-white transition-colors"
+                      className="px-5 py-3 cursor-pointer hover:text-[#F2F0E8] transition-colors"
                       onClick={() => {
                         if (sortBy === 'repeatProbability') {
                           setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -329,7 +330,7 @@ export function CustomerExplorerPage() {
                       </div>
                     </th>
                     <th
-                      className="px-5 py-3 cursor-pointer hover:text-white transition-colors"
+                      className="px-5 py-3 cursor-pointer hover:text-[#F2F0E8] transition-colors"
                       onClick={() => {
                         if (sortBy === 'totalSpend') {
                           setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -345,7 +346,7 @@ export function CustomerExplorerPage() {
                       </div>
                     </th>
                     <th
-                      className="px-5 py-3 cursor-pointer hover:text-white transition-colors"
+                      className="px-5 py-3 cursor-pointer hover:text-[#F2F0E8] transition-colors"
                       onClick={() => {
                         if (sortBy === 'recency') {
                           setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -366,10 +367,10 @@ export function CustomerExplorerPage() {
                   </tr>
                 </thead>
 
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-[#29332B]">
                   {paginatedCustomers.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="p-8 text-center text-slate-500">
+                      <td colSpan={8} className="p-8 text-center text-[#A6AEA5]">
                         No customers match the current filter criteria.
                       </td>
                     </tr>
@@ -378,33 +379,33 @@ export function CustomerExplorerPage() {
                       <tr
                         key={cust.customerUniqueId}
                         onClick={() => handleCustomerRowClick(cust)}
-                        className="hover:bg-white/[0.03] transition-colors cursor-pointer group"
+                        className="hover:bg-[#171D18] transition-colors cursor-pointer group"
                       >
-                        <td className="px-5 py-3.5 font-mono text-slate-200">
+                        <td className="px-5 py-3.5 font-tech text-[#F2F0E8]">
                           {truncateId(cust.customerUniqueId, 8, 6)}
                         </td>
                         <td className="px-5 py-3.5">
                           <RiskBadge tier={cust.riskTier} score={cust.inactivityRiskScore} size="sm" />
                         </td>
-                        <td className="px-5 py-3.5 font-mono text-[#53DDE0]">
+                        <td className="px-5 py-3.5 font-tech text-[#447A56]">
                           {formatPercent(cust.repeatPurchaseProbability, 2)}
                         </td>
-                        <td className="px-5 py-3.5 font-mono text-white">
+                        <td className="px-5 py-3.5 font-tech text-[#F2F0E8]">
                           {cust.totalSpend !== undefined ? formatCurrency(cust.totalSpend) : '—'}
                         </td>
-                        <td className="px-5 py-3.5 font-mono text-slate-400">
+                        <td className="px-5 py-3.5 font-tech text-[#A6AEA5]">
                           {cust.recencyDays !== undefined ? `${Math.round(cust.recencyDays)}d` : '—'}
                         </td>
-                        <td className="px-5 py-3.5 font-mono text-slate-300">
+                        <td className="px-5 py-3.5 font-tech text-[#A6AEA5]">
                           {cust.customerState || '—'}
                         </td>
                         <td className="px-5 py-3.5">
                           {cust.priorityRetentionTarget ? (
-                            <Badge variant="violet" size="sm">
+                            <Badge variant="crimson" size="sm">
                               Top 20%
                             </Badge>
                           ) : (
-                            <span className="text-slate-500 text-[11px] font-mono">Standard</span>
+                            <span className="text-[#A6AEA5] text-[11px] font-tech">Standard</span>
                           )}
                         </td>
                         <td className="px-5 py-3.5 text-right">
@@ -415,7 +416,7 @@ export function CustomerExplorerPage() {
                               e.stopPropagation();
                               handleCustomerRowClick(cust);
                             }}
-                            className="h-7 text-xs text-slate-400 group-hover:text-white"
+                            className="h-7 text-xs text-[#A6AEA5] group-hover:text-[#F2F0E8]"
                           >
                             Profile
                           </Button>
@@ -429,10 +430,10 @@ export function CustomerExplorerPage() {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between p-4 border-t border-white/5 bg-[#0B1020]/40 text-xs">
-                <span className="text-slate-400">
-                  Showing Page <span className="font-semibold text-white">{currentPage}</span> of{' '}
-                  <span className="font-semibold text-white">{totalPages}</span> ({formatNumber(filteredCustomers.length)} total)
+              <div className="flex items-center justify-between p-4 border-t border-[#29332B] bg-[#090B09] text-xs">
+                <span className="text-[#A6AEA5]">
+                  Showing Page <span className="font-tech font-semibold text-[#F2F0E8]">{currentPage}</span> of{' '}
+                  <span className="font-tech font-semibold text-[#F2F0E8]">{totalPages}</span> ({formatNumber(filteredCustomers.length)} total)
                 </span>
 
                 <div className="flex items-center gap-2">
@@ -442,7 +443,7 @@ export function CustomerExplorerPage() {
                     disabled={currentPage === 1}
                     onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className="h-4 w-4 mr-1" />
                     <span>Previous</span>
                   </Button>
 
@@ -453,7 +454,7 @@ export function CustomerExplorerPage() {
                     onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   >
                     <span>Next</span>
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>
                 </div>
               </div>

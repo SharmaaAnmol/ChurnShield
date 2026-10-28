@@ -3,22 +3,27 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:pointer-events-none select-none text-sm active:scale-[0.98]',
+  'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:pointer-events-none select-none text-sm font-ui active:scale-[0.98]',
   {
     variants: {
       variant: {
         primary:
-          'bg-[#8B7CFF] text-[#080B14] hover:bg-[#9D90FF] font-semibold shadow-lg shadow-[#8B7CFF]/20',
+          'bg-[#C82038] text-[#F2F0E8] hover:bg-[#E33B4F] font-semibold shadow-lg shadow-[#C82038]/25 border border-[#E33B4F]/30',
+        forest:
+          'bg-[#214D35] text-[#F2F0E8] hover:bg-[#2C6647] font-medium shadow-md shadow-[#214D35]/30 border border-[#447A56]/40',
         secondary:
-          'bg-[#161F34] text-slate-200 hover:bg-[#1E293B] border border-white/5 hover:border-white/10',
+          'bg-[#171D18] text-[#F2F0E8] hover:bg-[#212B22] border border-[#29332B] hover:border-[#3A4A3D]',
         outline:
-          'border border-slate-700/80 bg-transparent text-slate-300 hover:bg-slate-800/50 hover:text-white',
+          'border border-[#29332B] bg-transparent text-[#A6AEA5] hover:bg-[#111611] hover:text-[#F2F0E8] hover:border-[#3A4A3D]',
         ghost:
-          'bg-transparent text-slate-400 hover:text-slate-200 hover:bg-white/5',
-        cyan:
-          'bg-[#53DDE0] text-[#080B14] hover:bg-[#68E2E5] font-semibold shadow-lg shadow-[#53DDE0]/20',
+          'bg-transparent text-[#A6AEA5] hover:text-[#F2F0E8] hover:bg-[#171D18]',
         danger:
-          'bg-[#FB7185]/20 text-[#FB7185] border border-[#FB7185]/30 hover:bg-[#FB7185]/30',
+          'bg-[#C82038]/20 text-[#E33B4F] border border-[#C82038]/40 hover:bg-[#C82038]/30',
+        pill:
+          'rounded-full border border-[#29332B] bg-[#111611]/90 hover:bg-[#171D18] hover:border-[#3A4A3D] text-[#F2F0E8] px-5 py-2 tracking-wide text-xs uppercase',
+        // Backward-compat aliases
+        cyan:
+          'bg-[#214D35] text-[#F2F0E8] hover:bg-[#2C6647] font-medium shadow-md shadow-[#214D35]/30 border border-[#447A56]/40',
       },
       size: {
         sm: 'h-8 px-3 text-xs',

@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'motion/react';
 import {
   Award,
   TrendingUp,
   ShieldCheck,
-  CheckCircle,
   HelpCircle,
   Clock,
-  Layers,
   Activity,
   Zap,
   Calendar,
@@ -20,7 +17,7 @@ import { KpiCard } from '../components/shared/KpiCard';
 import { EmptyState } from '../components/shared/EmptyState';
 import { loadEvaluationMetrics, loadModelSummary } from '../lib/data/data-client';
 import { EvaluationMetrics, ModelSummary } from '../lib/data/types';
-import { formatNumber, formatPercent, formatDecimal } from '../lib/utils';
+import { formatNumber, formatPercent } from '../lib/utils';
 import { useTimeline, TIMELINE_OPTIONS } from '../lib/context/TimelineContext';
 
 export function ModelPerformancePage() {
@@ -78,28 +75,32 @@ export function ModelPerformancePage() {
   return (
     <div className="space-y-6">
       {/* Interactive Dataset Timeline Selector Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-[#0B1020] border border-white/10 shadow-lg">
-        <div className="flex items-center gap-2">
-          <Calendar className="h-4 w-4 text-[#8B7CFF]" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-[#111611] border border-[#29332B] shadow-lg">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[#171D18] text-[#447A56] border border-[#29332B]">
+            <Calendar className="h-4 w-4" />
+          </div>
           <div>
-            <span className="text-xs font-semibold text-white">Dataset Evaluation Timeline:</span>
-            <p className="text-[11px] text-slate-400">
-              Active: <span className="text-[#53DDE0] font-mono font-medium">{activeData?.quarterLabel || 'All Timelines'}</span> ({formatNumber(total)} customers evaluated)
+            <span className="text-xs font-semibold text-[#F2F0E8] uppercase tracking-wider">
+              Evaluation Timeline Cohort:
+            </span>
+            <p className="text-[11px] text-[#A6AEA5]">
+              Active: <span className="text-[#447A56] font-tech font-medium">{activeData?.quarterLabel || 'All Timelines'}</span> ({formatNumber(total)} customers evaluated)
             </p>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-2">
           {TIMELINE_OPTIONS.map((opt) => {
             const isSelected = activeTimeline === opt.id;
             return (
               <button
                 key={opt.id}
                 onClick={() => setActiveTimeline(opt.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-[#8B7CFF] text-white shadow-md shadow-[#8B7CFF]/20 font-semibold ring-1 ring-[#8B7CFF]'
-                    : 'bg-[#11182A] text-slate-400 hover:text-white hover:bg-white/5 border border-white/5'
+                    ? 'bg-[#214D35] text-[#F2F0E8] border-[#447A56] shadow-sm font-semibold'
+                    : 'bg-[#171D18] text-[#A6AEA5] border-[#29332B] hover:border-[#447A56]/60 hover:text-[#F2F0E8]'
                 }`}
               >
                 {opt.quarterLabel.replace(' Snapshot', '')}
@@ -110,47 +111,50 @@ export function ModelPerformancePage() {
       </div>
 
       {/* Page Header Banner */}
-      <div className="rounded-2xl border border-white/10 bg-gradient-to-r from-[#11182A] via-[#0C1322] to-[#161F34] p-6 shadow-xl relative overflow-hidden">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
+      <div className="rounded-2xl border border-[#29332B] bg-[#111611] p-6 sm:p-8 shadow-xl relative overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+          <div className="space-y-2">
             <div className="flex items-center gap-2 mb-2">
-              <Badge variant="mint" size="sm">
-                Champion Model
+              <Badge variant="forest" size="sm">
+                Champion Pipeline
               </Badge>
-              <Badge variant="violet" size="sm">
+              <Badge variant="default" size="sm">
                 {activeData?.quarterLabel || 'Temporal Evaluation'}
               </Badge>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-              Model Evaluation & Validation Rigor
-            </h2>
-            <p className="mt-1 text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-              Empirical out-of-time evaluation across <span className="text-[#53DDE0] font-mono">{formatNumber(total)} customers</span> ({repeats} actual repeat buyers, {(dummyBase * 100).toFixed(2)}% base rate).
+            <span className="text-[10px] font-tech uppercase tracking-[0.2em] text-[#C82038]">
+              Model Validation & Rigor
+            </span>
+            <h1 className="font-serif text-2xl sm:text-4xl font-normal text-[#F2F0E8] leading-tight">
+              Evaluation & Generalization Metrics
+            </h1>
+            <p className="mt-1 text-xs sm:text-sm text-[#A6AEA5] max-w-2xl leading-relaxed">
+              Empirical out-of-time evaluation across <span className="text-[#F2F0E8] font-tech">{formatNumber(total)} customers</span> ({repeats} actual repeat buyers, {(dummyBase * 100).toFixed(2)}% base rate).
               Evaluated primarily via Precision-Recall AUC (PR-AUC) to assess real predictive power under extreme class imbalance.
             </p>
           </div>
 
-          <div className="rounded-xl bg-[#080B14]/70 p-4 border border-white/10 shrink-0 text-right">
-            <span className="text-[11px] text-slate-400">Winning Algorithm</span>
-            <p className="font-semibold text-sm text-white mt-0.5">Balanced Logistic Regression</p>
-            <span className="font-mono text-xs text-[#8B7CFF]">C = 1.0, L2 Penalty</span>
+          <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B] shrink-0 text-left md:text-right">
+            <span className="text-[10px] font-tech uppercase tracking-wider text-[#A6AEA5]">Winning Algorithm</span>
+            <p className="font-serif text-base text-[#F2F0E8] mt-0.5">Balanced Logistic Regression</p>
+            <span className="font-tech text-xs text-[#447A56]">C = 1.0, L2 Penalty</span>
           </div>
         </div>
       </div>
 
       {/* Retrospective vs Prospective Inference Banner */}
-      <div className="rounded-lg bg-[#080B14] p-3.5 border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-300">
+      <div className="rounded-lg bg-[#090B09] p-3.5 border border-[#29332B] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#A6AEA5]">
         <div className="flex items-start gap-2.5">
-          <HelpCircle className="h-4 w-4 text-[#8B7CFF] shrink-0 mt-0.5" />
+          <HelpCircle className="h-4 w-4 text-[#447A56] shrink-0 mt-0.5" />
           <div>
-            <span className="font-semibold text-white">Dataset Evaluation vs Interactive Prediction:</span> The metrics below
-            reflect actual performance scored across the <span className="text-[#53DDE0] font-medium">{activeData?.quarterLabel || 'selected'}</span> timeline ($N = {formatNumber(total)}$).
-            To run live interactive inference on custom hypothetical feature inputs, use Prediction Studio.
+            <span className="font-semibold text-[#F2F0E8]">Dataset Evaluation vs Live Inference: </span> 
+            The metrics below reflect historical cohort scoring on the <span className="text-[#447A56] font-medium">{activeData?.quarterLabel || 'selected'}</span> timeline snapshot ($N = {formatNumber(total)}$).
+            To run live interactive inference on custom customer profiles, visit Prediction Studio.
           </div>
         </div>
         <Link to="/prediction-studio" className="shrink-0">
           <Button variant="outline" size="sm" className="text-xs">
-            <Zap className="h-3.5 w-3.5 text-[#8B7CFF]" />
+            <Zap className="h-3.5 w-3.5 text-[#C82038] mr-1" />
             <span>Open Prediction Studio</span>
           </Button>
         </Link>
@@ -174,7 +178,7 @@ export function ModelPerformancePage() {
               subtitle={`Baseline Dummy: ${dummyBase.toFixed(4)}`}
               lift={`+${Math.round((liftVal - 1) * 100)}% Lift`}
               liftType="accent"
-              icon={<Award className="h-4 w-4 text-[#8B7CFF]" />}
+              icon={<Award className="h-4 w-4 text-[#447A56]" />}
               isLoading={loading}
               delay={0.05}
             />
@@ -185,7 +189,7 @@ export function ModelPerformancePage() {
               subtitle="Baseline Random: 0.5000"
               lift={`+${Math.max(1, Math.round(((rocAuc - 0.5) / 0.5) * 100))}% vs Random`}
               liftType="positive"
-              icon={<Activity className="h-4 w-4 text-[#53DDE0]" />}
+              icon={<Activity className="h-4 w-4 text-[#447A56]" />}
               isLoading={loading}
               delay={0.1}
             />
@@ -196,7 +200,7 @@ export function ModelPerformancePage() {
               subtitle={`Captures ${tp} of ${repeats} repeat buyers`}
               lift={`${formatPercent(recallVal, 1)} Recall`}
               liftType="positive"
-              icon={<TrendingUp className="h-4 w-4 text-[#69DDA5]" />}
+              icon={<TrendingUp className="h-4 w-4 text-[#447A56]" />}
               isLoading={loading}
               delay={0.15}
             />
@@ -207,7 +211,7 @@ export function ModelPerformancePage() {
               subtitle="Macro avg of sensitivity & specificity"
               lift="Threshold-Neutral"
               liftType="neutral"
-              icon={<ShieldCheck className="h-4 w-4 text-[#F5BD64]" />}
+              icon={<ShieldCheck className="h-4 w-4 text-[#C48232]" />}
               isLoading={loading}
               delay={0.2}
             />
@@ -226,7 +230,7 @@ export function ModelPerformancePage() {
                         Evaluated at default probability threshold ($P \ge 0.5$) across $N = {formatNumber(total)}$ customers
                       </CardDescription>
                     </div>
-                    <Badge variant="violet" size="sm">
+                    <Badge variant="forest" size="sm">
                       N = {formatNumber(total)}
                     </Badge>
                   </div>
@@ -236,75 +240,75 @@ export function ModelPerformancePage() {
                   {/* 2x2 Matrix */}
                   <div className="grid grid-cols-2 gap-3">
                     {/* True Negative */}
-                    <div className="rounded-xl bg-[#161F34]/90 p-4 border border-white/10">
-                      <div className="flex items-center justify-between text-xs text-slate-400">
-                        <span className="font-semibold text-slate-200">True Negatives (TN)</span>
+                    <div className="rounded-xl bg-[#111611] p-4 border border-[#29332B]">
+                      <div className="flex items-center justify-between text-xs text-[#A6AEA5]">
+                        <span className="font-semibold text-[#F2F0E8]">True Negatives (TN)</span>
                         <Badge variant="default" size="sm">
                           {formatPercent(tn / total, 1)}
                         </Badge>
                       </div>
-                      <div className="mt-2 font-mono text-2xl font-bold text-white">
+                      <div className="mt-2 font-tech text-2xl font-bold text-[#F2F0E8]">
                         {formatNumber(tn)}
                       </div>
-                      <p className="mt-1 text-[11px] text-slate-400">
+                      <p className="mt-1 text-[11px] text-[#A6AEA5]">
                         Correctly predicted non-repeat buyers (inactive).
                       </p>
                     </div>
 
                     {/* False Positive */}
-                    <div className="rounded-xl bg-[#F5BD64]/10 p-4 border border-[#F5BD64]/20">
-                      <div className="flex items-center justify-between text-xs text-[#F5BD64]">
+                    <div className="rounded-xl bg-[#C48232]/10 p-4 border border-[#C48232]/30">
+                      <div className="flex items-center justify-between text-xs text-[#C48232]">
                         <span className="font-semibold">False Positives (FP)</span>
                         <Badge variant="amber" size="sm">
                           {formatPercent(fp / total, 1)}
                         </Badge>
                       </div>
-                      <div className="mt-2 font-mono text-2xl font-bold text-white">
+                      <div className="mt-2 font-tech text-2xl font-bold text-[#F2F0E8]">
                         {formatNumber(fp)}
                       </div>
-                      <p className="mt-1 text-[11px] text-slate-400">
+                      <p className="mt-1 text-[11px] text-[#A6AEA5]">
                         Predicted to repeat, but remained inactive. Cost of balanced recall.
                       </p>
                     </div>
 
                     {/* False Negative */}
-                    <div className="rounded-xl bg-[#FB7185]/10 p-4 border border-[#FB7185]/20">
-                      <div className="flex items-center justify-between text-xs text-[#FB7185]">
+                    <div className="rounded-xl bg-[#C82038]/10 p-4 border border-[#C82038]/30">
+                      <div className="flex items-center justify-between text-xs text-[#E33B4F]">
                         <span className="font-semibold">False Negatives (FN)</span>
-                        <Badge variant="coral" size="sm">
+                        <Badge variant="crimson" size="sm">
                           {formatPercent(fn / total, 2)}
                         </Badge>
                       </div>
-                      <div className="mt-2 font-mono text-2xl font-bold text-white">
+                      <div className="mt-2 font-tech text-2xl font-bold text-[#F2F0E8]">
                         {formatNumber(fn)}
                       </div>
-                      <p className="mt-1 text-[11px] text-slate-400">
+                      <p className="mt-1 text-[11px] text-[#A6AEA5]">
                         Missed repeat buyers predicted as inactive.
                       </p>
                     </div>
 
                     {/* True Positive */}
-                    <div className="rounded-xl bg-[#69DDA5]/10 p-4 border border-[#69DDA5]/20">
-                      <div className="flex items-center justify-between text-xs text-[#69DDA5]">
+                    <div className="rounded-xl bg-[#214D35]/20 p-4 border border-[#214D35]">
+                      <div className="flex items-center justify-between text-xs text-[#447A56]">
                         <span className="font-semibold">True Positives (TP)</span>
-                        <Badge variant="mint" size="sm">
+                        <Badge variant="forest" size="sm">
                           {formatPercent(tp / Math.max(1, repeats), 1)}
                         </Badge>
                       </div>
-                      <div className="mt-2 font-mono text-2xl font-bold text-white">
+                      <div className="mt-2 font-tech text-2xl font-bold text-[#F2F0E8]">
                         {formatNumber(tp)}
                       </div>
-                      <p className="mt-1 text-[11px] text-slate-400">
+                      <p className="mt-1 text-[11px] text-[#A6AEA5]">
                         Correctly identified repeat buyers ({formatPercent(tp / Math.max(1, repeats), 1)} sensitivity).
                       </p>
                     </div>
                   </div>
 
-                  {/* Clarification on 67% accuracy question */}
-                  <div className="rounded-lg bg-[#080B14] p-3.5 border border-white/5 text-xs text-slate-300 leading-relaxed">
-                    <span className="text-[#8B7CFF] font-semibold">Why Balanced Accuracy Matters:</span> In extreme class
+                  {/* Clarification on class imbalance */}
+                  <div className="rounded-lg bg-[#090B09] p-3.5 border border-[#29332B] text-xs text-[#A6AEA5] leading-relaxed">
+                    <span className="text-[#447A56] font-semibold">Why Balanced Accuracy Matters: </span> In extreme class
                     imbalance ({formatPercent(1 - dummyBase, 1)} negative rate), a naive dummy predicting "no one repeats" achieves high naive accuracy but
-                    has <span className="text-[#FB7185] font-semibold">zero retention utility</span>. Balanced Logistic
+                    has <span className="text-[#C82038] font-semibold">zero retention utility</span>. Balanced Logistic
                     Regression trades naive accuracy to capture {formatPercent(recallVal, 1)} of actual repeat buyers while boosting PR-AUC by +{Math.round((liftVal - 1) * 100)}%.
                   </div>
                 </CardContent>
@@ -323,38 +327,38 @@ export function ModelPerformancePage() {
                   </CardHeader>
 
                   <CardContent className="space-y-3 pt-3">
-                    <div className="rounded-lg bg-[#080B14] p-3 border border-white/5">
-                      <span className="text-[11px] text-slate-400 font-medium uppercase tracking-wider">
+                    <div className="rounded-lg bg-[#090B09] p-3 border border-[#29332B]">
+                      <span className="text-[10px] text-[#A6AEA5] font-tech uppercase tracking-wider">
                         Feature Preprocessing
                       </span>
-                      <p className="mt-1 text-xs text-slate-200">
+                      <p className="mt-1 text-xs text-[#F2F0E8]">
                         Median Imputation + Robust Standard Scaling (numerical) & One-Hot Encoding (state)
                       </p>
                     </div>
 
-                    <div className="rounded-lg bg-[#080B14] p-3 border border-white/5">
-                      <span className="text-[11px] text-slate-400 font-medium uppercase tracking-wider">
+                    <div className="rounded-lg bg-[#090B09] p-3 border border-[#29332B]">
+                      <span className="text-[10px] text-[#A6AEA5] font-tech uppercase tracking-wider">
                         Class Rebalancing Strategy
                       </span>
-                      <p className="mt-1 text-xs text-[#53DDE0] font-mono">
+                      <p className="mt-1 text-xs text-[#447A56] font-tech">
                         class_weight = 'balanced' (inversely proportional to class frequencies)
                       </p>
                     </div>
 
-                    <div className="rounded-lg bg-[#080B14] p-3 border border-white/5">
-                      <span className="text-[11px] text-slate-400 font-medium uppercase tracking-wider">
+                    <div className="rounded-lg bg-[#090B09] p-3 border border-[#29332B]">
+                      <span className="text-[10px] text-[#A6AEA5] font-tech uppercase tracking-wider">
                         Optimization Solver & Regularization
                       </span>
-                      <p className="mt-1 text-xs text-slate-200 font-mono">
+                      <p className="mt-1 text-xs text-[#F2F0E8] font-tech">
                         solver = 'lbfgs', C = 1.0 (L2 ridge penalty), max_iter = 1000
                       </p>
                     </div>
 
-                    <div className="rounded-lg bg-[#080B14] p-3 border border-white/5">
-                      <span className="text-[11px] text-slate-400 font-medium uppercase tracking-wider">
+                    <div className="rounded-lg bg-[#090B09] p-3 border border-[#29332B]">
+                      <span className="text-[10px] text-[#A6AEA5] font-tech uppercase tracking-wider">
                         Calibration Brier Score
                       </span>
-                      <p className="mt-1 text-xs text-slate-200 font-mono">
+                      <p className="mt-1 text-xs text-[#F2F0E8] font-tech">
                         {metrics ? metrics.metrics.brierScore.toFixed(4) : '0.2279'} (well-bounded probabilistic spread)
                       </p>
                     </div>
@@ -362,8 +366,8 @@ export function ModelPerformancePage() {
                 </div>
 
                 <div className="p-5 pt-0">
-                  <div className="rounded-lg bg-[#8B7CFF]/10 p-3 border border-[#8B7CFF]/20 text-xs text-slate-300">
-                    <span className="font-semibold text-[#8B7CFF]">Decision Rule:</span> Customers are prioritized by
+                  <div className="rounded-lg bg-[#102016]/40 p-3 border border-[#214D35] text-xs text-[#A6AEA5]">
+                    <span className="font-semibold text-[#447A56]">Decision Rule: </span> Customers are prioritized by
                     descending order of inactivity risk score, not hard thresholding.
                   </div>
                 </div>
@@ -381,7 +385,7 @@ export function ModelPerformancePage() {
                     Strict temporal segregation preventing future information leakage into historical observations
                   </CardDescription>
                 </div>
-                <Badge variant="cyan" size="sm">
+                <Badge variant="forest" size="sm">
                   Zero Lookahead Bias
                 </Badge>
               </div>
@@ -389,48 +393,48 @@ export function ModelPerformancePage() {
 
             <CardContent className="pt-2">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="rounded-xl bg-[#080B14] p-4 border border-white/10">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-[#8B7CFF] mb-2">
+                <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B]">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-[#447A56] mb-2">
                     <Clock className="h-4 w-4" />
                     <span>Training Cohorts (3 Snaps)</span>
                   </div>
-                  <div className="text-xs text-slate-300 space-y-1 font-mono">
+                  <div className="text-xs text-[#A6AEA5] space-y-1 font-tech">
                     <div>• 2017-06-01 (180d lookback)</div>
                     <div>• 2017-09-01 (180d lookback)</div>
                     <div>• 2017-12-01 (180d lookback)</div>
                   </div>
-                  <div className="mt-3 pt-2 border-t border-white/5 text-xs text-slate-400">
-                    Combined Training: <span className="font-bold text-white font-mono">56,975</span> customers
+                  <div className="mt-3 pt-2 border-t border-[#29332B] text-xs text-[#A6AEA5]">
+                    Combined Training: <span className="font-bold text-[#F2F0E8] font-tech">56,975</span> customers
                   </div>
                 </div>
 
-                <div className="rounded-xl bg-[#080B14] p-4 border border-white/10">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-[#53DDE0] mb-2">
+                <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B]">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-[#447A56] mb-2">
                     <Activity className="h-4 w-4" />
                     <span>Validation Cohort</span>
                   </div>
-                  <div className="text-xs text-slate-300 space-y-1 font-mono">
+                  <div className="text-xs text-[#A6AEA5] space-y-1 font-tech">
                     <div>• 2018-03-01 Snapshot</div>
                     <div>• 180d lookback window</div>
                     <div>• 90d forward evaluation</div>
                   </div>
-                  <div className="mt-3 pt-2 border-t border-white/5 text-xs text-slate-400">
-                    Validation Size: <span className="font-bold text-white font-mono">34,777</span> customers
+                  <div className="mt-3 pt-2 border-t border-[#29332B] text-xs text-[#A6AEA5]">
+                    Validation Size: <span className="font-bold text-[#F2F0E8] font-tech">34,777</span> customers
                   </div>
                 </div>
 
-                <div className="rounded-xl bg-[#080B14] p-4 border border-white/10">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-[#69DDA5] mb-2">
+                <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B]">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-[#447A56] mb-2">
                     <ShieldCheck className="h-4 w-4" />
                     <span>Final Holdout Test Cohort</span>
                   </div>
-                  <div className="text-xs text-slate-300 space-y-1 font-mono">
+                  <div className="text-xs text-[#A6AEA5] space-y-1 font-tech">
                     <div>• Final Evaluation Snapshot</div>
                     <div>• Zero overlap with training</div>
                     <div>• Frozen model weights</div>
                   </div>
-                  <div className="mt-3 pt-2 border-t border-white/5 text-xs text-slate-400">
-                    Test Cohort Size: <span className="font-bold text-white font-mono">39,162</span> customers
+                  <div className="mt-3 pt-2 border-t border-[#29332B] text-xs text-[#A6AEA5]">
+                    Test Cohort Size: <span className="font-bold text-[#F2F0E8] font-tech">39,162</span> customers
                   </div>
                 </div>
               </div>

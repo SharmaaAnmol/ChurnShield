@@ -1,12 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { motion } from 'motion/react';
 import {
-  BarChart3,
-  TrendingUp,
   Sparkles,
-  Info,
-  Layers,
-  ArrowUpDown,
   Compass,
   AlertTriangle,
   Lightbulb,
@@ -22,12 +16,10 @@ import {
 } from 'recharts';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
-import { Button } from '../components/ui/Button';
 import { Tabs } from '../components/ui/Tabs';
 import { EmptyState } from '../components/shared/EmptyState';
 import { loadFeatureImportance } from '../lib/data/data-client';
 import { FeatureImportanceItem } from '../lib/data/types';
-import { formatNumber, formatDecimal } from '../lib/utils';
 
 export function FeatureInsightsPage() {
   const [loading, setLoading] = useState(true);
@@ -94,30 +86,33 @@ export function FeatureInsightsPage() {
   return (
     <div className="space-y-8">
       {/* Page Header Banner */}
-      <div className="rounded-2xl border border-white/10 bg-gradient-to-r from-[#11182A] via-[#0C1322] to-[#161F34] p-6 shadow-xl relative overflow-hidden">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
+      <div className="rounded-2xl border border-[#29332B] bg-[#111611] p-6 sm:p-8 shadow-xl relative overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+          <div className="space-y-2">
             <div className="flex items-center gap-2 mb-2">
-              <Badge variant="cyan" size="sm">
+              <Badge variant="forest" size="sm">
                 Permutation Importance
               </Badge>
-              <Badge variant="violet" size="sm">
+              <Badge variant="default" size="sm">
                 Holdout Evaluation
               </Badge>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+            <span className="text-[10px] font-tech uppercase tracking-[0.2em] text-[#C82038]">
+              Signals & Interpretability
+            </span>
+            <h1 className="font-serif text-2xl sm:text-4xl font-normal text-[#F2F0E8] leading-tight">
               Feature Importance & Predictive Signals
-            </h2>
-            <p className="mt-1 text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+            </h1>
+            <p className="mt-1 text-xs sm:text-sm text-[#A6AEA5] max-w-2xl leading-relaxed">
               Calculated via permutation feature importance on the out-of-time test cohort. Identifies which behavioral
               attributes create the greatest drop in model PR-AUC when shuffled.
             </p>
           </div>
 
-          <div className="rounded-xl bg-[#080B14]/70 p-4 border border-white/10 shrink-0 text-right">
-            <span className="text-[11px] text-slate-400">Total Scored Features</span>
-            <p className="font-semibold text-lg text-white font-mono mt-0.5">21 Features</p>
-            <span className="text-xs text-[#53DDE0]">No Future Leakage</span>
+          <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B] shrink-0 text-left md:text-right">
+            <span className="text-[10px] font-tech uppercase tracking-wider text-[#A6AEA5]">Total Scored Features</span>
+            <p className="font-tech text-lg text-[#F2F0E8] font-bold mt-0.5">21 Features</p>
+            <span className="text-xs font-tech text-[#447A56]">Zero Lookahead Leakage</span>
           </div>
         </div>
       </div>
@@ -139,8 +134,8 @@ export function FeatureInsightsPage() {
               activeTab={activeCategory}
               onChange={setActiveCategory}
             />
-            <span className="text-xs text-slate-400">
-              Showing <span className="text-white font-mono">{filteredFeatures.length}</span> signals
+            <span className="text-xs text-[#A6AEA5]">
+              Showing <span className="text-[#F2F0E8] font-tech">{filteredFeatures.length}</span> signals
             </span>
           </div>
 
@@ -157,7 +152,7 @@ export function FeatureInsightsPage() {
                         Mean drop in PR-AUC score when feature values are randomly permuted
                       </CardDescription>
                     </div>
-                    <Badge variant="violet" size="sm">
+                    <Badge variant="forest" size="sm">
                       Top Signals
                     </Badge>
                   </div>
@@ -178,23 +173,24 @@ export function FeatureInsightsPage() {
                       >
                         <XAxis
                           type="number"
-                          stroke="#64748B"
+                          stroke="#4B554D"
                           fontSize={11}
                           tickFormatter={(val) => val.toFixed(4)}
                         />
                         <YAxis
                           type="category"
                           dataKey="name"
-                          stroke="#94A3B8"
+                          stroke="#A6AEA5"
                           fontSize={11}
                           width={150}
                         />
                         <Tooltip
                           contentStyle={{
-                            backgroundColor: '#0B1020',
-                            border: '1px solid rgba(255,255,255,0.1)',
+                            backgroundColor: '#111611',
+                            border: '1px solid #29332B',
                             borderRadius: '8px',
                             fontSize: '12px',
+                            color: '#F2F0E8',
                           }}
                           formatter={(val: any) => [`${Number(val).toFixed(6)} mean PR-AUC drop`, 'Importance']}
                         />
@@ -210,10 +206,10 @@ export function FeatureInsightsPage() {
                                 key={`cell-${index}`}
                                 fill={
                                   isSelected
-                                    ? '#53DDE0'
+                                    ? '#C82038'
                                     : entry.importance > 0.003
-                                    ? '#8B7CFF'
-                                    : '#4F46E5'
+                                    ? '#447A56'
+                                    : '#214D35'
                                 }
                               />
                             );
@@ -223,7 +219,7 @@ export function FeatureInsightsPage() {
                     </ResponsiveContainer>
                   </div>
 
-                  <p className="mt-3 text-[11px] text-slate-400 italic text-center">
+                  <p className="mt-3 text-[11px] text-[#A6AEA5] italic text-center">
                     Click on any feature bar in the chart to inspect its behavioral interpretation.
                   </p>
                 </CardContent>
@@ -238,7 +234,7 @@ export function FeatureInsightsPage() {
                     <div className="flex items-center justify-between">
                       <CardTitle>Behavioral Signal Interpretation</CardTitle>
                       {selectedFeature && (
-                        <Badge variant="cyan" size="sm">
+                        <Badge variant="crimson" size="sm">
                           Rank #{selectedFeature.rank}
                         </Badge>
                       )}
@@ -251,47 +247,47 @@ export function FeatureInsightsPage() {
                   <CardContent className="space-y-4 pt-4">
                     {selectedFeature ? (
                       <>
-                        <div className="rounded-xl bg-[#080B14] p-4 border border-white/10">
-                          <span className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">
+                        <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B]">
+                          <span className="text-[10px] text-[#A6AEA5] uppercase tracking-wider font-tech">
                             Feature Identifier
                           </span>
-                          <h4 className="mt-1 font-mono text-base font-bold text-white">
+                          <h4 className="mt-1 font-tech text-base font-bold text-[#F2F0E8]">
                             {selectedFeature.feature}
                           </h4>
                           <div className="mt-2 flex items-center gap-3">
-                            <Badge variant="violet" size="sm">
+                            <Badge variant="forest" size="sm">
                               Importance: {selectedFeature.importanceMean.toFixed(6)}
                             </Badge>
-                            <span className="text-xs font-mono text-slate-400">
+                            <span className="text-xs font-tech text-[#A6AEA5]">
                               σ = {selectedFeature.importanceStd.toFixed(6)}
                             </span>
                           </div>
                         </div>
 
-                        <div className="rounded-xl bg-[#11182A] p-4 border border-white/5 space-y-2">
-                          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#53DDE0]">
+                        <div className="rounded-xl bg-[#111611] p-4 border border-[#29332B] space-y-2">
+                          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#447A56]">
                             <Lightbulb className="h-4 w-4" />
                             Behavioral Explanation
                           </div>
-                          <p className="text-xs text-slate-300 leading-relaxed">
+                          <p className="text-xs text-[#A6AEA5] leading-relaxed">
                             {selectedFeature.interpretation ||
                               'This metric measures customer purchasing frequency and commitment over the 180-day observation window.'}
                           </p>
                         </div>
 
-                        <div className="rounded-xl bg-[#11182A] p-4 border border-white/5 space-y-2">
-                          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#F5BD64]">
+                        <div className="rounded-xl bg-[#111611] p-4 border border-[#29332B] space-y-2">
+                          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#C48232]">
                             <Compass className="h-4 w-4" />
                             Retention Team Takeaway
                           </div>
-                          <p className="text-xs text-slate-300 leading-relaxed">
+                          <p className="text-xs text-[#A6AEA5] leading-relaxed">
                             Customers exhibiting a decline in this feature should be prioritized for early re-engagement
                             before complete inactivity takes hold.
                           </p>
                         </div>
                       </>
                     ) : (
-                      <div className="p-8 text-center text-slate-500">
+                      <div className="p-8 text-center text-[#A6AEA5]">
                         Select a feature from the chart to view its deep-dive details.
                       </div>
                     )}
@@ -300,13 +296,13 @@ export function FeatureInsightsPage() {
 
                 {/* Important Cautionary Banner */}
                 <div className="p-5 pt-0">
-                  <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-3.5 flex items-start gap-2.5">
-                    <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
-                    <p className="text-[11px] text-amber-200/90 leading-relaxed">
-                      <span className="font-semibold text-white">Predictive Association vs. Causation:</span> A high
+                  <div className="rounded-lg bg-[#C48232]/10 border border-[#C48232]/30 p-3.5 flex items-start gap-2.5">
+                    <AlertTriangle className="h-4 w-4 text-[#C48232] shrink-0 mt-0.5" />
+                    <p className="text-[11px] text-[#A6AEA5] leading-relaxed">
+                      <span className="font-semibold text-[#F2F0E8]">Predictive Association vs. Causation: </span> A high
                       importance score confirms that this signal is predictive in historical data. It does{' '}
-                      <span className="underline">not</span> imply that artificially manipulating this variable will
-                      cause customer retention.
+                      <span className="underline text-[#F2F0E8]">not</span> imply that artificially manipulating this variable will
+                      guarantee customer retention.
                     </p>
                   </div>
                 </div>

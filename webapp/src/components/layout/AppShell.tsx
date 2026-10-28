@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { Sidebar } from './Sidebar';
+import { motion, AnimatePresence } from 'motion/react';
 import { TopBar } from './TopBar';
 
 interface AppShellProps {
@@ -8,83 +8,65 @@ interface AppShellProps {
   isBackendConnected?: boolean;
 }
 
-const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
-  '/': {
-    title: 'Customer Intelligence & Retention Posture',
-    subtitle: 'Predicting 90-day repeat purchase probability and customer inactivity risk',
-  },
-  '/prediction-studio': {
-    title: 'Prediction Studio & Counterfactual Inference',
-    subtitle: 'Real-time Scikit-Learn pipeline inference on new, unseen customer behavioral records',
-  },
-  '/customers': {
-    title: 'Customer Retention Explorer',
-    subtitle: 'Individual inactivity risk scores, repeat purchase probabilities, and priority outreach tiers',
-  },
-  '/model': {
-    title: 'Model Performance & Validation',
-    subtitle: 'Retrospective out-of-time evaluation metrics, lift over baseline, and confusion matrix',
-  },
-  '/features': {
-    title: 'Feature Importance & Signals',
-    subtitle: 'Permutation importance ranking on holdout test cohort with behavioral interpretations',
-  },
-  '/methodology': {
-    title: 'Methodology & Business ROI',
-    subtitle: 'Temporal rolling-origin design, causal validation boundaries, and financial scenario simulation',
-  },
-};
-
-export function AppShell({ isDataConnected = false, isBackendConnected = false }: AppShellProps) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+export function AppShell({ isDataConnected = true, isBackendConnected = true }: AppShellProps) {
   const location = useLocation();
 
-  const currentMeta = PAGE_TITLES[location.pathname] || {
-    title: 'ChurnShield Intelligence',
-    subtitle: 'Customer Inactivity Prediction Platform',
-  };
-
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#080B14] text-slate-100 font-sans">
-      {/* Desktop Sidebar */}
-      <div className="hidden md:flex h-full shrink-0">
-        <Sidebar
-          isDataConnected={isDataConnected}
-          isBackendConnected={isBackendConnected}
-        />
+    <div className="min-h-screen bg-[#090B09] text-[#F2F0E8] font-ui flex flex-col selection:bg-[#C82038]/30 selection:text-white relative">
+      {/* Ambient background lighting */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Subtle top forest glow */}
+        <div className="absolute -top-[20%] left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-gradient-to-b from-[#214D35]/12 via-[#102016]/8 to-transparent rounded-full blur-3xl" />
+        {/* Subtle bottom-right crimson reflection */}
+        <div className="absolute -bottom-[10%] right-[-10%] w-[600px] h-[400px] bg-gradient-to-t from-[#C82038]/6 to-transparent rounded-full blur-3xl" />
       </div>
 
-      {/* Mobile Drawer Sidebar */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 flex md:hidden">
-          <div
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm"
-            onClick={() => setMobileMenuOpen(false)}
-          />
-          <div className="relative z-10 h-full">
-            <Sidebar
-              isDataConnected={isDataConnected}
-              isBackendConnected={isBackendConnected}
-              onCloseMobile={() => setMobileMenuOpen(false)}
-            />
+      {/* Slim Editorial Top Navigation */}
+      <TopBar
+        isDataConnected={isDataConnected}
+        isBackendConnected={isBackendConnected}
+      />
+
+      {/* Page Content with smooth transition */}
+      <main className="relative z-10 flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
+      </main>
+
+      {/* Minimal Editorial Footer */}
+      <footer className="relative z-10 border-t border-[#29332B]/80 bg-[#090B09]/95 py-6 px-4 sm:px-8 text-xs text-[#A6AEA5]">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="font-editorial text-sm font-semibold tracking-wider text-[#F2F0E8]">CHURNSHIELD</span>
+            <span className="text-[#29332B] font-mono">/</span>
+            <span className="font-ui text-[11px] text-[#A6AEA5]">Non-Contractual E-Commerce Retention Intelligence</span>
+          </div>
+
+          <div className="flex items-center gap-4 text-[11px] font-tech text-[#A6AEA5]">
+            <span>130,914 Curated Records</span>
+            <span className="text-[#29332B]">•</span>
+            <span>Balanced Logistic Regression</span>
+            <span className="text-[#29332B]">•</span>
+            <a
+              href="https://github.com/SharmaaAnmol/ChurnShield"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#F2F0E8] hover:text-[#C82038] transition-colors"
+            >
+              GitHub Portfolio
+            </a>
           </div>
         </div>
-      )}
-
-      {/* Main Content Area */}
-      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
-        <TopBar
-          title={currentMeta.title}
-          subtitle={currentMeta.subtitle}
-          onOpenMobileMenu={() => setMobileMenuOpen(true)}
-        />
-
-        <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
-          <div className="mx-auto max-w-7xl">
-            <Outlet />
-          </div>
-        </main>
-      </div>
+      </footer>
     </div>
   );
 }

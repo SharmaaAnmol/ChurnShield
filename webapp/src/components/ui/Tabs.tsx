@@ -19,7 +19,7 @@ export function Tabs({ tabs, activeTab, onChange, className }: TabsProps) {
   return (
     <div
       className={cn(
-        'inline-flex items-center gap-1 p-1 rounded-lg bg-[#0B1020] border border-white/[0.06]',
+        'inline-flex items-center gap-1 p-1 rounded-lg bg-[#111611] border border-[#29332B]',
         className
       )}
     >
@@ -32,8 +32,8 @@ export function Tabs({ tabs, activeTab, onChange, className }: TabsProps) {
             className={cn(
               'flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150 cursor-pointer',
               isActive
-                ? 'bg-[#161F34] text-white shadow-sm border border-white/[0.08]'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]'
+                ? 'bg-[#214D35] text-[#F2F0E8] shadow-sm border border-[#447A56]'
+                : 'text-[#A6AEA5] hover:text-[#F2F0E8] hover:bg-[#171D18]'
             )}
           >
             {tab.icon && <span className="opacity-80">{tab.icon}</span>}
@@ -41,8 +41,8 @@ export function Tabs({ tabs, activeTab, onChange, className }: TabsProps) {
             {tab.count !== undefined && (
               <span
                 className={cn(
-                  'px-1.5 py-0.2 rounded-full text-[10px] font-mono',
-                  isActive ? 'bg-[#8B7CFF]/20 text-[#8B7CFF]' : 'bg-slate-800 text-slate-400'
+                  'px-1.5 py-0.2 rounded text-[10px] font-tech',
+                  isActive ? 'bg-[#111611] text-[#F2F0E8]' : 'bg-[#171D18] text-[#A6AEA5]'
                 )}
               >
                 {tab.count}
