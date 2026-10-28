@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #080B14;
+  --color-surface: #0B1020;
+  --color-card: #11182A;
+  --color-card-elevated: #161F34;
+  --color-card-border: rgba(255, 255, 255, 0.08);
+  
+  --color-accent-violet: #8B7CFF;
+  --color-accent-cyan: #53DDE0;
+  --color-accent-mint: #69DDA5;
+  --color-accent-amber: #F5BD64;
+  --color-accent-coral: #FB7185;
+
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+:root {
+  --canvas: #080B14;
+  --surface: #0B1020;
+  --card: #11182A;
+  --card-elevated: #161F34;
+  --card-border: rgba(255, 255, 255, 0.08);
+  --accent-violet: #8B7CFF;
+  --accent-cyan: #53DDE0;
+  --accent-mint: #69DDA5;
+  --accent-amber: #F5BD64;
+  --accent-coral: #FB7185;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #080B14;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E293B;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: rgba(17, 24, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.glass-panel-elevated {
+  background: rgba(22, 31, 52, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.glow-violet {
+  box-shadow: 0 0 25px -5px rgba(139, 124, 255, 0.25);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 25px -5px rgba(83, 221, 224, 0.25);
+}
+
+/* Shimmer animation for empty / loading states */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.03) 20%,
+    rgba(255, 255, 255, 0.06) 60%,
+    rgba(255, 255, 255, 0)
+  );
+  animation: shimmer 2s infinite;
+}

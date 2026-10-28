@@ -1,0 +1,128 @@
+[
+  {
+    "feature": "orders_recent_90d",
+    "importance_mean": 0.009339,
+    "importance_std": 0.000272,
+    "rank": 1
+  },
+  {
+    "feature": "spend_ratio_recent_vs_earlier",
+    "importance_mean": 0.006754,
+    "importance_std": 0.000497,
+    "rank": 2
+  },
+  {
+    "feature": "order_count",
+    "importance_mean": 0.00321,
+    "importance_std": 0.000948,
+    "rank": 3
+  },
+  {
+    "feature": "median_order_value",
+    "importance_mean": 0.00287,
+    "importance_std": 0.000257,
+    "rank": 4
+  },
+  {
+    "feature": "recency_days",
+    "importance_mean": 0.002194,
+    "importance_std": 0.000448,
+    "rank": 5
+  },
+  {
+    "feature": "total_items",
+    "importance_mean": 0.001973,
+    "importance_std": 0.00025,
+    "rank": 6
+  },
+  {
+    "feature": "order_ratio_recent_vs_earlier",
+    "importance_mean": 0.001747,
+    "importance_std": 0.000972,
+    "rank": 7
+  },
+  {
+    "feature": "total_spend",
+    "importance_mean": 0.001615,
+    "importance_std": 0.000494,
+    "rank": 8
+  },
+  {
+    "feature": "distinct_sellers",
+    "importance_mean": 0.001443,
+    "importance_std": 0.000241,
+    "rank": 9
+  },
+  {
+    "feature": "tenure_days",
+    "importance_mean": 0.000788,
+    "importance_std": 0.000229,
+    "rank": 10
+  },
+  {
+    "feature": "customer_state",
+    "importance_mean": 0.000738,
+    "importance_std": 0.000827,
+    "rank": 11
+  },
+  {
+    "feature": "has_multiple_orders",
+    "importance_mean": 0.000479,
+    "importance_std": 0.000263,
+    "rank": 12
+  },
+  {
+    "feature": "total_freight",
+    "importance_mean": 0.000345,
+    "importance_std": 9.3e-05,
+    "rank": 13
+  },
+  {
+    "feature": "avg_order_value",
+    "importance_mean": 5.8e-05,
+    "importance_std": 0.000158,
+    "rank": 14
+  },
+  {
+    "feature": "freight_ratio",
+    "importance_mean": -6e-05,
+    "importance_std": 2.5e-05,
+    "rank": 15
+  },
+  {
+    "feature": "spend_recent_90d",
+    "importance_mean": -8.8e-05,
+    "importance_std": 0.000116,
+    "rank": 16
+  },
+  {
+    "feature": "distinct_products",
+    "importance_mean": -9.2e-05,
+    "importance_std": 5.2e-05,
+    "rank": 17
+  },
+  {
+    "feature": "order_value_std",
+    "importance_mean": -0.000202,
+    "importance_std": 2.6e-05,
+    "rank": 18
+  },
+  {
+    "feature": "avg_inter_order_days",
+    "importance_mean": -0.000322,
+    "importance_std": 0.000442,
+    "rank": 19
+  },
+  {
+    "feature": "avg_items_per_order",
+    "importance_mean": -0.000688,
+    "importance_std": 0.000174,
+    "rank": 20
+  },
+  {
+    "feature": "std_inter_order_days",
+    "importance_mean": -0.003264,
+    "importance_std": 8e-06,
+    "rank": 21
+  }
+]

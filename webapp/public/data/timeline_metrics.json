@@ -1,0 +1,164 @@
+{
+  "2017-06-01": {
+    "timelineId": "2017-06-01",
+    "label": "2017-06-01",
+    "quarterLabel": "Q2 2017",
+    "totalCustomersEvaluated": 10955,
+    "actualRepeatPurchasers": 97,
+    "actualInactiveCustomers": 10858,
+    "baseRepeatPurchaseRate": 0.008854,
+    "baseInactivityRate": 0.991146,
+    "prAuc": 0.0183,
+    "rocAuc": 0.5588,
+    "recall": 0.4845,
+    "balancedAccuracy": 0.5346,
+    "prAucLiftOverDummy": 2.06,
+    "recommendedContactCount": 2191,
+    "riskDistribution": {
+      "highRisk": 259,
+      "moderateRisk": 10340,
+      "lowRisk": 356
+    },
+    "confusionMatrix": {
+      "tn": 6349,
+      "fp": 4509,
+      "fn": 50,
+      "tp": 47
+    }
+  },
+  "2017-09-01": {
+    "timelineId": "2017-09-01",
+    "label": "2017-09-01",
+    "quarterLabel": "Q3 2017",
+    "totalCustomersEvaluated": 19338,
+    "actualRepeatPurchasers": 186,
+    "actualInactiveCustomers": 19152,
+    "baseRepeatPurchaseRate": 0.009618,
+    "baseInactivityRate": 0.990382,
+    "prAuc": 0.0335,
+    "rocAuc": 0.5967,
+    "recall": 0.4785,
+    "balancedAccuracy": 0.5666,
+    "prAucLiftOverDummy": 3.48,
+    "recommendedContactCount": 3868,
+    "riskDistribution": {
+      "highRisk": 475,
+      "moderateRisk": 18291,
+      "lowRisk": 572
+    },
+    "confusionMatrix": {
+      "tn": 12539,
+      "fp": 6613,
+      "fn": 97,
+      "tp": 89
+    }
+  },
+  "2017-12-01": {
+    "timelineId": "2017-12-01",
+    "label": "2017-12-01",
+    "quarterLabel": "Q4 2017",
+    "totalCustomersEvaluated": 26682,
+    "actualRepeatPurchasers": 236,
+    "actualInactiveCustomers": 26446,
+    "baseRepeatPurchaseRate": 0.008845,
+    "baseInactivityRate": 0.991155,
+    "prAuc": 0.0219,
+    "rocAuc": 0.5956,
+    "recall": 0.5085,
+    "balancedAccuracy": 0.5634,
+    "prAucLiftOverDummy": 2.47,
+    "recommendedContactCount": 5336,
+    "riskDistribution": {
+      "highRisk": 639,
+      "moderateRisk": 25162,
+      "lowRisk": 881
+    },
+    "confusionMatrix": {
+      "tn": 16354,
+      "fp": 10092,
+      "fn": 116,
+      "tp": 120
+    }
+  },
+  "2018-03-01": {
+    "timelineId": "2018-03-01",
+    "label": "2018-03-01",
+    "quarterLabel": "Q1 2018",
+    "totalCustomersEvaluated": 34777,
+    "actualRepeatPurchasers": 287,
+    "actualInactiveCustomers": 34490,
+    "baseRepeatPurchaseRate": 0.008253,
+    "baseInactivityRate": 0.991747,
+    "prAuc": 0.0173,
+    "rocAuc": 0.5543,
+    "recall": 0.446,
+    "balancedAccuracy": 0.5409,
+    "prAucLiftOverDummy": 2.1,
+    "recommendedContactCount": 6955,
+    "riskDistribution": {
+      "highRisk": 858,
+      "moderateRisk": 32922,
+      "lowRisk": 997
+    },
+    "confusionMatrix": {
+      "tn": 21926,
+      "fp": 12564,
+      "fn": 159,
+      "tp": 128
+    }
+  },
+  "2018-06-01": {
+    "timelineId": "2018-06-01",
+    "label": "2018-06-01",
+    "quarterLabel": "Q2 2018",
+    "totalCustomersEvaluated": 39162,
+    "actualRepeatPurchasers": 270,
+    "actualInactiveCustomers": 38892,
+    "baseRepeatPurchaseRate": 0.006894,
+    "baseInactivityRate": 0.993106,
+    "prAuc": 0.0117,
+    "rocAuc": 0.5849,
+    "recall": 0.4259,
+    "balancedAccuracy": 0.5575,
+    "prAucLiftOverDummy": 1.7,
+    "recommendedContactCount": 7832,
+    "riskDistribution": {
+      "highRisk": 963,
+      "moderateRisk": 37285,
+      "lowRisk": 914
+    },
+    "confusionMatrix": {
+      "tn": 26802,
+      "fp": 12090,
+      "fn": 155,
+      "tp": 115
+    }
+  },
+  "all": {
+    "timelineId": "all",
+    "label": "All Timelines (130k Cumulative)",
+    "quarterLabel": "2017 - 2018 All Snapshots",
+    "totalCustomersEvaluated": 130914,
+    "actualRepeatPurchasers": 1076,
+    "actualInactiveCustomers": 129838,
+    "baseRepeatPurchaseRate": 0.008219,
+    "baseInactivityRate": 0.991781,
+    "prAuc": 0.0185,
+    "rocAuc": 0.582,
+    "recall": 0.468,
+    "balancedAccuracy": 0.551,
+    "prAucLiftOverDummy": 2.2,
+    "recommendedContactCount": 26183,
+    "riskDistribution": {
+      "highRisk": 3194,
+      "moderateRisk": 124000,
+      "lowRisk": 3720
+    },
+    "confusionMatrix": {
+      "tn": 88600,
+      "fp": 41238,
+      "fn": 573,
+      "tp": 504
+    }
+  }
+}
