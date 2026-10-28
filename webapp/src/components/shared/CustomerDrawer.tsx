@@ -15,6 +15,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { CustomerPrediction } from '../../lib/data/types';
+import { generateDynamicRetentionPlay } from '../../lib/data/model-inference-engine';
 import { RiskBadge } from './RiskBadge';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
@@ -158,19 +159,54 @@ export function CustomerDrawer({ customer, isOpen, onClose }: CustomerDrawerProp
               </div>
 
               {/* Recommended Retention Action */}
-              <div className="rounded-xl border border-[#214D35] bg-[#102016]/40 p-4">
-                <div className="flex items-center gap-2 text-xs font-semibold text-[#447A56]">
-                  <Sparkles className="h-4 w-4" />
-                  Recommended Retention Playbook
-                </div>
-                <p className="mt-1.5 text-xs text-[#A6AEA5] leading-relaxed">
-                  {customer.priorityRetentionTarget
-                    ? 'Deploy targeted win-back outreach within 7 days. Customer is in the top 20% inactivity decile with proven past purchasing history.'
-                    : customer.inactivityRiskScore >= 0.7
-                    ? 'Automated low-cost email re-engagement or educational push notification to avoid exhausting retention budget.'
-                    : 'Customer demonstrates above-baseline natural re-order propensity. Maintain regular loyalty communications.'}
-                </p>
-              </div>
+              {(() => {
+                const retentionPlay = generateDynamicRetentionPlay(
+                  customer.repeatPurchaseProbability >= 0.5 ? 1 : 0,
+                  customer.inactivityRiskScore,
+                  customer.repeatPurchaseProbability,
+                  {
+                    recency_days: customer.recencyDays,
+                    total_spend: customer.totalSpend,
+                    order_count: customer.orderCount,
+                    orders_recent_90d: customer.ordersRecent90d,
+                    freight_ratio: 0.18,
+                    tenure_days: customer.tenureDays,
+                  }
+                );
+
+                return (
+                  <div
+                    className={`rounded-xl border p-4 transition-colors ${
+                      customer.inactivityRiskScore >= 0.7
+                        ? 'border-[#C82038]/40 bg-[#C82038]/10'
+                        : customer.inactivityRiskScore >= 0.4
+                        ? 'border-[#C48232]/40 bg-[#C48232]/10'
+                        : 'border-[#214D35] bg-[#102016]/40'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div
+                        className={`flex items-center gap-2 text-xs font-semibold ${
+                          customer.inactivityRiskScore >= 0.7
+                            ? 'text-[#E33B4F]'
+                            : customer.inactivityRiskScore >= 0.4
+                            ? 'text-[#C48232]'
+                            : 'text-[#447A56]'
+                        }`}
+                      >
+                        <Sparkles className="h-4 w-4" />
+                        <span>{retentionPlay.title}</span>
+                      </div>
+                      <span className="text-[10px] font-tech text-[#A6AEA5] bg-[#090B09] px-2 py-0.5 rounded border border-[#29332B]">
+                        {retentionPlay.channel}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-xs text-[#F2F0E8]/90 leading-relaxed font-medium">
+                      {retentionPlay.action}
+                    </p>
+                  </div>
+                );
+              })()}
 
               {/* Historical Behavioral Snapshot */}
               <div>

@@ -1418,13 +1418,36 @@ export function PredictionStudioPage() {
                           </div>
                         </div>
 
-                        {/* Summary & Recommended Action */}
-                        <div className="rounded-xl bg-[#102016]/50 p-3.5 border border-[#214D35] text-xs text-[#A6AEA5] space-y-1.5">
-                          <span className="font-semibold text-[#447A56] flex items-center gap-1.5 text-xs">
-                            <Sparkles className="h-3.5 w-3.5" />
-                            Recommended Retention Play
-                          </span>
-                          <p className="text-xs leading-relaxed text-[#F2F0E8]/90">
+                        {/* Summary & Recommended Dynamic Action */}
+                        <div
+                          className={`rounded-xl p-4 border text-xs space-y-2 transition-colors duration-300 ${
+                            predictionResult.predictedClass === 1
+                              ? 'bg-[#102016]/60 border-[#214D35]'
+                              : predictionResult.inactivityRiskScore >= 0.7
+                              ? 'bg-[#C82038]/10 border-[#C82038]/40'
+                              : 'bg-[#C48232]/10 border-[#C48232]/40'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span
+                              className={`font-semibold flex items-center gap-1.5 text-xs ${
+                                predictionResult.predictedClass === 1
+                                  ? 'text-[#447A56]'
+                                  : predictionResult.inactivityRiskScore >= 0.7
+                                  ? 'text-[#E33B4F]'
+                                  : 'text-[#C48232]'
+                              }`}
+                            >
+                              <Sparkles className="h-3.5 w-3.5" />
+                              <span>{predictionResult.recommendedPlayTitle || 'Dynamic Retention Play'}</span>
+                            </span>
+                            {predictionResult.recommendedPlayChannel && (
+                              <span className="text-[10px] font-tech text-[#A6AEA5] bg-[#090B09] px-2 py-0.5 rounded border border-[#29332B]">
+                                {predictionResult.recommendedPlayChannel}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs leading-relaxed text-[#F2F0E8]/90 font-medium">
                             {predictionResult.recommendedAction}
                           </p>
                         </div>

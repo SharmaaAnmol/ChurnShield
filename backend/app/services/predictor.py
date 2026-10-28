@@ -128,34 +128,30 @@ class ChurnShieldPredictor:
         else:
             prediction_label = "At risk of no repeat purchase within 90 days"
 
-        # Generate contextual drivers
+        # Generate contextual drivers & dynamic retention play
         key_drivers = self._analyze_drivers(req, p_repeat, inactivity_risk)
+        play = self._generate_retention_play(predicted_class, inactivity_risk, p_repeat, req)
 
         if predicted_class == 1:
             summary = (
                 f"The model estimates a {p_repeat:.1%} probability of repeat purchase within 90 days "
                 f"(Inactivity risk: {inactivity_risk:.1%}). The customer exceeds the 50% decision threshold "
-                f"driven by recent purchasing momentum."
-            )
-            retention_action = (
-                "Enroll in VIP loyalty rewards program. Maintain regular product recommendations "
-                "to capitalize on high repeat propensity without excessive margin discounts."
+                f"driven by active engagement."
             )
         else:
+            primary_factor = (
+                "extended recency dormancy"
+                if req.recency_days >= 90.0
+                else "elevated freight-to-spend ratio"
+                if req.freight_ratio >= 0.22
+                else "decelerating purchasing velocity"
+            )
             summary = (
                 f"The model estimates a {inactivity_risk:.1%} risk of customer inactivity over the next 90 days "
-                f"(Repeat purchase probability: {p_repeat:.1%}). Below the 50% threshold."
+                f"(Repeat purchase probability: {p_repeat:.1%}). Primarily impacted by {primary_factor}."
             )
-            if risk_tier == "high":
-                retention_action = (
-                    "High Priority Action Tier: Trigger immediate win-back outreach (e.g. personalized voucher or "
-                    "in-app promotion) within 7 days before complete customer disengagement."
-                )
-            else:
-                retention_action = (
-                    "Moderate Attention Tier: Include in scheduled marketing newsletters and monitor for further "
-                    "recency deterioration."
-                )
+
+        retention_action = f"{play['title']}: {play['action']}"
 
         explanation = PredictionExplanation(
             summary=summary,
@@ -174,6 +170,87 @@ class ChurnShieldPredictor:
             features_received=data_dict,
             explanation=explanation
         )
+
+    def _generate_retention_play(
+        self,
+        predicted_class: int,
+        inactivity_risk: float,
+        p_repeat: float,
+        req: CustomerInferenceRequest
+    ) -> Dict[str, str]:
+        recency = req.recency_days
+        total_spend = req.total_spend
+        order_count = req.order_count
+        recent_orders = req.orders_recent_90d
+        freight_ratio = req.freight_ratio
+
+        if predicted_class == 0 or inactivity_risk >= 0.50:
+            if total_spend >= 350.0 or (order_count >= 2 and total_spend >= 250.0):
+                return {
+                    "title": "VIP Concierge Win-Back",
+                    "action": f"High-value customer (${total_spend:.0f} lifetime spend) is disengaging ({recency:.0f}d dormant). Unit economics justify high-touch concierge outreach with an exclusive $30–$50 account credit or personalized direct message before irreversible defection.",
+                    "channel": "Personalized Concierge / SMS"
+                }
+            if freight_ratio >= 0.22:
+                return {
+                    "title": "Friction Elimination: 100% Free Shipping Pass",
+                    "action": f"Model identifies excessive shipping overhead ({freight_ratio:.0%} freight-to-spend ratio) as the primary re-order friction. Issue a targeted 'Free Shipping on Your Next 2 Orders' subsidy to eliminate logistics hesitation.",
+                    "channel": "Automated Email Voucher"
+                }
+            if order_count >= 2 and recent_orders == 0 and recency <= 95.0:
+                return {
+                    "title": "Early Cadence Intercept & Replenishment Nudge",
+                    "action": f"Customer previously established repeat buying patterns ({order_count} lifetime orders) but went completely dormant in the last 90 days. Deploy a dynamic replenishment reminder with a 15% discount expiring in 72 hours before habit dissolution becomes permanent.",
+                    "channel": "Push Notification + Email"
+                }
+            if recency >= 120.0 or inactivity_risk >= 0.90:
+                return {
+                    "title": "Critical Attrition: Automated Last-Chance Reactivation",
+                    "action": f"Severe inactivity detected ({recency:.0f}d dormant, {inactivity_risk:.1%} churn risk). Routine marketing prompts will bounce. Deliver a high-urgency reactivation offer (25% off or bonus mystery gift) with a single-click checkout link.",
+                    "channel": "SMS / Direct Push"
+                }
+            if order_count == 1 and recency <= 90.0:
+                return {
+                    "title": "Second-Order Conversion Sequence",
+                    "action": "Customer has only 1 lifetime order. The first-to-second order transition is the highest-leverage retention hurdle. Deploy curated accessory cross-sells, onboarding guides, and a $10 first-repeat coupon to establish purchase habituation.",
+                    "channel": "Lifecycle Onboarding Sequence"
+                }
+            if total_spend < 60.0 and inactivity_risk >= 0.70:
+                return {
+                    "title": "Margin-Safe Automated Lifecycle Drip",
+                    "action": f"Low historical spend (${total_spend:.0f}) does not warrant margin discounts or paid ad re-targeting. Route into zero-marginal-cost automated lifecycle email sequences with product showcases and social proof.",
+                    "channel": "Automated Email Drip"
+                }
+            return {
+                "title": "Proactive Loyalty Nudge & Category Showcase",
+                "action": f"Inactivity risk is accelerating ({inactivity_risk:.1%}), but customer has not fully disengaged. Preserve margins by avoiding steep discounts; deliver trending category arrivals, peer reviews, and a 2x loyalty points multiplier.",
+                "channel": "Weekly Highlights Email"
+            }
+
+        # Likely to repeat
+        if total_spend >= 500.0 or order_count >= 4:
+            return {
+                "title": "Elite VIP Tier Perks & Early Access",
+                "action": f"Customer is a high-conviction brand champion ({order_count} orders, ${total_spend:.0f} lifetime spend). Strict margin preservation: do not issue price discounts. Provide exclusive preview access to new product drops, VIP concierge support, and referral rewards.",
+                "channel": "VIP Portal / Private Invite"
+            }
+        if recent_orders >= 2 and recency <= 30.0:
+            return {
+                "title": "Cross-Category Expansion & Basket Growth",
+                "action": f"Exceptional current velocity ({recent_orders} orders in last 90 days, {recency:.0f}d recency). Leverage active buying window to introduce complementary product lines and bundle incentives to increase basket size.",
+                "channel": "In-App Post-Checkout Carousel"
+            }
+        if order_count >= 2 and recent_orders >= 1:
+            return {
+                "title": "Loyalty Milestone & Habit Institutionalization",
+                "action": f"Successfully converted past the initial repeat hurdle ({order_count} orders). Incentivize milestone loyalty program enrollment (e.g. unlock Tier 2 perks on next order) to cement permanent brand habituation.",
+                "channel": "Milestone Notification / Email"
+            }
+        return {
+            "title": "Sustained Engagement & Social Referral",
+            "action": f"Customer demonstrates healthy organic repeat propensity ({p_repeat:.1%}). Maintain regular weekly product highlights, post-purchase satisfaction surveys, and reciprocal referral bonus invitations without margin erosion.",
+            "channel": "Standard Loyalty Communications"
+        }
 
     def _analyze_drivers(
         self,
