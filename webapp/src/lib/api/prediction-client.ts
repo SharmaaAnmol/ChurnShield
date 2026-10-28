@@ -92,7 +92,8 @@ export interface PredictionResult {
   explanation: PredictionExplanation;
 }
 
-const API_BASE_URL = ((import.meta as any).env?.VITE_API_BASE_URL as string) || 'http://localhost:8000';
+const RAW_API_BASE_URL = ((import.meta as any).env?.VITE_API_BASE_URL as string) || 'http://localhost:8000';
+export const API_BASE_URL = RAW_API_BASE_URL.replace(/\/+$/, '');
 
 export class ApiError extends Error {
   status?: number;

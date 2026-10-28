@@ -3,11 +3,21 @@ ChurnShield Predictor Service
 Wraps the trained Scikit-Learn pipeline and handles real model inference.
 """
 
+import os
 import json
+import warnings
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 import joblib
 import pandas as pd
+
+# Suppress minor version warning across cloud environments
+try:
+    from sklearn.exceptions import InconsistentVersionWarning
+    warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
+except ImportError:
+    pass
+
 from ..schemas import (
     CustomerInferenceRequest,
     PredictionResponse,
@@ -43,7 +53,11 @@ EXPECTED_FEATURE_ORDER = [
 class ChurnShieldPredictor:
     def __init__(self, artifact_dir: Optional[Path] = None):
         if artifact_dir is None:
-            artifact_dir = Path(__file__).resolve().parent.parent.parent / "artifacts"
+            env_artifact_dir = os.getenv("ARTIFACT_DIR")
+            if env_artifact_dir:
+                artifact_dir = Path(env_artifact_dir)
+            else:
+                artifact_dir = Path(__file__).resolve().parent.parent.parent / "artifacts"
         self.artifact_dir = artifact_dir
         self.pipeline = None
         self.metadata = {}

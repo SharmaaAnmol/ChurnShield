@@ -34,12 +34,17 @@ allowed_origins_env = os.getenv(
     "ALLOWED_ORIGINS",
     "http://localhost:5173,http://localhost:4173,http://127.0.0.1:5173,http://127.0.0.1:4173"
 )
-allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",") if origin.strip()]
+if allowed_origins_env.strip() == "*":
+    allowed_origins = ["*"]
+    allow_credentials = False
+else:
+    allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",") if origin.strip()]
+    allow_credentials = True
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=True,
+    allow_credentials=allow_credentials,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
@@ -74,6 +79,24 @@ async def global_exception_handler(request: Request, exc: Exception):
             "message": "An error occurred during model prediction. Please verify inputs.",
         },
     )
+
+@app.get("/")
+async def root():
+    """
+    Root discovery endpoint for hosting platform health checks.
+    """
+    return {
+        "service": "ChurnShield ML Inference API",
+        "status": "online",
+        "model_loaded": predictor.is_ready,
+        "endpoints": {
+            "health": "/api/health",
+            "model_info": "/api/model-info",
+            "model_schema": "/api/model-schema",
+            "predict": "/api/predict",
+            "documentation": "/docs"
+        }
+    }
 
 @app.get("/api/health", response_model=HealthResponse)
 async def health_check():
@@ -140,3 +163,10 @@ async def predict_customer(payload: CustomerInferenceRequest):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Model inference failed. Ensure feature values are within valid operational ranges."
         )
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.getenv("PORT", 8000))
+    host = os.getenv("HOST", "0.0.0.0")
+    uvicorn.run("app.main:app", host=host, port=port, reload=False)
+
