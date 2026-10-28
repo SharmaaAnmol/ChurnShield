@@ -1474,10 +1474,20 @@ export function PredictionStudioPage() {
                         <Tooltip
                           contentStyle={{
                             backgroundColor: '#111611',
-                            border: '1px solid #29332B',
+                            border: '1px solid #C82038',
                             borderRadius: '8px',
                             fontSize: '11px',
+                            color: '#E33B4F',
+                            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.75)',
+                          }}
+                          itemStyle={{
+                            color: '#E33B4F',
+                            fontWeight: 600,
+                          }}
+                          labelStyle={{
                             color: '#F2F0E8',
+                            fontWeight: 600,
+                            marginBottom: '4px',
                           }}
                           formatter={(val: any, name: any) => [
                             `${val}%`,
@@ -1645,10 +1655,20 @@ export function PredictionStudioPage() {
                         <Tooltip
                           contentStyle={{
                             backgroundColor: '#111611',
-                            border: '1px solid #29332B',
+                            border: '1px solid #C82038',
                             borderRadius: '8px',
                             fontSize: '11px',
+                            color: '#E33B4F',
+                            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.75)',
+                          }}
+                          itemStyle={{
+                            color: '#E33B4F',
+                            fontWeight: 600,
+                          }}
+                          labelStyle={{
                             color: '#F2F0E8',
+                            fontWeight: 600,
+                            marginBottom: '4px',
                           }}
                           formatter={(val: any, name: any, item: any) => [
                             `${Number(val).toFixed(3)} log-odds impact (${item.payload.valueDisplay})`,

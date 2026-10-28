@@ -184,3 +184,27 @@
     @apply font-sans;
   }
 }
+
+/* Recharts Tooltip Crimson Red Global Theme Override */
+.recharts-default-tooltip {
+  background-color: #111611 !important;
+  border: 1px solid #C82038 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75) !important;
+  padding: 8px 12px !important;
+}
+
+.recharts-tooltip-label {
+  color: #F2F0E8 !important;
+  font-weight: 600 !important;
+  margin-bottom: 4px !important;
+}
+
+.recharts-tooltip-item,
+.recharts-tooltip-item-name,
+.recharts-tooltip-item-separator,
+.recharts-tooltip-item-value,
+.recharts-tooltip-item-unit {
+  color: #E33B4F !important;
+  font-weight: 600 !important;
+}
