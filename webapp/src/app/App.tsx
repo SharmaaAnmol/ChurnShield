@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { AppShell } from '../components/layout/AppShell';
 import { OverviewPage } from '../pages/OverviewPage';
 import { PredictionStudioPage } from '../pages/PredictionStudioPage';
@@ -58,6 +59,7 @@ export function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      <Analytics />
     </TimelineProvider>
   );
 }
