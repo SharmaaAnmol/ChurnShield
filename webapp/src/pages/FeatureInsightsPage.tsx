@@ -198,6 +198,9 @@ export function FeatureInsightsPage() {
                           dataKey="importance"
                           radius={[0, 4, 4, 0]}
                           cursor="pointer"
+                          isAnimationActive={true}
+                          animationDuration={800}
+                          animationEasing="ease-out"
                         >
                           {chartData.map((entry, index) => {
                             const isSelected = selectedFeature?.feature === entry.name;

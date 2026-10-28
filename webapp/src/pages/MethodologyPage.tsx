@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
+import { ScrollReveal } from '../components/ui/ScrollReveal';
 import { formatCurrency, formatNumber } from '../lib/utils';
 
 export function MethodologyPage() {
@@ -230,6 +231,20 @@ export function MethodologyPage() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Editorial Methodology Callout with React Bits Scroll Reveal */}
+      <div className="py-2">
+        <ScrollReveal
+          baseOpacity={0.15}
+          enableBlur={true}
+          baseRotation={2}
+          blurStrength={4}
+          containerClassName="my-4 text-center max-w-3xl mx-auto"
+          textClassName="font-serif text-lg sm:text-2xl text-[#F2F0E8] font-normal leading-relaxed tracking-wide"
+        >
+          Predictive modeling ranks inactivity probability; only randomized controlled trials establish true incremental lift.
+        </ScrollReveal>
       </div>
 
       {/* Interactive Business ROI Simulator */}

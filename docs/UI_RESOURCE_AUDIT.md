@@ -101,6 +101,20 @@ import { motion, AnimatePresence, useSpring } from 'motion/react';
 
 ---
 
+## 4. Active Page Integration Matrix
+
+| Page / Route | Animation & Interaction Capabilities | Integrated Components |
+| :--- | :--- | :--- |
+| **AppShell Layout** (`/`) | Page-to-page cross-fade route transitions | `AnimatePresence mode="wait"`, `useOutlet()`, `motion.main` |
+| **Overview** (`/`) | Editorial character cascade header reveal<br>Spring-eased KPI metric tickers<br>Clickable risk distribution bars filtering queue<br>Operational risk cutoff slider ($30\% - 90\%$) with live ROI<br>Below-the-fold narrative scroll reveal<br>Animated Recharts bars | `SplitText` (characters), `NumberTicker`, `BorderBeam`, `Spotlight`, `ScrollReveal`, Recharts `Bar` |
+| **Prediction Studio** (`/prediction-studio`) | 350ms debounced live model inference<br>Direct stepper buttons & accessible numeric inputs<br>What-If Scenario Comparison (A vs B with feature diff table & $\Delta$ percentage points)<br>Feature Sensitivity Analysis (recency, spend, orders, freight)<br>Animated probability gauges & waterfall charts | `runLocalModelInference`, `predictCustomer`, Recharts `LineChart`, Recharts `BarChart`, `RadarChart`, `AnimatePresence` |
+| **Feature Insights** (`/features`) | Smooth Recharts bar entrance animations<br>Category tab switching & feature detail drawer | Recharts `BarChart` (`isAnimationActive={true}`) |
+| **Methodology** (`/methodology`) | Interactive business ROI simulator<br>Editorial narrative text scroll reveal | `ScrollReveal`, custom range controls |
+| **Customer Explorer** (`/customers`) | Tier filtering, pagination, slide-over customer detail drawer | `CustomerDrawer`, `AnimatePresence` |
+
+
+---
+
 ## 4. Verification & Production Build Status
 
 - **Framework:** React 18 + Vite 6 + Tailwind CSS v4 (`@tailwindcss/vite`)

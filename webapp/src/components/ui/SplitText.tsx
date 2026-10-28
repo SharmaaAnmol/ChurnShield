@@ -14,9 +14,9 @@ export interface SplitTextProps {
 export function SplitText({
   text,
   className = '',
-  delay = 50,
+  delay = 30,
   duration = 0.5,
-  splitBy = 'words',
+  splitBy = 'characters',
   highlightWord,
   highlightClass = 'text-[#C82038]',
 }: SplitTextProps) {
@@ -33,8 +33,8 @@ export function SplitText({
             <span key={i} className="inline-block overflow-hidden mr-[0.25em]">
               <motion.span
                 className={`inline-block ${isHighlighted ? highlightClass : ''}`}
-                initial={{ y: '105%', opacity: 0 }}
-                animate={isInView ? { y: '0%', opacity: 1 } : { y: '105%', opacity: 0 }}
+                initial={{ y: '105%', opacity: 0, filter: 'blur(4px)' }}
+                animate={isInView ? { y: '0%', opacity: 1, filter: 'blur(0px)' } : { y: '105%', opacity: 0, filter: 'blur(4px)' }}
                 transition={{
                   duration,
                   delay: (i * delay) / 1000,
@@ -50,6 +50,7 @@ export function SplitText({
     );
   }
 
+  // Character level split (React Bits standard)
   const chars = text.split('');
   return (
     <span ref={ref} className={`inline-block ${className}`}>
@@ -57,10 +58,10 @@ export function SplitText({
         <span key={i} className="inline-block overflow-hidden">
           <motion.span
             className="inline-block"
-            initial={{ y: '105%', opacity: 0 }}
-            animate={isInView ? { y: '0%', opacity: 1 } : { y: '105%', opacity: 0 }}
+            initial={{ y: '100%', opacity: 0, filter: 'blur(3px)' }}
+            animate={isInView ? { y: '0%', opacity: 1, filter: 'blur(0px)' } : { y: '100%', opacity: 0, filter: 'blur(3px)' }}
             transition={{
-              duration,
+              duration: duration,
               delay: (i * delay) / 1000,
               ease: [0.22, 1, 0.36, 1],
             }}

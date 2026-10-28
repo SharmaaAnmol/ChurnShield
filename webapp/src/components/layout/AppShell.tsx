@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { useLocation, useOutlet } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { TopBar } from './TopBar';
 
@@ -10,6 +10,7 @@ interface AppShellProps {
 
 export function AppShell({ isDataConnected = true, isBackendConnected = true }: AppShellProps) {
   const location = useLocation();
+  const currentOutlet = useOutlet();
 
   return (
     <div className="min-h-screen bg-[#090B09] text-[#F2F0E8] font-ui flex flex-col selection:bg-[#C82038]/30 selection:text-white relative">
@@ -27,18 +28,20 @@ export function AppShell({ isDataConnected = true, isBackendConnected = true }: 
         isBackendConnected={isBackendConnected}
       />
 
-      {/* Page Content with smooth transition */}
+      {/* Page Content with real route-level exit/entrance transitions */}
       <main className="relative z-10 flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <Outlet />
-          </motion.div>
+        <AnimatePresence mode="wait" initial={false}>
+          {currentOutlet && (
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, y: 12, filter: 'blur(2px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, y: -10, filter: 'blur(2px)' }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {currentOutlet}
+            </motion.div>
+          )}
         </AnimatePresence>
       </main>
 
@@ -46,7 +49,7 @@ export function AppShell({ isDataConnected = true, isBackendConnected = true }: 
       <footer className="relative z-10 border-t border-[#29332B]/80 bg-[#090B09]/95 py-6 px-4 sm:px-8 text-xs text-[#A6AEA5]">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <span className="font-editorial text-sm font-semibold tracking-wider text-[#F2F0E8]">CHURNSHIELD</span>
+            <span className="font-serif text-sm font-semibold tracking-wider text-[#F2F0E8]">CHURNSHIELD</span>
             <span className="text-[#29332B] font-mono">/</span>
             <span className="font-ui text-[11px] text-[#A6AEA5]">Non-Contractual E-Commerce Retention Intelligence</span>
           </div>

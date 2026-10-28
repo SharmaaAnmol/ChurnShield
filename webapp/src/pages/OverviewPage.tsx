@@ -13,6 +13,9 @@ import {
   TrendingDown,
   Sparkles,
   ShieldAlert,
+  Filter,
+  X,
+  Sliders,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -35,6 +38,7 @@ import { NumberTicker } from '../components/ui/NumberTicker';
 import { BorderBeam } from '../components/ui/BorderBeam';
 import { Spotlight } from '../components/ui/Spotlight';
 import { AnalyticalContourVisual } from '../components/shared/AnalyticalContourVisual';
+import { ScrollReveal } from '../components/ui/ScrollReveal';
 import { useTimeline, TIMELINE_OPTIONS } from '../lib/context/TimelineContext';
 import { loadCustomerPredictions, loadModelSummary } from '../lib/data/data-client';
 import { CustomerPrediction, ModelSummary } from '../lib/data/types';
@@ -49,6 +53,12 @@ export function OverviewPage() {
 
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerPrediction | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  // Interactive Risk Tier Filter from Chart
+  const [riskTierFilter, setRiskTierFilter] = useState<'all' | 'high' | 'moderate' | 'low'>('all');
+
+  // Interactive Operational Cutoff Threshold Slider (30% to 90%, default 70%)
+  const [operationalCutoff, setOperationalCutoff] = useState<number>(70);
 
   const fetchData = async () => {
     setLoading(true);
@@ -106,29 +116,52 @@ export function OverviewPage() {
   const riskChartData = useMemo(() => {
     const dist = activeData.riskDistribution;
     return [
-      { name: 'High Inactivity Risk (≥70%)', count: dist.highRisk, color: '#C82038' },
-      { name: 'Moderate Risk (40-69%)', count: dist.moderateRisk, color: '#C48232' },
-      { name: 'Low Inactivity Risk (<40%)', count: dist.lowRisk, color: '#447A56' },
+      { name: 'High Inactivity Risk (≥70%)', tier: 'high' as const, count: dist.highRisk, color: '#C82038' },
+      { name: 'Moderate Risk (40-69%)', tier: 'moderate' as const, count: dist.moderateRisk, color: '#C48232' },
+      { name: 'Low Inactivity Risk (<40%)', tier: 'low' as const, count: dist.lowRisk, color: '#447A56' },
     ];
   }, [activeData]);
 
-  // Filter preview customers by selected timeline
+  // Filter preview customers by selected timeline AND active riskTierFilter
   const highRiskPreview = useMemo(() => {
     let pool = [...customers];
     if (activeTimeline !== 'all') {
       pool = pool.filter((c) => c.observationDate === activeTimeline);
     }
+    if (riskTierFilter !== 'all') {
+      pool = pool.filter((c) => c.riskTier === riskTierFilter);
+    }
     return pool
       .sort((a, b) => b.inactivityRiskScore - a.inactivityRiskScore)
       .slice(0, 6);
-  }, [customers, activeTimeline]);
+  }, [customers, activeTimeline, riskTierFilter]);
 
-  // Financial calculations dynamically scaled to active timeline population
-  const campaignBudget = activeData.recommendedContactCount * 5.0; // $5 per contact
-  const estimatedRetained = Math.round(activeData.recommendedContactCount * 0.05); // 5% conversion
-  const marginPreserved = estimatedRetained * (40.0 * 3); // $40/month for 3 months
+  // Financial calculations dynamically scaled to operationalCutoff slider & timeline population
+  // Cutoff 70% corresponds to standard top 20% capacity. Lower cutoff includes more customers.
+  const dynamicContactRatio = useMemo(() => {
+    // Linear mapping: 90% cutoff -> 5% contact; 70% cutoff -> 20% contact; 30% cutoff -> 50% contact
+    const ratio = 0.20 + (70 - operationalCutoff) * 0.0075;
+    return Math.max(0.03, Math.min(0.60, ratio));
+  }, [operationalCutoff]);
+
+  const simulatedContactCount = Math.round(activeData.totalCustomersEvaluated * dynamicContactRatio);
+  const campaignBudget = simulatedContactCount * 5.0; // $5 per contact
+  const estimatedRetained = Math.round(simulatedContactCount * 0.05); // 5% conversion
+  const marginPreserved = estimatedRetained * (40.0 * 3); // $40/month for 3 months ($120)
   const netBenefit = marginPreserved - campaignBudget;
   const roiRatio = campaignBudget > 0 ? netBenefit / campaignBudget : 0.195;
+
+  const cutoffPolicyLabel = useMemo(() => {
+    if (operationalCutoff >= 80) return { label: 'Conservative (High Conviction)', variant: 'forest' as const };
+    if (operationalCutoff >= 65) return { label: 'Balanced Policy (Recommended)', variant: 'crimson' as const };
+    return { label: 'Aggressive Coverage', variant: 'amber' as const };
+  }, [operationalCutoff]);
+
+  const handleBarClick = (entry: any) => {
+    if (!entry) return;
+    const tier = entry.tier || (entry.name?.includes('High') ? 'high' : entry.name?.includes('Moderate') ? 'moderate' : 'low');
+    setRiskTierFilter((prev) => (prev === tier ? 'all' : tier));
+  };
 
   return (
     <div className="space-y-10 relative">
@@ -318,12 +351,23 @@ export function OverviewPage() {
               <div>
                 <CardTitle>Customer Inactivity Risk Distribution</CardTitle>
                 <CardDescription>
-                  Stratification for {activeData.quarterLabel} using formula: risk = 1 - P(repeat)
+                  Click any tier below or in the chart to filter the customer queue table
                 </CardDescription>
               </div>
-              <Badge variant="forest" size="sm">
-                {formatNumber(activeData.totalCustomersEvaluated)} Customers
-              </Badge>
+              <div className="flex items-center gap-2">
+                {riskTierFilter !== 'all' && (
+                  <button
+                    onClick={() => setRiskTierFilter('all')}
+                    className="flex items-center gap-1 text-[11px] font-tech text-[#C82038] hover:text-[#E33B4F] bg-[#C82038]/10 px-2 py-0.5 rounded border border-[#C82038]/30 transition-colors cursor-pointer"
+                  >
+                    <span>Reset Filter</span>
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
+                <Badge variant="forest" size="sm">
+                  {formatNumber(activeData.totalCustomersEvaluated)} Customers
+                </Badge>
+              </div>
             </CardHeader>
 
             <CardContent className="flex-1 flex flex-col justify-between pt-4">
@@ -333,6 +377,11 @@ export function OverviewPage() {
                     data={riskChartData}
                     layout="vertical"
                     margin={{ top: 10, right: 20, left: 10, bottom: 5 }}
+                    onClick={(state) => {
+                      if (state && state.activePayload && state.activePayload.length > 0) {
+                        handleBarClick(state.activePayload[0].payload);
+                      }
+                    }}
                   >
                     <XAxis
                       type="number"
@@ -349,91 +398,170 @@ export function OverviewPage() {
                         fontSize: '12px',
                         color: '#F2F0E8',
                       }}
-                      formatter={(val: any) => [`${formatNumber(val)} customers`, 'Count']}
+                      formatter={(val: any) => [`${formatNumber(val)} customers (Click to filter)`, 'Count']}
                     />
-                    <Bar dataKey="count" radius={[0, 4, 4, 0]}>
-                      {riskChartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
+                    <Bar
+                      dataKey="count"
+                      radius={[0, 4, 4, 0]}
+                      isAnimationActive={true}
+                      animationDuration={900}
+                      animationEasing="ease-out"
+                      className="cursor-pointer"
+                    >
+                      {riskChartData.map((entry, index) => {
+                        const isSelected = riskTierFilter === entry.tier;
+                        return (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={entry.color}
+                            opacity={riskTierFilter === 'all' || isSelected ? 1 : 0.4}
+                            stroke={isSelected ? '#F2F0E8' : 'none'}
+                            strokeWidth={isSelected ? 1.5 : 0}
+                            className="cursor-pointer transition-opacity duration-200"
+                          />
+                        );
+                      })}
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
 
-              {/* Breakdown Legend */}
+              {/* Interactive Breakdown Legend (Click to filter) */}
               <div className="grid grid-cols-3 gap-3 pt-4 border-t border-[#29332B] text-center">
-                <div className="rounded-lg bg-[#C82038]/10 p-2.5 border border-[#C82038]/30">
-                  <span className="text-[11px] text-[#E33B4F] font-medium">High Risk (≥70%)</span>
+                <button
+                  type="button"
+                  onClick={() => setRiskTierFilter((prev) => (prev === 'high' ? 'all' : 'high'))}
+                  className={`rounded-lg p-2.5 border transition-all cursor-pointer text-left ${
+                    riskTierFilter === 'high'
+                      ? 'bg-[#C82038]/25 border-[#E33B4F] shadow-sm shadow-[#C82038]/50 ring-1 ring-[#E33B4F]'
+                      : 'bg-[#C82038]/10 border-[#C82038]/30 hover:border-[#C82038]/60 hover:bg-[#C82038]/15'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] text-[#E33B4F] font-medium">High Risk (≥70%)</span>
+                    {riskTierFilter === 'high' && <span className="text-[9px] font-tech text-[#E33B4F]">Active</span>}
+                  </div>
                   <p className="mt-1 font-tech text-base font-bold text-[#F2F0E8]">
                     {formatNumber(activeData.riskDistribution.highRisk)}
                   </p>
-                </div>
+                </button>
 
-                <div className="rounded-lg bg-[#C48232]/10 p-2.5 border border-[#C48232]/30">
-                  <span className="text-[11px] text-[#C48232] font-medium">Moderate (40-69%)</span>
+                <button
+                  type="button"
+                  onClick={() => setRiskTierFilter((prev) => (prev === 'moderate' ? 'all' : 'moderate'))}
+                  className={`rounded-lg p-2.5 border transition-all cursor-pointer text-left ${
+                    riskTierFilter === 'moderate'
+                      ? 'bg-[#C48232]/25 border-[#C48232] shadow-sm ring-1 ring-[#C48232]'
+                      : 'bg-[#C48232]/10 border-[#C48232]/30 hover:border-[#C48232]/60 hover:bg-[#C48232]/15'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] text-[#C48232] font-medium">Moderate (40-69%)</span>
+                    {riskTierFilter === 'moderate' && <span className="text-[9px] font-tech text-[#C48232]">Active</span>}
+                  </div>
                   <p className="mt-1 font-tech text-base font-bold text-[#F2F0E8]">
                     {formatNumber(activeData.riskDistribution.moderateRisk)}
                   </p>
-                </div>
+                </button>
 
-                <div className="rounded-lg bg-[#214D35]/20 p-2.5 border border-[#214D35]">
-                  <span className="text-[11px] text-[#447A56] font-medium">Low Risk (&lt;40%)</span>
+                <button
+                  type="button"
+                  onClick={() => setRiskTierFilter((prev) => (prev === 'low' ? 'all' : 'low'))}
+                  className={`rounded-lg p-2.5 border transition-all cursor-pointer text-left ${
+                    riskTierFilter === 'low'
+                      ? 'bg-[#214D35]/40 border-[#447A56] shadow-sm ring-1 ring-[#447A56]'
+                      : 'bg-[#214D35]/20 border-[#214D35] hover:border-[#447A56]/60 hover:bg-[#214D35]/30'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] text-[#447A56] font-medium">Low Risk (&lt;40%)</span>
+                    {riskTierFilter === 'low' && <span className="text-[9px] font-tech text-[#447A56]">Active</span>}
+                  </div>
                   <p className="mt-1 font-tech text-base font-bold text-[#F2F0E8]">
                     {formatNumber(activeData.riskDistribution.lowRisk)}
                   </p>
-                </div>
+                </button>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Retention Strategy & Impact Card (Styled as an Executive Investment Memo) */}
+        {/* Retention Strategy & Impact Card (With Interactive Operational Cutoff Slider) */}
         <div className="lg:col-span-5">
           <Card className="h-full flex flex-col justify-between">
             <div>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>Retention Campaign Economics</CardTitle>
-                  <Badge variant="crimson" size="sm">
-                    Top 20% Capacity
+                  <Badge variant={cutoffPolicyLabel.variant} size="sm">
+                    {cutoffPolicyLabel.label}
                   </Badge>
                 </div>
                 <CardDescription>
-                  Projected ROI for {activeData.quarterLabel} under standard intervention unit economics
+                  Simulate intervention ROI under flexible decision cutoff policies
                 </CardDescription>
               </CardHeader>
 
-              <CardContent className="space-y-4 pt-4">
-                <div className="space-y-2.5">
-                  <div className="flex items-center justify-between text-xs py-2 border-b border-[#29332B]">
-                    <span className="text-[#A6AEA5]">Target Contact Population:</span>
+              <CardContent className="space-y-4 pt-2">
+                {/* Interactive Operational Cutoff Slider */}
+                <div className="rounded-xl bg-[#090B09] p-3.5 border border-[#29332B] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <Sliders className="h-3.5 w-3.5 text-[#447A56]" />
+                      <span className="text-xs font-semibold text-[#F2F0E8]">
+                        Operational Risk Cutoff Threshold
+                      </span>
+                    </div>
+                    <span className="font-tech text-xs font-bold text-[#447A56] bg-[#102016] px-2 py-0.5 rounded border border-[#214D35]">
+                      ≥ {operationalCutoff}%
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="30"
+                    max="90"
+                    step="5"
+                    value={operationalCutoff}
+                    onChange={(e) => setOperationalCutoff(parseInt(e.target.value, 10))}
+                    className="w-full accent-[#447A56] cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[10px] text-[#A6AEA5] font-tech">
+                    <span>30% (High Volume)</span>
+                    <span>70% (Top 20% Standard)</span>
+                    <span>90% (Strict Focus)</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs py-1.5 border-b border-[#29332B]">
+                    <span className="text-[#A6AEA5]">Prioritized Outreach Cohort:</span>
                     <span className="font-tech text-[#F2F0E8] font-medium">
-                      {formatNumber(activeData.recommendedContactCount)} customers
+                      {formatNumber(simulatedContactCount)} buyers ({(dynamicContactRatio * 100).toFixed(1)}%)
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between text-xs py-2 border-b border-[#29332B]">
+                  <div className="flex items-center justify-between text-xs py-1.5 border-b border-[#29332B]">
                     <span className="text-[#A6AEA5]">Outreach Cost ($5.00/user):</span>
                     <span className="font-tech text-[#F2F0E8] font-medium">
                       {formatCurrency(campaignBudget)}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between text-xs py-2 border-b border-[#29332B]">
+                  <div className="flex items-center justify-between text-xs py-1.5 border-b border-[#29332B]">
                     <span className="text-[#A6AEA5]">Estimated Re-Activated Buyers:</span>
                     <span className="font-tech text-[#447A56] font-medium">
                       {formatNumber(estimatedRetained)} buyers (5% conv.)
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between text-xs py-2 border-b border-[#29332B]">
+                  <div className="flex items-center justify-between text-xs py-1.5 border-b border-[#29332B]">
                     <span className="text-[#A6AEA5]">Gross Margin Preserved (3 mos):</span>
                     <span className="font-tech text-[#447A56] font-bold">
                       {formatCurrency(marginPreserved)}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between text-xs py-2">
+                  <div className="flex items-center justify-between text-xs py-1.5">
                     <span className="text-[#A6AEA5]">Net Scenario Benefit & ROI:</span>
                     <div className="flex items-center gap-2">
                       <span className="font-tech text-[#447A56] font-bold">
@@ -446,7 +574,7 @@ export function OverviewPage() {
                   </div>
                 </div>
 
-                <div className="rounded-lg bg-[#090B09] p-3 border border-[#29332B] text-[11px] text-[#A6AEA5] leading-relaxed">
+                <div className="rounded-lg bg-[#090B09] p-2.5 border border-[#29332B] text-[11px] text-[#A6AEA5] leading-relaxed">
                   <span className="text-[#C48232] font-medium">Causal Caution:</span> Projections assume a 5% response
                   rate on contactable churners. ML scores prioritize customers by risk rank; true incremental lift requires randomized control trials.
                 </div>
@@ -466,22 +594,61 @@ export function OverviewPage() {
         </div>
       </div>
 
-      {/* 5. Highest Inactivity Risk Customers Preview (Filtered to Timeline) */}
+      {/* Editorial Narrative Section with React Bits Scroll Reveal */}
+      <div className="py-2">
+        <ScrollReveal
+          baseOpacity={0.15}
+          enableBlur={true}
+          baseRotation={2}
+          blurStrength={4}
+          containerClassName="my-3 text-center max-w-3xl mx-auto"
+          textClassName="font-serif text-lg sm:text-2xl text-[#F2F0E8] font-normal leading-relaxed tracking-wide"
+        >
+          Precision retention modeling preserves enterprise margin by identifying dormant buyers before defection becomes permanent.
+        </ScrollReveal>
+      </div>
+
+      {/* 5. Highest Inactivity Risk Customers Preview (Filtered to Timeline & Active Risk Tier) */}
       {highRiskPreview.length > 0 && (
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <CardTitle>Highest Inactivity Risk Customers ({activeData.quarterLabel})</CardTitle>
+              <div className="flex items-center gap-2">
+                <CardTitle>Customer Cohort Queue ({activeData.quarterLabel})</CardTitle>
+                {riskTierFilter !== 'all' && (
+                  <Badge
+                    variant={riskTierFilter === 'high' ? 'crimson' : riskTierFilter === 'moderate' ? 'amber' : 'forest'}
+                    size="sm"
+                  >
+                    Filter: {riskTierFilter.toUpperCase()} RISK
+                  </Badge>
+                )}
+              </div>
               <CardDescription>
-                Top customers flagged by the model for prioritized retention outreach in this timeline
+                {riskTierFilter === 'all'
+                  ? 'Top customers flagged for prioritized retention outreach in this timeline'
+                  : `Filtered to show customers currently categorized in the ${riskTierFilter} inactivity risk tier`}
               </CardDescription>
             </div>
-            <Link to="/customers">
-              <Button variant="outline" size="sm">
-                <span>View Full Population</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
-            </Link>
+            <div className="flex items-center gap-2">
+              {riskTierFilter !== 'all' && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setRiskTierFilter('all')}
+                  className="text-xs text-[#A6AEA5] hover:text-[#F2F0E8]"
+                >
+                  <X className="h-3 w-3 mr-1" />
+                  Clear Filter
+                </Button>
+              )}
+              <Link to="/customers">
+                <Button variant="outline" size="sm">
+                  <span>View Full Population</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
+              </Link>
+            </div>
           </CardHeader>
 
           <CardContent className="p-0">
