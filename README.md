@@ -1,6 +1,6 @@
 # ChurnShield: Explainable E-Commerce Customer Inactivity Prediction & Retention Intelligence
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/anmolsharma/ChurnShield/blob/main/ChurnShield_Customer_Inactivity_Prediction.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/SharmaaAnmol/E-commerece-inactivity-predictor/blob/main/ChurnShield_Customer_Inactivity_Prediction.ipynb)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.0%2B-orange.svg)](https://scikit-learn.org/)
 [![Dataset](https://img.shields.io/badge/Dataset-Olist%20E--Commerce-green.svg)](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
