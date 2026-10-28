@@ -290,6 +290,76 @@
   box-shadow: 0 0 28px rgba(227, 59, 79, 1), 0 0 10px #FFFFFF;
 }
 
+/* Tactile Forest Green Slider Range Controls */
+.slider-forest {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #171D18;
+  height: 7px;
+  border-radius: 9999px;
+  border: 1px solid #29332B;
+  outline: none;
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+.slider-forest:focus {
+  outline: none;
+  border-color: #447A56;
+}
+
+.slider-forest:active {
+  cursor: grabbing;
+}
+
+.slider-forest::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #5BA674 0%, #35734A 60%, #153822 100%);
+  border: 2.5px solid #FFFFFF;
+  box-shadow: 0 0 12px rgba(68, 122, 86, 0.8), 0 2px 6px rgba(0, 0, 0, 0.6);
+  cursor: grab;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.slider-forest::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #5BA674 0%, #35734A 60%, #153822 100%);
+  border: 2.5px solid #FFFFFF;
+  box-shadow: 0 0 12px rgba(68, 122, 86, 0.8), 0 2px 6px rgba(0, 0, 0, 0.6);
+  cursor: grab;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.slider-forest::-webkit-slider-thumb:hover {
+  transform: scale(1.22);
+  background: radial-gradient(circle at 35% 35%, #6EBE88 0%, #447A56 60%, #1C482C 100%);
+  box-shadow: 0 0 20px rgba(68, 122, 86, 0.95), 0 3px 8px rgba(0, 0, 0, 0.7);
+}
+
+.slider-forest::-moz-range-thumb:hover {
+  transform: scale(1.22);
+  background: radial-gradient(circle at 35% 35%, #6EBE88 0%, #447A56 60%, #1C482C 100%);
+  box-shadow: 0 0 20px rgba(68, 122, 86, 0.95), 0 3px 8px rgba(0, 0, 0, 0.7);
+}
+
+.slider-forest:active::-webkit-slider-thumb {
+  transform: scale(1.35);
+  cursor: grabbing;
+  box-shadow: 0 0 28px rgba(68, 122, 86, 1), 0 0 10px #FFFFFF;
+}
+
+.slider-forest:active::-moz-range-thumb {
+  transform: scale(1.35);
+  cursor: grabbing;
+  box-shadow: 0 0 28px rgba(68, 122, 86, 1), 0 0 10px #FFFFFF;
+}
+
 /* Hazard diagonal stripes animation */
 @keyframes hazardPulse {
   0%, 100% { opacity: 0.85; }

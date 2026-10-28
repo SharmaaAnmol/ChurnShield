@@ -789,36 +789,36 @@ export function PredictionStudioPage() {
         </div>
 
         {/* Enlarged Visual Interactive Timeline Canvas */}
-        <div className="mt-8 mb-6 select-none">
+        <div className="mt-4 mb-4 select-none">
           {/* Main Interactive Scrubbing Track */}
           <div
             ref={timelineTrackRef}
             onPointerDown={handleTrackPointerDown}
             onPointerMove={handleTrackPointerMove}
             onPointerUp={handleTrackPointerUp}
-            className="relative h-28 sm:h-32 w-full rounded-2xl bg-[#090B09] border border-[#29332B] overflow-visible cursor-crosshair px-2 shadow-inner group"
+            className="relative h-20 sm:h-22 w-full rounded-xl bg-[#090B09] border border-[#29332B] cursor-crosshair px-2 shadow-inner group"
           >
             {/* Top Region Labels */}
-            <div className="absolute top-2 left-3 right-3 flex items-center justify-between text-[10px] font-tech pointer-events-none z-0">
-              <span className="text-[#A6AEA5] tracking-wider uppercase flex items-center gap-1">
+            <div className="absolute top-1.5 left-3 right-3 flex items-center justify-between text-[10px] font-tech pointer-events-none z-0">
+              <span className="text-[#A6AEA5] tracking-wide flex items-center gap-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#447A56]" />
-                Past Customer Lifespan (-{lookbackWindow}d Lookback)
+                Past Lifespan (-{lookbackWindow}d)
               </span>
-              <span className="text-[#447A56] tracking-wider uppercase font-semibold flex items-center gap-1">
-                +{predictionHorizon}d Model Forecast Horizon
+              <span className="text-[#447A56] tracking-wide font-medium flex items-center gap-1.5">
+                Forecast (+{predictionHorizon}d)
                 <span className="h-1.5 w-1.5 rounded-full bg-[#447A56] animate-pulse" />
               </span>
             </div>
 
             {/* Horizontal Timeline Center Rail */}
-            <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 h-10 flex pointer-events-none">
+            <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 h-7 sm:h-8 flex pointer-events-none">
               {/* 1. Inactive/Historical Background Rail (0% to 65%) */}
               <div
                 className="h-full bg-[#111611] border-y border-l border-[#29332B] relative flex items-center overflow-hidden"
                 style={{ width: '65%' }}
               >
                 {/* Micro tick marks across lookback rail */}
-                <div className="absolute inset-0 flex justify-between px-2 opacity-30">
+                <div className="absolute inset-0 flex justify-between px-2 opacity-25">
                   {Array.from({ length: 13 }).map((_, i) => (
                     <div key={i} className="h-full w-px bg-[#29332B]" />
                   ))}
@@ -826,32 +826,32 @@ export function PredictionStudioPage() {
 
                 {/* Active Lifespan Fill (Tenure to Last Order) */}
                 <div
-                  className="absolute top-1 bottom-1 rounded-sm bg-gradient-to-r from-[#214D35]/40 to-[#447A56]/60 border-y border-[#447A56]/70 flex items-center justify-center transition-all duration-75"
+                  className="absolute top-0.5 bottom-0.5 rounded-sm bg-gradient-to-r from-[#214D35]/35 to-[#447A56]/50 border-y border-[#447A56]/60 flex items-center justify-center transition-all duration-75"
                   style={{
                     left: `${(tenurePct / 0.65) * 100}%`,
                     width: `${Math.max(1, ((recencyPct - tenurePct) / 0.65) * 100)}%`,
                   }}
                 >
-                  <span className="text-[9px] font-tech text-[#F2F0E8]/90 font-medium whitespace-nowrap px-1 truncate">
-                    Active Buyer Interval ({Math.max(0, tenureDays - recencyDays)}d)
+                  <span className="text-[8.5px] font-tech text-[#F2F0E8]/90 font-medium whitespace-nowrap px-1 truncate">
+                    Active ({Math.max(0, tenureDays - recencyDays)}d)
                   </span>
                 </div>
 
                 {/* Dormancy / Inactivity Hazard Gap (Last Order to Day 0 Cutoff) */}
                 <div
-                  className={`absolute top-1 bottom-1 right-0 rounded-sm flex items-center justify-center transition-all duration-75 ${
+                  className={`absolute top-0.5 bottom-0.5 right-0 rounded-sm flex items-center justify-center transition-all duration-75 ${
                     recencyDays <= 30
-                      ? 'bg-[#447A56]/30 border border-[#447A56]/80'
+                      ? 'bg-[#447A56]/25 border border-[#447A56]/70'
                       : recencyDays <= 90
-                      ? 'hazard-stripes-amber border border-[#C48232]/80'
-                      : 'hazard-stripes-crimson border border-[#C82038] shadow-[inset_0_0_12px_rgba(200,32,56,0.35)]'
+                      ? 'hazard-stripes-amber border border-[#C48232]/70'
+                      : 'hazard-stripes-crimson border border-[#C82038]/80 shadow-[inset_0_0_10px_rgba(200,32,56,0.3)]'
                   }`}
                   style={{
                     left: `${(recencyPct / 0.65) * 100}%`,
                   }}
                 >
                   <span
-                    className={`text-[9.5px] font-tech font-bold uppercase tracking-wider px-2 truncate ${
+                    className={`text-[9px] font-tech font-bold uppercase tracking-wider px-1.5 truncate ${
                       recencyDays <= 30
                         ? 'text-[#447A56]'
                         : recencyDays <= 90
@@ -860,26 +860,23 @@ export function PredictionStudioPage() {
                     }`}
                   >
                     {recencyDays <= 30
-                      ? `Active Window (${recencyDays}d)`
+                      ? `${recencyDays}d Active`
                       : recencyDays <= 90
-                      ? `Cooling-Off Gap (${recencyDays}d)`
-                      : `CRITICAL CHURN HAZARD (${recencyDays}d)`}
+                      ? `${recencyDays}d Cooling`
+                      : `${recencyDays}d Dormancy`}
                   </span>
                 </div>
               </div>
 
               {/* 2. Prediction Outcome Horizon Rail (65% to 100%) */}
               <div
-                className="h-full rounded-r-md bg-gradient-to-r from-[#214D35]/25 to-[#102016]/40 border border-dashed border-[#447A56]/70 relative flex items-center justify-center overflow-hidden"
+                className="h-full rounded-r-md bg-gradient-to-r from-[#214D35]/20 to-[#102016]/30 border border-dashed border-[#447A56]/60 relative flex items-center justify-center overflow-hidden"
                 style={{ width: '35%' }}
               >
-                <div className="text-center px-2">
-                  <div className="text-[10px] font-tech text-[#447A56] font-bold uppercase tracking-wider">
+                <div className="text-center px-1">
+                  <span className="text-[9.5px] font-tech text-[#447A56] font-semibold">
                     {predictionResult ? (predictionResult.repeatPurchaseProbability >= 0.5 ? 'Repeat Forecast' : 'Churn Predicted') : 'Model Scoring'}
-                  </div>
-                  <div className="text-[9px] font-tech text-[#A6AEA5]">
-                    {predictionResult ? `${(predictionResult.repeatPurchaseProbability * 100).toFixed(1)}% reorder prob` : 'Evaluating...'}
-                  </div>
+                  </span>
                 </div>
               </div>
             </div>
@@ -889,12 +886,12 @@ export function PredictionStudioPage() {
               className="absolute top-2 bottom-2 pointer-events-none flex flex-col items-center z-10 transition-all duration-75"
               style={{ left: `${tenurePct}%` }}
             >
-              <div className="h-3 w-3 rounded-full bg-[#102016] border border-[#447A56] flex items-center justify-center shadow">
-                <div className="h-1.5 w-1.5 rounded-full bg-[#447A56]" />
+              <div className="h-2.5 w-2.5 rounded-full bg-[#102016] border border-[#447A56] flex items-center justify-center shadow">
+                <div className="h-1 w-1 rounded-full bg-[#447A56]" />
               </div>
-              <div className="w-px h-full bg-[#447A56]/40 mt-0.5" />
-              <span className="text-[8.5px] font-tech text-[#A6AEA5] bg-[#090B09] px-1 py-0.5 rounded border border-[#29332B] whitespace-nowrap -mt-1 shadow">
-                Joined: -{tenureDays}d
+              <div className="w-px h-full bg-[#447A56]/50 mt-0.5" />
+              <span className="text-[8px] font-tech text-[#A6AEA5] bg-[#090B09] px-1 rounded border border-[#29332B] whitespace-nowrap -mt-0.5 shadow">
+                Joined -{tenureDays}d
               </span>
             </div>
 
@@ -903,73 +900,73 @@ export function PredictionStudioPage() {
               className="absolute top-0 bottom-0 pointer-events-none flex flex-col items-center z-20"
               style={{ left: '65%' }}
             >
-              <div className="absolute -top-7 -translate-x-1/2 flex items-center gap-1 bg-[#171D18] px-2 py-0.5 rounded border border-[#C82038] shadow-[0_0_12px_rgba(200,32,56,0.4)]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#E33B4F] animate-pulse" />
-                <span className="text-[9px] font-tech text-[#E33B4F] font-bold uppercase tracking-wider whitespace-nowrap">
-                  CUTOFF: {snapshotDate} (Day 0)
+              <div className="absolute -top-5 -translate-x-1/2 flex items-center gap-1 bg-[#171D18] px-1.5 py-0.5 rounded border border-[#C82038] shadow-[0_0_8px_rgba(200,32,56,0.3)]">
+                <span className="h-1 w-1 rounded-full bg-[#E33B4F] animate-pulse" />
+                <span className="text-[8.5px] font-tech text-[#E33B4F] font-bold uppercase tracking-wider whitespace-nowrap">
+                  Cutoff (Day 0)
                 </span>
               </div>
-              <div className="w-0.5 h-full bg-[#C82038] shadow-[0_0_12px_#C82038]" />
-              <div className="h-2 w-2 rotate-45 bg-[#C82038] -mt-1 shadow-[0_0_8px_#C82038]" />
+              <div className="w-px h-full bg-[#C82038] shadow-[0_0_8px_#C82038]" />
+              <div className="h-1.5 w-1.5 rotate-45 bg-[#C82038] -mt-0.5 shadow-[0_0_6px_#C82038]" />
             </div>
 
-            {/* TACTILE CRIMSON DRAGGER PIN (The centerpiece!) */}
+            {/* Clamped Floating Readout Chip (Guaranteed to NEVER bleed off-screen) */}
             <div
-              className="absolute top-0 bottom-0 z-30 transition-all duration-75 flex flex-col items-center pointer-events-none"
+              className="absolute -top-7 -translate-x-1/2 pointer-events-none transition-all duration-75 z-30"
+              style={{
+                left: `${Math.max(12, Math.min(54, recencyPct))}%`,
+              }}
+            >
+              <div className="rounded-md bg-[#090B09]/95 border border-[#C82038] px-2 py-0.5 shadow-xl backdrop-blur-md flex items-center gap-1.5 whitespace-nowrap text-[10px] font-tech font-bold text-[#F2F0E8]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#E33B4F] animate-pulse" />
+                <span>Last Order: {recencyDays}d ago</span>
+                <span className="text-[#A6AEA5]">|</span>
+                <span
+                  className={
+                    (predictionResult?.inactivityRiskScore || 0) >= 0.5 ? 'text-[#E33B4F]' : 'text-[#447A56]'
+                  }
+                >
+                  Risk: {((predictionResult?.inactivityRiskScore || 0) * 100).toFixed(1)}%
+                </span>
+              </div>
+              <div className="w-0 h-0 border-x-[3px] border-x-transparent border-t-[3px] border-t-[#C82038] mx-auto" />
+            </div>
+
+            {/* TACTILE CRIMSON DRAGGER PIN */}
+            <div
+              className="absolute top-0 bottom-0 z-20 transition-all duration-75 flex flex-col items-center pointer-events-none"
               style={{ left: `${recencyPct}%` }}
             >
-              {/* Floating Magnetic Readout Chip */}
-              <div className="absolute -top-13 -translate-x-1/2 pointer-events-none">
-                <div className="rounded-lg bg-[#090B09]/95 border-2 border-[#C82038] px-3 py-1 shadow-[0_4px_20px_rgba(0,0,0,0.85)] backdrop-blur-md flex items-center gap-2 whitespace-nowrap">
-                  <span className="h-2 w-2 rounded-full bg-[#E33B4F] animate-ping" />
-                  <span className="text-xs font-tech font-bold text-[#F2F0E8]">
-                    Last Order: {recencyDays}d ago
-                  </span>
-                  <span className="text-[#A6AEA5]">|</span>
-                  <span
-                    className={`text-xs font-tech font-bold ${
-                      (predictionResult?.inactivityRiskScore || 0) >= 0.5 ? 'text-[#E33B4F]' : 'text-[#447A56]'
-                    }`}
-                  >
-                    Risk: {((predictionResult?.inactivityRiskScore || 0) * 100).toFixed(1)}%
-                  </span>
-                </div>
-                <div className="w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-[#C82038] mx-auto mt-0.5" />
-              </div>
-
               {/* Vertical Laser Hairline */}
-              <div className="w-0.5 h-full bg-[#E33B4F] shadow-[0_0_10px_#E33B4F]" />
+              <div className="w-px h-full bg-[#E33B4F]/90 shadow-[0_0_6px_#E33B4F]" />
 
-              {/* Center Crimson Dragger Head */}
+              {/* Precision Crimson Dragger Head */}
               <div
-                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-10 w-10 rounded-full border-[3px] border-white shadow-[0_0_24px_rgba(200,32,56,1),0_4px_14px_rgba(0,0,0,0.9)] cursor-grab active:cursor-grabbing hover:scale-125 transition-transform flex items-center justify-center pointer-events-auto"
+                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-6 w-6 rounded-full border-2 border-white shadow-[0_0_14px_rgba(200,32,56,0.95)] cursor-grab active:cursor-grabbing hover:scale-120 transition-transform flex items-center justify-center pointer-events-auto"
                 style={{
-                  background: 'radial-gradient(circle at 35% 35%, #FF5A70 0%, #C82038 55%, #7A0B1A 100%)',
+                  background: 'radial-gradient(circle at 35% 35%, #FF5A70 0%, #C82038 60%, #7A0B1A 100%)',
                 }}
-                title={`Tactile Dragger: Last Order ${recencyDays} days ago. Drag across timeline or use range sliders!`}
               >
-                <div className="h-3 w-3 rounded-full bg-white shadow-sm flex items-center justify-center">
-                  <div className="h-1 w-1 rounded-full bg-[#C82038]" />
-                </div>
+                <div className="h-1.5 w-1.5 rounded-full bg-white shadow-sm" />
               </div>
             </div>
           </div>
 
           {/* Timeline Bottom Axis Labels */}
-          <div className="flex justify-between text-[11px] font-tech text-[#A6AEA5] pt-2 px-1">
-            <span>-{lookbackWindow}d Lookback Boundary</span>
+          <div className="flex justify-between text-[10px] font-tech text-[#A6AEA5] pt-1.5 px-1">
+            <span>-{lookbackWindow}d Lookback</span>
             <span>-90d Quarter Mark</span>
-            <span className="text-[#E33B4F] font-semibold">Day 0 (Observation Cutoff)</span>
-            <span className="text-[#447A56] font-semibold">+{predictionHorizon}d Target Forecast</span>
+            <span className="text-[#E33B4F] font-semibold">Day 0 (Cutoff)</span>
+            <span className="text-[#447A56] font-semibold">+{predictionHorizon}d Forecast</span>
           </div>
         </div>
 
         {/* Milestone Quick Jump Chips */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 pb-4 border-t border-[#29332B]">
-          <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2.5 pt-2.5 pb-3 border-t border-[#29332B]">
+          <div className="flex flex-wrap items-center gap-1.5">
             <span className="text-[10px] font-tech uppercase tracking-wider text-[#A6AEA5] flex items-center gap-1 mr-1">
               <Zap className="h-3 w-3 text-[#E33B4F]" />
-              <span>Milestone Quick-Jump:</span>
+              <span>Milestones:</span>
             </span>
             {[
               { label: '⚡ 7d Immediate', days: 7 },
@@ -987,9 +984,9 @@ export function PredictionStudioPage() {
                   if (m.days > tenureDays) setTenureDays(m.days);
                   setIsStale(true);
                 }}
-                className={`px-2.5 py-1 rounded-md text-[11px] font-tech font-medium transition-all cursor-pointer border ${
+                className={`px-2 py-0.5 rounded text-[10.5px] font-tech font-medium transition-all cursor-pointer border ${
                   recencyDays === m.days
-                    ? 'bg-[#C82038] text-white border-[#E33B4F] shadow-[0_0_14px_rgba(200,32,56,0.7)] font-bold scale-105'
+                    ? 'bg-[#C82038] text-white border-[#E33B4F] shadow-[0_0_10px_rgba(200,32,56,0.6)] font-bold'
                     : 'bg-[#171D18] text-[#A6AEA5] border-[#29332B] hover:text-[#F2F0E8] hover:border-[#447A56]'
                 }`}
               >
@@ -999,13 +996,13 @@ export function PredictionStudioPage() {
           </div>
 
           <span className="text-[10px] font-tech text-[#A6AEA5] italic hidden sm:inline">
-            Click or scrub anywhere directly on the timeline track
+            Click or scrub directly on the timeline track
           </span>
         </div>
 
-        {/* Sliders with TACTILE CRIMSON RED DRAGGERS */}
+        {/* Sliders: Recency (Crimson Red) & Account Tenure (Forest Green) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-[#29332B]">
-          {/* Recency Slider & Accessible Direct Controls */}
+          {/* Recency Slider: TACTILE CRIMSON RED DRAGGER */}
           <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B] space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-[#F2F0E8] flex items-center gap-1.5">
@@ -1087,7 +1084,7 @@ export function PredictionStudioPage() {
             </div>
           </div>
 
-          {/* Tenure Slider & Accessible Direct Input */}
+          {/* Account Tenure Slider: TACTILE FOREST GREEN DRAGGER (Requested by user) */}
           <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B] space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-[#F2F0E8] flex items-center gap-1.5">
@@ -1105,7 +1102,7 @@ export function PredictionStudioPage() {
                     setTenureDays(val);
                     if (val < recencyDays) setRecencyDays(val);
                   }}
-                  className="w-16 h-6 text-center rounded bg-[#111611] border border-[#29332B] font-tech text-xs text-[#F2F0E8] focus:border-[#C82038] focus:outline-none"
+                  className="w-16 h-6 text-center rounded bg-[#111611] border border-[#29332B] font-tech text-xs text-[#F2F0E8] focus:border-[#447A56] focus:outline-none"
                 />
                 <span className="text-xs font-tech text-[#A6AEA5]">days</span>
               </div>
@@ -1121,7 +1118,7 @@ export function PredictionStudioPage() {
                 setTenureDays(val);
                 if (val < recencyDays) setRecencyDays(val);
               }}
-              className="w-full slider-crimson accent-[#C82038] cursor-pointer"
+              className="w-full slider-forest accent-[#447A56] cursor-pointer"
             />
             <div className="flex justify-between text-[10px] text-[#A6AEA5] font-tech">
               <span>Customer joined {tenureDays}d ago</span>
