@@ -254,7 +254,7 @@ export function MethodologyPage() {
             <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B] space-y-2">
               <div className="flex justify-between text-xs">
                 <span className="text-[#A6AEA5]">Outreach Cost / User</span>
-                <span className="font-tech font-bold text-[#F2F0E8]">R$ {outreachCost.toFixed(2)}</span>
+                <span className="font-tech font-bold text-[#F2F0E8]">${outreachCost.toFixed(2)}</span>
               </div>
               <input
                 type="range"
@@ -265,7 +265,7 @@ export function MethodologyPage() {
                 onChange={(e) => setOutreachCost(parseFloat(e.target.value))}
                 className="w-full accent-[#447A56] cursor-pointer"
               />
-              <span className="text-[10px] text-[#A6AEA5]">e.g. Email (R$ 1) vs SMS (R$ 5) vs Voucher (R$ 15)</span>
+              <span className="text-[10px] text-[#A6AEA5]">e.g. Email ($1) vs SMS ($5) vs Voucher ($15)</span>
             </div>
 
             {/* Assumed Response Rate Slider */}
@@ -289,8 +289,8 @@ export function MethodologyPage() {
             {/* Monthly Margin Slider */}
             <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B] space-y-2">
               <div className="flex justify-between text-xs">
-                <span className="text-[#A6AEA5]">Monthly Margin (R$)</span>
-                <span className="font-tech font-bold text-[#F2F0E8]">R$ {marginPerMonth.toFixed(0)}</span>
+                <span className="text-[#A6AEA5]">Monthly Margin ($)</span>
+                <span className="font-tech font-bold text-[#F2F0E8]">${marginPerMonth.toFixed(0)}</span>
               </div>
               <input
                 type="range"

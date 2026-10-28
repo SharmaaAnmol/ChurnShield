@@ -109,7 +109,7 @@ export function runLocalModelInference(values: Record<string, any>): ClientInfer
 
     let valueDisplay = String(rawVal);
     if (col === 'recency_days' || col === 'tenure_days') valueDisplay = `${Math.round(rawVal)} days`;
-    else if (col === 'total_spend' || col === 'spend_recent_90d') valueDisplay = `R$ ${rawVal.toFixed(0)}`;
+    else if (col === 'total_spend' || col === 'spend_recent_90d') valueDisplay = `$${rawVal.toFixed(0)}`;
     else if (col.includes('ratio')) valueDisplay = `${(rawVal * 100).toFixed(0)}%`;
 
     contributions.push({

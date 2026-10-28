@@ -178,7 +178,7 @@ export function CustomerDrawer({ customer, isOpen, onClose }: CustomerDrawerProp
 
                   <div className="rounded-lg bg-[#111611] p-3 border border-[#29332B]">
                     <div className="flex items-center gap-1.5 text-xs text-[#A6AEA5]">
-                      <span className="text-[#447A56] font-tech text-xs">R$</span>
+                      <span className="text-[#447A56] font-tech text-xs">$</span>
                       Total Spend
                     </div>
                     <p className="mt-1.5 font-tech text-sm font-semibold text-[#F2F0E8]">

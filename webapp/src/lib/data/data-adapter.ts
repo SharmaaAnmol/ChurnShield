@@ -26,7 +26,7 @@ const FEATURE_METADATA: Record<string, { label: string; category: FeatureImporta
     interpretation: 'Multi-order history provides strong signal distinguishing habituated buyers from one-time shoppers.',
   },
   median_order_value: {
-    label: 'Median Order Value (R$)',
+    label: 'Median Order Value ($)',
     category: 'spend_behavior',
     interpretation: 'Median baseline spend reflects typical basket commitment without skew from outlier purchases.',
   },
@@ -46,7 +46,7 @@ const FEATURE_METADATA: Record<string, { label: string; category: FeatureImporta
     interpretation: 'Relative frequency of transactions in recent 90 days vs earlier customer lifecycle.',
   },
   total_spend: {
-    label: 'Total Lifetime Spend (R$)',
+    label: 'Total Lifetime Spend ($)',
     category: 'spend_behavior',
     interpretation: 'Cumulative gross revenue contributed by customer to date.',
   },
@@ -71,12 +71,12 @@ const FEATURE_METADATA: Record<string, { label: string; category: FeatureImporta
     interpretation: 'Binary indicator distinguishing single-order buyers (97%) from established repeat customers.',
   },
   total_freight: {
-    label: 'Total Freight Paid (R$)',
+    label: 'Total Freight Paid ($)',
     category: 'logistics',
     interpretation: 'Cumulative shipping charges paid across all lifetime orders.',
   },
   avg_order_value: {
-    label: 'Average Order Value (R$)',
+    label: 'Average Order Value ($)',
     category: 'spend_behavior',
     interpretation: 'Mean order basket size across all historic customer purchases.',
   },
@@ -86,7 +86,7 @@ const FEATURE_METADATA: Record<string, { label: string; category: FeatureImporta
     interpretation: 'Proportion of expenditure allocated to logistics rather than product value.',
   },
   spend_recent_90d: {
-    label: 'Spend in Recent 90 Days (R$)',
+    label: 'Spend in Recent 90 Days ($)',
     category: 'spend_behavior',
     interpretation: 'Absolute gross monetary amount spent during the immediate 90-day observation window.',
   },

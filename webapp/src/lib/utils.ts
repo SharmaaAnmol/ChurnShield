@@ -22,13 +22,13 @@ export function formatNumber(value: number | null | undefined): string {
 }
 
 /**
- * Format currency in Brazilian Real (R$) or generic currency
+ * Format currency in Standard Currency ($)
  */
 export function formatCurrency(value: number | null | undefined): string {
   if (value === null || value === undefined || isNaN(value)) return '—';
-  return new Intl.NumberFormat('pt-BR', {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'BRL',
+    currency: 'USD',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(value);

@@ -124,9 +124,9 @@ export function OverviewPage() {
   }, [customers, activeTimeline]);
 
   // Financial calculations dynamically scaled to active timeline population
-  const campaignBudget = activeData.recommendedContactCount * 5.0; // R$ 5 per contact
+  const campaignBudget = activeData.recommendedContactCount * 5.0; // $5 per contact
   const estimatedRetained = Math.round(activeData.recommendedContactCount * 0.05); // 5% conversion
-  const marginPreserved = estimatedRetained * (40.0 * 3); // R$ 40/month for 3 months
+  const marginPreserved = estimatedRetained * (40.0 * 3); // $40/month for 3 months
   const netBenefit = marginPreserved - campaignBudget;
   const roiRatio = campaignBudget > 0 ? netBenefit / campaignBudget : 0.195;
 
@@ -413,7 +413,7 @@ export function OverviewPage() {
                   </div>
 
                   <div className="flex items-center justify-between text-xs py-2 border-b border-[#29332B]">
-                    <span className="text-[#A6AEA5]">Outreach Cost (R$ 5.00/user):</span>
+                    <span className="text-[#A6AEA5]">Outreach Cost ($5.00/user):</span>
                     <span className="font-tech text-[#F2F0E8] font-medium">
                       {formatCurrency(campaignBudget)}
                     </span>

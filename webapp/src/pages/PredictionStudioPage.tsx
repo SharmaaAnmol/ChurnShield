@@ -644,9 +644,9 @@ export function PredictionStudioPage() {
                 className="w-full accent-[#447A56] cursor-pointer"
               />
               <div className="flex justify-between text-[10px] text-[#A6AEA5] font-tech">
-                <span>R$ 20 (Low basket)</span>
-                <span>R$ 106 (Platform Median)</span>
-                <span>R$ 2,500+ (High Value)</span>
+                <span>$20 (Low basket)</span>
+                <span>$106 (Platform Median)</span>
+                <span>$2,500+ (High Value)</span>
               </div>
             </div>
 
