@@ -179,6 +179,26 @@ export function PredictionStudioPage() {
   // Debounced live preview state (350ms)
   const [isDebouncing, setIsDebouncing] = useState(false);
 
+  // Temporal & Cadence Coherence Synchronization:
+  // 1. If recencyDays > 90: By mathematical definition, the customer placed ZERO orders in the last 90 days.
+  // 2. If recencyDays <= 90: The customer must have placed at least 1 order in the recent 90-day window.
+  // 3. In all cases: ordersRecent90d cannot exceed orderCount.
+  useEffect(() => {
+    if (recencyDays > 90) {
+      if (ordersRecent90d !== 0) {
+        setOrdersRecent90d(0);
+      }
+    } else {
+      // recencyDays <= 90: minimum 1 order placed in the recent 90d window
+      const maxPossible = Math.max(1, orderCount);
+      if (ordersRecent90d === 0) {
+        setOrdersRecent90d(1);
+      } else if (ordersRecent90d > maxPossible) {
+        setOrdersRecent90d(maxPossible);
+      }
+    }
+  }, [recencyDays, orderCount]);
+
   // Prediction states
   const [predictionResult, setPredictionResult] = useState<ClientInferenceResult | null>(null);
   const [isComputing, setIsComputing] = useState(false);
@@ -1183,28 +1203,59 @@ export function PredictionStudioPage() {
 
               {/* Orders in Recent Window */}
               <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B] space-y-2">
-                <span className="text-xs font-semibold text-[#F2F0E8]">Orders in Recent 90 Days</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-[#F2F0E8]">Orders in Recent 90 Days</span>
+                  {recencyDays > 90 ? (
+                    <span className="text-[10px] font-tech text-[#C48232] bg-[#C48232]/10 px-1.5 py-0.5 rounded border border-[#C48232]/30">
+                      Locked to 0 (Recency &gt; 90d)
+                    </span>
+                  ) : orderCount === 1 ? (
+                    <span className="text-[10px] font-tech text-[#447A56] bg-[#447A56]/10 px-1.5 py-0.5 rounded border border-[#447A56]/30">
+                      Locked to 1 (Single order)
+                    </span>
+                  ) : null}
+                </div>
                 <div className="flex items-center gap-1.5 pt-1">
-                  {[0, 1, 2, 3, 4].map((num) => (
-                    <button
-                      key={num}
-                      type="button"
-                      disabled={num > orderCount}
-                      onClick={() => setOrdersRecent90d(num)}
-                      className={`flex-1 py-1.5 rounded-md text-xs font-tech font-semibold transition-all cursor-pointer ${
-                        ordersRecent90d === num
-                          ? 'bg-[#214D35] text-[#F2F0E8] border border-[#447A56]'
-                          : num > orderCount
-                          ? 'opacity-25 pointer-events-none bg-[#171D18] text-[#A6AEA5]'
-                          : 'bg-[#171D18] text-[#A6AEA5] hover:text-[#F2F0E8]'
-                      }`}
-                    >
-                      {num}
-                    </button>
-                  ))}
+                  {[0, 1, 2, 3, 4].map((num) => {
+                    const isDisabled =
+                      (recencyDays > 90 && num > 0) ||
+                      (recencyDays <= 90 && num === 0) ||
+                      num > orderCount;
+
+                    return (
+                      <button
+                        key={num}
+                        type="button"
+                        disabled={isDisabled}
+                        onClick={() => setOrdersRecent90d(num)}
+                        className={`flex-1 py-1.5 rounded-md text-xs font-tech font-semibold transition-all cursor-pointer ${
+                          ordersRecent90d === num
+                            ? 'bg-[#214D35] text-[#F2F0E8] border border-[#447A56]'
+                            : isDisabled
+                            ? 'opacity-20 pointer-events-none bg-[#171D18] text-[#A6AEA5]'
+                            : 'bg-[#171D18] text-[#A6AEA5] hover:text-[#F2F0E8]'
+                        }`}
+                        title={
+                          recencyDays > 90 && num > 0
+                            ? 'Disabled: Last order was >90 days ago, so recent 90d orders must be 0'
+                            : recencyDays <= 90 && num === 0
+                            ? 'Disabled: Last order was within 90 days, so recent 90d orders cannot be 0'
+                            : num > orderCount
+                            ? 'Disabled: Cannot exceed lifetime orders'
+                            : undefined
+                        }
+                      >
+                        {num}
+                      </button>
+                    );
+                  })}
                 </div>
                 <p className="text-[10px] text-[#A6AEA5]">
-                  Top predictor in permutation importance ranking
+                  {recencyDays > 90
+                    ? 'Customer last ordered > 90 days ago, so recent 90d activity is mathematically 0'
+                    : orderCount === 1
+                    ? 'Customer made only 1 lifetime order, which occurred in recent 90d'
+                    : 'Recent order frequency within the 90-day observation window'}
                 </p>
               </div>
             </div>
