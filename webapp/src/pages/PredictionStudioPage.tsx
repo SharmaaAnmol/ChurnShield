@@ -23,6 +23,7 @@ import {
   Plus,
   Minus,
   MapPin,
+  User,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -102,8 +103,12 @@ const ALL_STATES = [
 
 interface ScenarioPreset {
   id: string;
+  personaName: string;
+  personaRole: string;
   title: string;
   tagline: string;
+  story: string;
+  playbook: string;
   recency: number;
   tenure: number;
   orders: number;
@@ -116,8 +121,12 @@ interface ScenarioPreset {
 const SCENARIO_PRESETS: ScenarioPreset[] = [
   {
     id: 'active_repeat',
-    title: 'Active Multi-Order Buyer',
-    tagline: 'Ordered 14 days ago, 3 lifetime orders, high recent velocity',
+    personaName: 'Beatriz',
+    personaRole: 'High-Velocity Loyalist',
+    title: 'Beatriz (Active Repeat)',
+    tagline: 'Ordered 14 days ago in SP, 3 lifetime orders, high recent velocity',
+    story: 'Ordered 14 days ago from São Paulo. 3 lifetime purchases with 2 placed inside the recent 90-day window. Strong brand affinity and steady purchasing cadence.',
+    playbook: 'VIP Tier Perks: Private invitations to new catalog drops & loyalty concierge. Avoid price discounting.',
     recency: 14,
     tenure: 140,
     orders: 3,
@@ -128,8 +137,12 @@ const SCENARIO_PRESETS: ScenarioPreset[] = [
   },
   {
     id: 'cooling_off',
-    title: 'Cooling-Off Customer',
-    tagline: 'Ordered 55 days ago, 2 lifetime orders, fading activity',
+    personaName: 'Helena',
+    personaRole: 'Cooling-Off VIP Buyer',
+    title: 'Helena (Cooling Off)',
+    tagline: 'Ordered 55 days ago in RJ, 2 lifetime orders, fading cadence',
+    story: 'Ordered 55 days ago from Rio de Janeiro. 2 lifetime purchases ($180 total). Activity has paused for nearly 2 months. Crucial intervention window before churn locks in.',
+    playbook: 'Soft Re-Engagement: Personalized product recommendations and satisfaction pulse-check. Maintain margin discipline.',
     recency: 55,
     tenure: 110,
     orders: 2,
@@ -140,8 +153,12 @@ const SCENARIO_PRESETS: ScenarioPreset[] = [
   },
   {
     id: 'lapsed_single',
-    title: 'Lapsed Single-Order Buyer',
-    tagline: 'Single purchase 160 days ago, zero activity in recent period',
+    personaName: 'Carlos',
+    personaRole: 'Lapsed High-Freight Buyer',
+    title: 'Carlos (Lapsed Single)',
+    tagline: 'Single purchase 160 days ago in MG, zero activity, 28% freight friction',
+    story: 'Ordered 160 days ago in Minas Gerais. Paid $75 with high shipping friction (28% freight ratio). Zero repeat purchases. Severely lapsed into platform inactivity.',
+    playbook: 'Win-Back Campaign: Targeted subsidized shipping voucher to eliminate geographical friction.',
     recency: 160,
     tenure: 160,
     orders: 1,
@@ -738,7 +755,7 @@ export function PredictionStudioPage() {
           <div className="flex flex-wrap items-center gap-2.5">
             {/* Archetype Presets */}
             <div className="flex items-center gap-1.5 bg-[#090B09] p-1 rounded-lg border border-[#29332B]">
-              <span className="text-[10px] font-tech text-[#A6AEA5] px-1.5">Preset:</span>
+              <span className="text-[10px] font-tech text-[#A6AEA5] px-1.5">Archetypes:</span>
               {SCENARIO_PRESETS.map((preset) => {
                 const isSelected = activePreset === preset.id;
                 return (
@@ -746,14 +763,15 @@ export function PredictionStudioPage() {
                     key={preset.id}
                     type="button"
                     onClick={() => applyPreset(preset)}
-                    className={`px-2 py-1 rounded text-xs font-tech font-medium transition-all cursor-pointer ${
+                    className={`px-2.5 py-1 rounded text-xs font-tech font-medium transition-all cursor-pointer flex items-center gap-1 ${
                       isSelected
                         ? 'bg-[#214D35] text-[#F2F0E8] border border-[#447A56] shadow-sm'
                         : 'text-[#A6AEA5] hover:text-[#F2F0E8] hover:bg-[#171D18]'
                     }`}
                     title={preset.tagline}
                   >
-                    {preset.title.split(' ')[0]} ({preset.recency}d)
+                    <span className="font-semibold">{preset.personaName}</span>
+                    <span className="opacity-70 text-[10px]">({preset.recency}d)</span>
                   </button>
                 );
               })}
@@ -819,6 +837,40 @@ export function PredictionStudioPage() {
             </div>
           </div>
         </div>
+
+        {/* Active Persona Narrative Callout Banner */}
+        {(() => {
+          const activePresetObj = SCENARIO_PRESETS.find((p) => p.id === activePreset);
+          if (!activePresetObj) return null;
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-3.5 rounded-xl bg-[#090B09] border border-[#214D35] p-3 text-xs flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-lg"
+            >
+              <div className="flex items-start sm:items-center gap-2.5">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#102016] border border-[#447A56] text-[#447A56] font-tech text-xs font-bold">
+                  {activePresetObj.personaName[0]}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-semibold text-[#F2F0E8] font-tech text-xs">
+                      {activePresetObj.personaName} — {activePresetObj.personaRole}
+                    </span>
+                    <Badge variant="forest" size="sm">Active Archetype</Badge>
+                  </div>
+                  <p className="text-[11px] text-[#A6AEA5] mt-0.5 leading-snug">
+                    {activePresetObj.story}
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-[11px] font-tech text-[#447A56] bg-[#102016] px-3 py-1.5 rounded-lg border border-[#214D35] shrink-0 font-medium">
+                {activePresetObj.playbook}
+              </div>
+            </motion.div>
+          );
+        })()}
 
         {/* Enlarged Visual Interactive Timeline Canvas */}
         <div className="mt-4 mb-4 select-none">

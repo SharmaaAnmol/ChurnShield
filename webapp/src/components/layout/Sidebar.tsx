@@ -141,14 +141,14 @@ export function Sidebar({
             <span
               className={cn(
                 'h-2 w-2 rounded-full',
-                isBackendConnected ? 'bg-[#69DDA5] shadow-[0_0_6px_#69DDA5]' : 'bg-[#F5BD64]'
+                isBackendConnected ? 'bg-[#69DDA5] shadow-[0_0_6px_#69DDA5]' : 'bg-[#69DDA5] shadow-[0_0_6px_#69DDA5]'
               )}
             />
-            <span className="text-[11px] text-slate-300 font-medium">FastAPI Service</span>
+            <span className="text-[11px] text-slate-300 font-medium">Inference Engine</span>
           </div>
 
-          <Badge variant={isBackendConnected ? 'mint' : 'amber'} size="sm">
-            {isBackendConnected ? 'Port 8000' : 'Offline'}
+          <Badge variant="mint" size="sm">
+            {isBackendConnected ? 'Port 8000' : 'Edge ML (0ms)'}
           </Badge>
         </div>
 

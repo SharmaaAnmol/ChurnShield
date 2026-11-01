@@ -7,6 +7,18 @@ import {
   Award,
   DollarSign,
   AlertOctagon,
+  Cpu,
+  Scale,
+  GitBranch,
+  ArrowRight,
+  CheckCircle2,
+  Activity,
+  FileCode,
+  TrendingUp,
+  Sparkles,
+  ChevronRight,
+  Shield,
+  Zap,
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -20,6 +32,9 @@ export function MethodologyPage() {
   const [marginPerMonth, setMarginPerMonth] = useState<number>(40.0);
   const [targetCount, setTargetCount] = useState<number>(7833);
 
+  // Interactive Architecture Blueprint Stage Selector
+  const [selectedBlueprintStage, setSelectedBlueprintStage] = useState<number>(3); // Default to Champion Model stage
+
   // Derived financial simulation calculations
   const totalCampaignCost = targetCount * outreachCost;
   const customersRetained = targetCount * conversionRate;
@@ -27,57 +42,93 @@ export function MethodologyPage() {
   const netProfit = grossMarginSaved - totalCampaignCost;
   const roi = totalCampaignCost > 0 ? (netProfit / totalCampaignCost) * 100 : 0;
 
-  const pipelineStages = [
+  const blueprintStages = [
     {
+      id: 0,
       step: '01',
-      title: 'Data Ingestion & Hygiene',
-      description:
-        'Parsed 100,000+ orders from Brazilian Olist marketplace. Enforced customer entity deduplication via customer_unique_id.',
+      title: 'Data Ingestion & Deduplication',
+      shortTitle: 'Ingestion Layer',
       icon: Database,
       badge: 'Data Layer',
       variant: 'forest',
+      summary: '100,000+ Brazilian Olist records deduplicated into true customer behavioral entities.',
+      inputs: ['Raw Olist Orders CSV (99,441 records)', 'Customer Geolocation & State Registry', 'Product Category & SKU Metadata'],
+      outputs: ['Customer Entity Behavioral Master Table', 'Deduplicated customer_unique_id tokens'],
+      keyTechnique: 'Separating transient checkout IDs (customer_id) from persistent human buyers (customer_unique_id) to reconstruct authentic multi-order lifespans.',
     },
     {
+      id: 1,
       step: '02',
-      title: 'Rolling-Origin Windows',
-      description:
-        'Constructed 180-day observation lookback windows with strictly non-overlapping 90-day forward outcome evaluation horizons.',
+      title: 'Rolling-Origin Temporal Windows',
+      shortTitle: 'Temporal Splits',
       icon: Calendar,
-      badge: 'Temporal Split',
+      badge: 'Zero Leakage',
       variant: 'default',
+      summary: 'Strictly non-overlapping 180-day lookback and 90-day forward evaluation horizons.',
+      inputs: ['Timestamped Order Sequence: [T_start, T_cutoff]', 'Cutoff Date T_0 for cohort observation'],
+      outputs: ['Feature Lookback Horizon [T_0 - 180d, T_0]', 'Ground-Truth Binary Label y ∈ {0, 1} in [T_0, T_0 + 90d]'],
+      keyTechnique: 'Rolling-origin temporal partitions guarantee zero target leakage. All predictor features terminate strictly at T_0 before outcome evaluation begins.',
     },
     {
+      id: 2,
       step: '03',
-      title: 'Feature Store Engineering',
-      description:
-        'Engineered 21 leakage-free customer features spanning frequency, spend ratios, recency cadence, basket stability, and logistics.',
+      title: 'Leakage-Free Feature Store',
+      shortTitle: '21 Signals',
       icon: Layers,
-      badge: '21 Signals',
+      badge: 'Signal Store',
       variant: 'forest',
+      summary: '21 engineered signals across RFM-D, basket stability, inter-order intervals, and logistics.',
+      inputs: ['Order timestamps, quantities, freight fees, item categories, seller locations'],
+      outputs: ['21-dimensional normalized numerical + categorical feature vector x_i'],
+      keyTechnique: 'StandardScaler centering (μ, σ) and categorical target encoding. Captures velocity ratios (recent 90d spend vs. earlier spend) as primary leading indicators.',
     },
     {
+      id: 3,
       step: '04',
-      title: 'Balanced ML Pipeline',
-      description:
-        'Trained Balanced Logistic Regression model optimized for Precision-Recall AUC (PR-AUC) under severe 99.3% negative class imbalance.',
+      title: 'Balanced ML Champion Engine',
+      shortTitle: 'Champion ML',
       icon: Award,
-      badge: 'Champion ML',
+      badge: 'Scikit-Learn',
       variant: 'crimson',
+      summary: 'Balanced Logistic Regression optimizing PR-AUC (+3.2× lift) under severe 99.3% imbalance.',
+      inputs: ['21 engineered features x_i', 'Inverse-frequency class balancing weights w_j = N / (2 · N_j)'],
+      outputs: ['Continuous probability P(repeat) ∈ [0, 1]', 'Log-odds z = β_0 + Σ β_i z_i', 'Inactivity Risk Score (1 - P)'],
+      keyTechnique: 'Inverse-frequency class balancing prevents probability collapse on rare 0.69% positive repeaters. Exact linear coefficients enable instant in-browser explainability.',
     },
     {
+      id: 4,
       step: '05',
-      title: 'Retention Decision Policy',
-      description:
-        'Rank-ordered customers by inactivity risk (1 - P(repeat)) and prioritized top 20% outreach decile for retention campaigns.',
+      title: 'Dual-Engine Serving Infrastructure',
+      shortTitle: 'Serving Layer',
+      icon: Cpu,
+      badge: 'FastAPI + Edge',
+      variant: 'forest',
+      summary: 'Python FastAPI microservice (port 8000) paired with an in-browser 0ms Edge ML engine.',
+      inputs: ['Real-time interactive user inputs (Recency, Spend, Orders, Tenure, State)'],
+      outputs: ['0ms Instantaneous client-side inference', 'FastAPI REST verification payload', 'Telemetry health status'],
+      keyTechnique: 'Dual-engine architecture eliminates server lag. Full Scikit-Learn weights and standard scalers compile into TypeScript for 100% offline mathematical parity.',
+    },
+    {
+      id: 5,
+      step: '06',
+      title: 'Operational Policy & Financial ROI',
+      shortTitle: 'Decision Layer',
       icon: DollarSign,
       badge: 'Policy & ROI',
       variant: 'amber',
+      summary: 'Decile prioritization and cost-matrix simulation to preserve margin before churn locks in.',
+      inputs: ['Risk ranking (1 - P(repeat))', 'Campaign outreach cost ($)', 'Preserved monthly gross margin ($)'],
+      outputs: ['Top 20% outreach priority cohort', 'Projected net profit saved ($)', 'Targeted retention playbooks'],
+      keyTechnique: 'Connecting probabilistic ML scores to dollars saved. Mandates randomized A/B holdouts (treatment vs. control) to isolate true incremental lift.',
     },
   ];
 
+  const activeStage = blueprintStages[selectedBlueprintStage];
+  const ActiveStageIcon = activeStage.icon;
+
   return (
-    <div className="space-y-8">
-      {/* Banner */}
+    <div className="space-y-10">
+      {/* Editorial Header Banner */}
       <div className="rounded-2xl border border-[#29332B] bg-[#111611] p-6 sm:p-8 shadow-xl relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
           <div className="space-y-2">
@@ -86,72 +137,237 @@ export function MethodologyPage() {
                 Engineering Methodology
               </Badge>
               <Badge variant="default" size="sm">
-                Business ROI Rigor
+                Production ML Architecture
               </Badge>
             </div>
             <span className="text-[10px] font-tech uppercase tracking-[0.2em] text-[#C82038]">
-              Methodology & Causal Boundaries
+              Methodology, Data Flow & Causal Boundaries
             </span>
             <h1 className="font-serif text-2xl sm:text-4xl font-normal text-[#F2F0E8] leading-tight">
-              Inactivity Proxy, Architecture & Financial Modeling
+              System Architecture, Model Selection & Mathematical Mechanics
             </h1>
             <p className="mt-1 text-xs sm:text-sm text-[#A6AEA5] max-w-2xl leading-relaxed">
-              Transparent review of the machine learning design principles, non-contractual retail definitions,
-              financial scenario mechanics, and scientific causal boundaries.
+              A comprehensive technical inspection for software developers and machine learning engineers:
+              from raw Brazilian marketplace transactions to leakage-free temporal splits, PR-AUC champion selection,
+              and dual-engine edge serving.
             </p>
           </div>
         </div>
       </div>
 
-      {/* 5-Stage Architecture Flow */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
+      {/* 1. INTERACTIVE SYSTEM ARCHITECTURE BLUEPRINT (Interactive CAD Visual) */}
+      <Card className="border-[#29332B] shadow-2xl bg-[#111611] overflow-hidden">
+        <CardHeader className="border-b border-[#29332B] bg-[#090B09]/60">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <CardTitle>End-to-End ML Pipeline Architecture</CardTitle>
-              <CardDescription>
-                Chronological data pipeline from raw Olist tables to operational retention scoring
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-[#447A56] animate-pulse" />
+                <CardTitle className="text-base font-semibold">End-to-End System & Data Flow Blueprint</CardTitle>
+              </div>
+              <CardDescription className="text-xs">
+                Click any pipeline stage below to inspect its data inputs, transformation algorithms, and architectural outputs
               </CardDescription>
             </div>
             <Badge variant="forest" size="sm">
-              5 Modular Stages
+              6 Modular Stages
             </Badge>
           </div>
         </CardHeader>
 
-        <CardContent className="pt-4">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            {pipelineStages.map((stage) => {
+        <CardContent className="p-6 space-y-6">
+          {/* Interactive Pipeline Node Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+            {blueprintStages.map((stage) => {
               const Icon = stage.icon;
+              const isSelected = selectedBlueprintStage === stage.id;
               return (
-                <div
-                  key={stage.step}
-                  className="rounded-xl bg-[#090B09] p-4 border border-[#29332B] flex flex-col justify-between relative group hover:border-[#447A56] transition-colors"
+                <button
+                  key={stage.id}
+                  type="button"
+                  onClick={() => setSelectedBlueprintStage(stage.id)}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between min-h-[92px] ${
+                    isSelected
+                      ? 'bg-[#102016] border-[#447A56] shadow-[0_0_15px_rgba(68,122,86,0.25)]'
+                      : 'bg-[#090B09] border-[#29332B] hover:border-[#447A56]/60 hover:bg-[#111611]'
+                  }`}
                 >
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`font-tech text-[10px] font-bold px-1.5 py-0.5 rounded border ${
+                        isSelected
+                          ? 'bg-[#214D35] text-[#F2F0E8] border-[#447A56]'
+                          : 'bg-[#171D18] text-[#A6AEA5] border-[#29332B]'
+                      }`}
+                    >
+                      {stage.step}
+                    </span>
+                    <Icon className={`h-4 w-4 ${isSelected ? 'text-[#447A56]' : 'text-[#A6AEA5]'}`} />
+                  </div>
                   <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="font-tech text-xs font-bold text-[#447A56] bg-[#102016] border border-[#214D35] px-2 py-0.5 rounded">
-                        {stage.step}
-                      </span>
-                      <Icon className="h-4 w-4 text-[#A6AEA5] group-hover:text-[#F2F0E8] transition-colors" />
-                    </div>
-                    <h4 className="text-xs font-semibold text-[#F2F0E8] mb-1.5">{stage.title}</h4>
-                    <p className="text-[11px] text-[#A6AEA5] leading-relaxed">{stage.description}</p>
-                  </div>
-
-                  <div className="mt-4 pt-2 border-t border-[#29332B]">
-                    <Badge variant={stage.variant as any} size="sm">
+                    <h4 className="text-xs font-semibold text-[#F2F0E8] font-tech leading-tight mt-2">
+                      {stage.shortTitle}
+                    </h4>
+                    <span className="text-[9.5px] text-[#A6AEA5] line-clamp-1 block mt-0.5">
                       {stage.badge}
-                    </Badge>
+                    </span>
                   </div>
-                </div>
+                </button>
               );
             })}
+          </div>
+
+          {/* Active Blueprint Stage Detailed Inspector Card */}
+          <div className="rounded-xl bg-[#090B09] border border-[#214D35] p-5 sm:p-6 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#29332B]">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#102016] border border-[#447A56] text-[#447A56]">
+                  <ActiveStageIcon className="h-5 w-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-tech text-xs text-[#C82038] font-bold">STAGE {activeStage.step}</span>
+                    <span className="text-[#29332B]">•</span>
+                    <h3 className="text-sm sm:text-base font-semibold text-[#F2F0E8]">{activeStage.title}</h3>
+                  </div>
+                  <p className="text-xs text-[#A6AEA5] mt-0.5">{activeStage.summary}</p>
+                </div>
+              </div>
+              <Badge variant={activeStage.variant as any} size="sm" className="shrink-0 self-start sm:self-center">
+                {activeStage.badge}
+              </Badge>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1 text-xs">
+              {/* Inputs */}
+              <div className="rounded-lg bg-[#111611] p-3.5 border border-[#29332B] space-y-2">
+                <span className="text-[10px] font-tech text-[#A6AEA5] uppercase tracking-wider font-semibold block">
+                  Stage Ingestion Inputs:
+                </span>
+                <ul className="space-y-1.5 text-[11px] text-[#F2F0E8]">
+                  {activeStage.inputs.map((inp, idx) => (
+                    <li key={idx} className="flex items-start gap-1.5">
+                      <span className="text-[#447A56] font-bold font-tech">→</span>
+                      <span>{inp}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Outputs */}
+              <div className="rounded-lg bg-[#111611] p-3.5 border border-[#29332B] space-y-2">
+                <span className="text-[10px] font-tech text-[#A6AEA5] uppercase tracking-wider font-semibold block">
+                  Architectural Artifacts / Outputs:
+                </span>
+                <ul className="space-y-1.5 text-[11px] text-[#F2F0E8]">
+                  {activeStage.outputs.map((out, idx) => (
+                    <li key={idx} className="flex items-start gap-1.5">
+                      <span className="text-[#E33B4F] font-bold font-tech">✓</span>
+                      <span>{out}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Engineering Method */}
+              <div className="rounded-lg bg-[#111611] p-3.5 border border-[#29332B] space-y-2">
+                <span className="text-[10px] font-tech text-[#447A56] uppercase tracking-wider font-semibold block">
+                  Core Implementation Technique:
+                </span>
+                <p className="text-[11px] text-[#A6AEA5] leading-relaxed">
+                  {activeStage.keyTechnique}
+                </p>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Domain Reality: Inactivity vs Permanent Churn */}
+      {/* 2. DEEP TECHNICAL ANALYSIS: MODEL SELECTION CRITERIA & PREDICTION FORMULATION */}
+      <div className="space-y-6">
+        <div className="border-b border-[#29332B] pb-3">
+          <div className="flex items-center gap-2">
+            <Scale className="h-5 w-5 text-[#447A56]" />
+            <h2 className="font-serif text-xl sm:text-2xl font-normal text-[#F2F0E8]">
+              Model Selection Criteria & Prediction Formulation
+            </h2>
+          </div>
+          <p className="text-xs text-[#A6AEA5] mt-1">
+            Why Balanced Logistic Regression was selected over tree ensembles (XGBoost, Random Forest), and why PR-AUC was the primary metric.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Card A: Why PR-AUC Over ROC-AUC */}
+          <Card className="border-[#29332B] bg-[#111611]">
+            <CardHeader className="pb-3 border-b border-[#29332B]/60">
+              <span className="text-[10px] font-tech text-[#C82038] uppercase tracking-wider font-bold">Evaluation Rigor</span>
+              <CardTitle className="text-sm font-semibold text-[#F2F0E8]">Why PR-AUC Over ROC-AUC</CardTitle>
+            </CardHeader>
+            <CardContent className="pt-4 space-y-3 text-xs text-[#A6AEA5] leading-relaxed">
+              <p>
+                In severe class imbalance (0.69% positive repeat rate), <strong className="text-[#F2F0E8]">ROC-AUC creates a dangerous false sense of security</strong>.
+              </p>
+              <div className="rounded-lg bg-[#090B09] p-3 border border-[#29332B] font-mono text-[10.5px] space-y-1">
+                <div className="text-[#A6AEA5]">FPR = FP / (FP + TN)</div>
+                <div className="text-[#A6AEA5]">Precision = TP / (TP + FP)</div>
+              </div>
+              <p>
+                Because True Negatives (TN = 38,892) dominate, False Positive Rate (FPR) remains deceptively near zero even with 500 false alarms. In contrast, <strong className="text-[#447A56]">PR-AUC ignores True Negatives completely</strong>, directly penalizing false positives and measuring commercial precision.
+              </p>
+              <div className="pt-2 border-t border-[#29332B] flex items-center justify-between text-[11px] font-tech">
+                <span className="text-[#A6AEA5]">ChurnShield PR-AUC Lift:</span>
+                <span className="text-[#447A56] font-bold">+3.2× Over Dummy Baseline</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Card B: Mathematical Formulation */}
+          <Card className="border-[#29332B] bg-[#111611]">
+            <CardHeader className="pb-3 border-b border-[#29332B]/60">
+              <span className="text-[10px] font-tech text-[#447A56] uppercase tracking-wider font-bold">Exact Math</span>
+              <CardTitle className="text-sm font-semibold text-[#F2F0E8]">Mathematical Prediction Mechanics</CardTitle>
+            </CardHeader>
+            <CardContent className="pt-4 space-y-3 text-xs text-[#A6AEA5] leading-relaxed">
+              <p>
+                The pipeline computes standard z-scores for all 21 features, sums the weighted log-odds, and applies the standard logistic sigmoid:
+              </p>
+              <div className="rounded-lg bg-[#090B09] p-3 border border-[#29332B] font-tech text-[10.5px] space-y-1.5">
+                <div className="text-[#447A56]">z = β_0 + Σ β_i · ((x_i - μ_i) / σ_i)</div>
+                <div className="text-[#F2F0E8]">P(repeat) = 1.0 / (1.0 + e^(-z))</div>
+                <div className="text-[#E33B4F]">Inactivity Risk = 1.0 - P(repeat)</div>
+              </div>
+              <p>
+                Because the equation is strictly linear in log-odds space, feature contributions are <strong className="text-[#F2F0E8]">100% mathematically exact</strong>. No black-box approximations or Monte Carlo SHAP sampling required.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Card C: Why Logistic Over Trees */}
+          <Card className="border-[#29332B] bg-[#111611]">
+            <CardHeader className="pb-3 border-b border-[#29332B]/60">
+              <span className="text-[10px] font-tech text-[#C48232] uppercase tracking-wider font-bold">Architecture Trade-off</span>
+              <CardTitle className="text-sm font-semibold text-[#F2F0E8]">Why Logistic Over Tree Ensembles</CardTitle>
+            </CardHeader>
+            <CardContent className="pt-4 space-y-3 text-xs text-[#A6AEA5] leading-relaxed">
+              <p>
+                Uncalibrated gradient-boosted trees (XGBoost, LightGBM) compress probabilities heavily near zero when trained on 99% negative data, requiring post-hoc Platt scaling or isotonic regression.
+              </p>
+              <div className="space-y-1.5 pt-1">
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-[#447A56] shrink-0 mt-0.5" />
+                  <span><strong className="text-[#F2F0E8]">Smooth Probability Spectrum:</strong> Class-weighted logistic regression yields naturally calibrated odds across all deciles.</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-[#447A56] shrink-0 mt-0.5" />
+                  <span><strong className="text-[#F2F0E8]">0ms In-Browser Edge ML:</strong> Compact parameter size allows instant client execution without heavy Python runtimes.</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* 3. Domain Reality: Inactivity vs Permanent Churn & Scientific Boundaries */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
@@ -175,7 +391,7 @@ export function MethodologyPage() {
               months later, or may never return.
             </p>
             <div className="rounded-lg bg-[#090B09] p-3 border border-[#29332B] space-y-1.5 font-tech text-[11px]">
-              <div className="font-semibold text-[#F2F0E8]">Mathematical Modeling Formulation:</div>
+              <div className="font-semibold text-[#F2F0E8]">Operational Formulation:</div>
               <div className="text-[#447A56]">
                 repeat_purchase_next_90d ∈ &#123;0, 1&#125;
               </div>
@@ -247,7 +463,7 @@ export function MethodologyPage() {
         </ScrollReveal>
       </div>
 
-      {/* Interactive Business ROI Simulator */}
+      {/* 4. Interactive Business ROI Simulator */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">

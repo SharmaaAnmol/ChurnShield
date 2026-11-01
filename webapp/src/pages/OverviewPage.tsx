@@ -16,6 +16,7 @@ import {
   Filter,
   X,
   Sliders,
+  Play,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -29,6 +30,7 @@ import {
 import { KpiCard } from '../components/shared/KpiCard';
 import { RiskBadge } from '../components/shared/RiskBadge';
 import { CustomerDrawer } from '../components/shared/CustomerDrawer';
+import { QuickOverviewModal } from '../components/shared/QuickOverviewModal';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
@@ -59,6 +61,9 @@ export function OverviewPage() {
 
   // Interactive Operational Cutoff Threshold Slider (30% to 90%, default 70%)
   const [operationalCutoff, setOperationalCutoff] = useState<number>(70);
+
+  // 60-Second Overview Tour Modal
+  const [isTourOpen, setIsTourOpen] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -205,7 +210,17 @@ export function OverviewPage() {
               Using temporal cutoff simulation and calibrated logistic regression to capture margin before churn locks in.
             </p>
 
-            <div className="pt-2 flex items-center gap-4 flex-wrap">
+            <div className="pt-2 flex items-center gap-3.5 flex-wrap">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => setIsTourOpen(true)}
+                className="border-[#447A56]/70 text-[#F2F0E8] hover:bg-[#214D35]/30 group cursor-pointer"
+              >
+                <Play className="h-4 w-4 mr-1.5 text-[#447A56] fill-[#447A56] group-hover:text-white group-hover:fill-white transition-colors" />
+                <span>60s Overview Tour</span>
+              </Button>
+
               <Link to="/prediction-studio">
                 <Button variant="primary" size="lg" className="group">
                   <Zap className="h-4 w-4 mr-1 text-[#F2F0E8]" />
@@ -733,6 +748,12 @@ export function OverviewPage() {
         customer={selectedCustomer}
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
+      />
+
+      {/* 60-Second Overview Tour Modal */}
+      <QuickOverviewModal
+        isOpen={isTourOpen}
+        onClose={() => setIsTourOpen(false)}
       />
     </div>
   );

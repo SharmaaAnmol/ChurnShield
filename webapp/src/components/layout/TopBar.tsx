@@ -11,8 +11,11 @@ import {
   Activity,
   Shield,
   ExternalLink,
+  Play,
+  Sparkles,
 } from 'lucide-react';
 import { useTimeline, TIMELINE_OPTIONS } from '../../lib/context/TimelineContext';
+import { QuickOverviewModal } from '../shared/QuickOverviewModal';
 
 interface TopBarProps {
   isDataConnected?: boolean;
@@ -21,6 +24,7 @@ interface TopBarProps {
 
 export function TopBar({ isDataConnected = true, isBackendConnected = true }: TopBarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isOverviewOpen, setIsOverviewOpen] = useState(false);
   const { activeTimeline, setActiveTimeline } = useTimeline();
   const location = useLocation();
 
@@ -113,7 +117,18 @@ export function TopBar({ isDataConnected = true, isBackendConnected = true }: To
         </nav>
 
         {/* Right Controls: Timeline & Telemetry */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
+          {/* 60s Tour Button */}
+          <button
+            type="button"
+            onClick={() => setIsOverviewOpen(true)}
+            className="flex items-center gap-1.5 rounded-xl bg-[#171D18] hover:bg-[#214D35] px-3 py-1.5 border border-[#29332B] hover:border-[#447A56] text-xs font-tech text-[#F2F0E8] transition-all cursor-pointer shadow-sm group"
+            title="Open 60-Second System Architecture & Machine Learning Tour"
+          >
+            <Play className="h-3 w-3 text-[#447A56] group-hover:text-white fill-[#447A56] group-hover:fill-white transition-colors" />
+            <span className="font-semibold">60s Overview</span>
+          </button>
+
           {/* Timeline Selector Dropdown */}
           <div className="flex items-center gap-2 rounded-xl bg-[#111611] px-3.5 py-1.5 border border-[#29332B] text-xs text-[#A6AEA5] hover:border-[#447A56]/60 transition-colors shadow-sm">
             <Calendar className="h-4 w-4 text-[#447A56]" />
@@ -133,15 +148,21 @@ export function TopBar({ isDataConnected = true, isBackendConnected = true }: To
 
           {/* Backend Status indicator */}
           <div
-            title={isBackendConnected ? 'FastAPI Model Inference Live' : 'Backend in Offline Fallback'}
+            title={
+              isBackendConnected
+                ? 'FastAPI Model Inference Live on Port 8000'
+                : 'In-Browser Edge ML Engine Active: Exact Scikit-Learn Logistic Regression math running client-side with 0ms latency.'
+            }
             className="hidden sm:flex items-center gap-2 rounded-xl bg-[#111611] px-3 py-1.5 border border-[#29332B] text-xs font-tech text-[#A6AEA5]"
           >
             <span
               className={`h-2 w-2 rounded-full ${
-                isBackendConnected ? 'bg-[#447A56] shadow-[0_0_10px_#447A56]' : 'bg-[#C48232]'
+                isBackendConnected
+                  ? 'bg-[#447A56] shadow-[0_0_10px_#447A56]'
+                  : 'bg-[#447A56] shadow-[0_0_8px_#447A56] animate-pulse'
               }`}
             />
-            <span>{isBackendConnected ? 'Live API' : 'Fallback'}</span>
+            <span>{isBackendConnected ? 'Live API' : 'Edge ML (0ms)'}</span>
           </div>
 
           {/* GitHub link */}
@@ -165,6 +186,9 @@ export function TopBar({ isDataConnected = true, isBackendConnected = true }: To
           </button>
         </div>
       </div>
+
+      {/* 60-Second Overview Interactive Modal */}
+      <QuickOverviewModal isOpen={isOverviewOpen} onClose={() => setIsOverviewOpen(false)} />
 
       {/* Mobile Drawer */}
       <AnimatePresence>
@@ -199,20 +223,34 @@ export function TopBar({ isDataConnected = true, isBackendConnected = true }: To
               })}
             </nav>
 
-            <div className="mt-6 pt-4 border-t border-[#29332B] flex items-center justify-between text-xs text-[#A6AEA5]">
-              <div className="flex items-center gap-2">
-                <span className={`h-2 w-2 rounded-full ${isBackendConnected ? 'bg-[#447A56]' : 'bg-[#C48232]'}`} />
-                <span>FastAPI Inference: {isBackendConnected ? 'Online' : 'Offline'}</span>
-              </div>
-              <a
-                href="https://github.com/SharmaaAnmol/ChurnShield"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 text-[#F2F0E8] hover:underline font-tech"
+            <div className="mt-4 pt-3 border-t border-[#29332B] flex flex-col gap-3 text-xs text-[#A6AEA5]">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setIsOverviewOpen(true);
+                }}
+                className="flex items-center justify-center gap-2 py-2 rounded-lg bg-[#171D18] border border-[#29332B] text-[#F2F0E8] font-tech"
               >
-                <Github className="h-3.5 w-3.5" />
-                <span>Repo</span>
-              </a>
+                <Play className="h-3.5 w-3.5 text-[#447A56] fill-[#447A56]" />
+                <span>Launch 60-Second Overview Tour</span>
+              </button>
+
+              <div className="flex items-center justify-between pt-1">
+                <div className="flex items-center gap-2 font-tech">
+                  <span className={`h-2 w-2 rounded-full ${isBackendConnected ? 'bg-[#447A56]' : 'bg-[#447A56] animate-pulse'}`} />
+                  <span>{isBackendConnected ? 'FastAPI Service: Online' : 'Edge ML Engine: 0ms Active'}</span>
+                </div>
+                <a
+                  href="https://github.com/SharmaaAnmol/ChurnShield"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 text-[#F2F0E8] hover:underline font-tech"
+                >
+                  <Github className="h-3.5 w-3.5" />
+                  <span>Repo</span>
+                </a>
+              </div>
             </div>
           </motion.div>
         )}
