@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   X,
@@ -28,6 +29,18 @@ interface QuickOverviewModalProps {
 
 export function QuickOverviewModal({ isOpen, onClose }: QuickOverviewModalProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Lock background body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   // Close on Escape & handle Arrow keys
   useEffect(() => {
@@ -97,7 +110,7 @@ export function QuickOverviewModal({ isOpen, onClose }: QuickOverviewModalProps)
     {
       step: '02 / 04',
       badge: 'Data & Methodology',
-      title: 'Rolling-Origin Temporal Splits & 21 Leakage-Free Signals',
+      title: 'Rolling-Origin Temporal Windows & 21 Leakage-Free Signals',
       subtitle: 'Constructing mathematically rigorous time horizons to prevent data leakage.',
       icon: Database,
       content: (
@@ -246,20 +259,24 @@ export function QuickOverviewModal({ isOpen, onClose }: QuickOverviewModalProps)
   const slide = slides[currentSlide];
   const IconComponent = slide.icon;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md">
+  const modalElement = (
+    <div
+      className="fixed inset-0 z-[9999] overflow-y-auto bg-black/85 backdrop-blur-md flex min-h-screen items-center justify-center p-3 sm:p-6 text-left"
+      onClick={onClose}
+    >
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+        initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 10 }}
+        exit={{ opacity: 0, scale: 0.95, y: 15 }}
         transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full max-w-2xl rounded-2xl border border-[#29332B] bg-[#111611] shadow-2xl overflow-hidden flex flex-col"
+        className="relative w-full max-w-2xl max-h-[88vh] my-auto rounded-2xl border border-[#29332B] bg-[#111611] shadow-2xl flex flex-col overflow-hidden text-left"
         role="dialog"
         aria-modal="true"
         aria-labelledby="overview-modal-title"
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#29332B] bg-[#090B09]">
+        <div className="flex items-center justify-between px-5 sm:px-6 py-3.5 border-b border-[#29332B] bg-[#090B09] shrink-0">
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#171D18] text-[#447A56] border border-[#29332B]">
               <IconComponent className="h-4 w-4" />
@@ -282,8 +299,8 @@ export function QuickOverviewModal({ isOpen, onClose }: QuickOverviewModalProps)
           </button>
         </div>
 
-        {/* Modal Body */}
-        <div className="p-6 sm:p-8 space-y-4">
+        {/* Modal Body - Scrollable */}
+        <div className="overflow-y-auto flex-1 p-5 sm:p-6 space-y-4">
           <div className="space-y-1">
             <h3 id="overview-modal-title" className="font-serif text-xl sm:text-2xl font-normal text-[#F2F0E8] leading-tight">
               {slide.title}
@@ -300,7 +317,7 @@ export function QuickOverviewModal({ isOpen, onClose }: QuickOverviewModalProps)
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -12 }}
               transition={{ duration: 0.18 }}
-              className="pt-2"
+              className="pt-1"
             >
               {slide.content}
             </motion.div>
@@ -308,7 +325,7 @@ export function QuickOverviewModal({ isOpen, onClose }: QuickOverviewModalProps)
         </div>
 
         {/* Footer Navigation */}
-        <div className="px-6 py-4 border-t border-[#29332B] bg-[#090B09] flex items-center justify-between">
+        <div className="px-5 sm:px-6 py-3.5 border-t border-[#29332B] bg-[#090B09] flex items-center justify-between shrink-0">
           {/* Step indicator dots */}
           <div className="flex items-center gap-2">
             {slides.map((_, i) => (
@@ -361,4 +378,6 @@ export function QuickOverviewModal({ isOpen, onClose }: QuickOverviewModalProps)
       </motion.div>
     </div>
   );
+
+  return typeof document !== 'undefined' ? createPortal(modalElement, document.body) : null;
 }
