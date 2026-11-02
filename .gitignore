@@ -42,3 +42,11 @@ dist/
 .coverage
 htmlcov/
 
+# Academic / Student reports & PDF builds (excluded from portfolio)
+*.pdf
+*Project_Report*
+docs/report_images/
+build_pdf_report.py
+generate_report_charts.py
+
+
