@@ -177,7 +177,7 @@ export function adaptModelSummary(raw: any): ModelSummary {
       modelType: champ.model_type || champ.modelType || 'Balanced Logistic Regression',
       hyperparameters: champ.hyperparameters || { C: 1.0, class_weight: 'balanced', solver: 'lbfgs' },
       selectionMetric: champ.primary_selection_metric || champ.selectionMetric || 'Average Precision (PR-AUC)',
-      validationPrAuc: champ.validation_cohort_pr_auc ?? champ.validationPrAuc ?? 0.0112,
+      validationPrAuc: champ.validation_cohort_pr_auc ?? champ.validationPrAuc ?? 0.0173,
       testPrAuc: champ.test_cohort_pr_auc ?? champ.testPrAuc ?? 0.0117,
       prAucLiftOverDummy: champ.test_pr_auc_lift_over_dummy ?? champ.prAucLiftOverDummy ?? 1.7,
     },

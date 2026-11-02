@@ -59,15 +59,19 @@
       "random_state": 42
     },
     "primary_selection_metric": "Average Precision (PR-AUC)",
-    "validation_cohort_pr_auc": 0.0112,
+    "validation_cohort_pr_auc": 0.0173,
     "test_cohort_pr_auc": 0.0117,
-    "test_pr_auc_lift_over_dummy": 1.7
+    "test_pr_auc_lift_over_dummy": 1.7,
+    "calibration_note": "Probabilities are balanced-space relative risk scores (trained with class_weight='balanced') optimized for decile ranking rather than unweighted posterior probabilities."
   },
   "retention_prioritization_policy": {
     "frozen_policy_name": "Top 20% highest inactivity risk",
     "outreach_capacity_pct": 20.0,
     "test_cohort_inactivity_capture_rate": 0.2005,
-    "test_cohort_lift": 1.0026
+    "test_cohort_lift": 1.0026,
+    "reengagement_top_decile_lift": 1.63,
+    "reengagement_top_decile_precision": 0.0112,
+    "test_cohort_base_rate": 0.0069
   },
   "business_impact_scenario": {
     "assumptions": {

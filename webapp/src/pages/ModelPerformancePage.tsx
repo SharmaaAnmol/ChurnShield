@@ -356,19 +356,26 @@ export function ModelPerformancePage() {
 
                     <div className="rounded-lg bg-[#090B09] p-3 border border-[#29332B]">
                       <span className="text-[10px] text-[#A6AEA5] font-tech uppercase tracking-wider">
-                        Calibration Brier Score
+                        Calibration Brier Score (Balanced Loss Space)
                       </span>
                       <p className="mt-1 text-xs text-[#F2F0E8] font-tech">
-                        {metrics ? metrics.metrics.brierScore.toFixed(4) : '0.2279'} (well-bounded probabilistic spread)
+                        {metrics ? metrics.metrics.brierScore.toFixed(4) : '0.2279'} (Balanced-Space Relative Risk Index)
+                      </p>
+                      <p className="mt-1 text-[10px] text-[#A6AEA5] leading-normal">
+                        Score reflects inverse-frequency class-weighting (~50% mean). Used for risk ranking rather than unweighted raw posterior probabilities.
                       </p>
                     </div>
                   </CardContent>
                 </div>
 
-                <div className="p-5 pt-0">
+                <div className="p-5 pt-0 space-y-2">
                   <div className="rounded-lg bg-[#102016]/40 p-3 border border-[#214D35] text-xs text-[#A6AEA5]">
-                    <span className="font-semibold text-[#447A56]">Decision Rule: </span> Customers are prioritized by
-                    descending order of inactivity risk score, not hard thresholding.
+                    <span className="font-semibold text-[#447A56]">Targeting Power: </span> Top 10% decile delivers{' '}
+                    <strong className="text-[#F2F0E8]">+1.63× re-engagement lift</strong> over baseline (1.12% precision vs. 0.69% base rate).
+                  </div>
+                  <div className="rounded-lg bg-[#090B09] p-2.5 border border-[#29332B] text-[11px] text-[#A6AEA5]">
+                    <span className="font-semibold text-[#A6AEA5]">Decision Policy: </span> Inactivity outreach prioritizes by
+                    descending risk score. Note: 99.57% inactivity capture tracks the population 99.31% base rate (1.003× lift).
                   </div>
                 </div>
               </Card>
@@ -396,12 +403,12 @@ export function ModelPerformancePage() {
                 <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B]">
                   <div className="flex items-center gap-2 text-xs font-semibold text-[#447A56] mb-2">
                     <Clock className="h-4 w-4" />
-                    <span>Training Cohorts (3 Snaps)</span>
+                    <span>In-Sample Training (3 Cohorts)</span>
                   </div>
                   <div className="text-xs text-[#A6AEA5] space-y-1 font-tech">
-                    <div>• 2017-06-01 (180d lookback)</div>
-                    <div>• 2017-09-01 (180d lookback)</div>
-                    <div>• 2017-12-01 (180d lookback)</div>
+                    <div>• 2017-06-01 (In-Sample, PR-AUC = 0.0183)</div>
+                    <div>• 2017-09-01 (In-Sample, PR-AUC = 0.0335)</div>
+                    <div>• 2017-12-01 (In-Sample, PR-AUC = 0.0219)</div>
                   </div>
                   <div className="mt-3 pt-2 border-t border-[#29332B] text-xs text-[#A6AEA5]">
                     Combined Training: <span className="font-bold text-[#F2F0E8] font-tech">56,975</span> customers
@@ -415,8 +422,8 @@ export function ModelPerformancePage() {
                   </div>
                   <div className="text-xs text-[#A6AEA5] space-y-1 font-tech">
                     <div>• 2018-03-01 Snapshot</div>
-                    <div>• 180d lookback window</div>
-                    <div>• 90d forward evaluation</div>
+                    <div>• PR-AUC = 0.0173 (+2.10× Lift)</div>
+                    <div>• Hyperparameter Tuning & Selection</div>
                   </div>
                   <div className="mt-3 pt-2 border-t border-[#29332B] text-xs text-[#A6AEA5]">
                     Validation Size: <span className="font-bold text-[#F2F0E8] font-tech">34,777</span> customers
@@ -426,12 +433,12 @@ export function ModelPerformancePage() {
                 <div className="rounded-xl bg-[#090B09] p-4 border border-[#29332B]">
                   <div className="flex items-center gap-2 text-xs font-semibold text-[#447A56] mb-2">
                     <ShieldCheck className="h-4 w-4" />
-                    <span>Final Holdout Test Cohort</span>
+                    <span>Held-Out Test Cohort (Headline)</span>
                   </div>
                   <div className="text-xs text-[#A6AEA5] space-y-1 font-tech">
-                    <div>• Final Evaluation Snapshot</div>
-                    <div>• Zero overlap with training</div>
-                    <div>• Frozen model weights</div>
+                    <div>• 2018-06-01 Out-of-Sample Test</div>
+                    <div>• PR-AUC = 0.0117 (+1.70× Lift)</div>
+                    <div>• Top-Decile Re-Engagement Lift: +1.63×</div>
                   </div>
                   <div className="mt-3 pt-2 border-t border-[#29332B] text-xs text-[#A6AEA5]">
                     Test Cohort Size: <span className="font-bold text-[#F2F0E8] font-tech">39,162</span> customers

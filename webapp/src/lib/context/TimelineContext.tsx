@@ -36,12 +36,12 @@ export interface TimelineOption {
 }
 
 export const TIMELINE_OPTIONS: TimelineOption[] = [
-  { id: 'all', label: 'All Timelines', quarterLabel: '2017 - 2018 Cumulative', customerCount: 130914 },
-  { id: '2018-06-01', label: '2018-06-01', quarterLabel: 'Q2 2018 Snapshot', customerCount: 39162 },
-  { id: '2018-03-01', label: '2018-03-01', quarterLabel: 'Q1 2018 Snapshot', customerCount: 34777 },
-  { id: '2017-12-01', label: '2017-12-01', quarterLabel: 'Q4 2017 Snapshot', customerCount: 26682 },
-  { id: '2017-09-01', label: '2017-09-01', quarterLabel: 'Q3 2017 Snapshot', customerCount: 19338 },
-  { id: '2017-06-01', label: '2017-06-01', quarterLabel: 'Q2 2017 Snapshot', customerCount: 10955 },
+  { id: '2018-06-01', label: '2018-06-01', quarterLabel: 'Q2 2018 [Held-Out Test]', customerCount: 39162 },
+  { id: '2018-03-01', label: '2018-03-01', quarterLabel: 'Q1 2018 [Validation Cohort]', customerCount: 34777 },
+  { id: '2017-12-01', label: '2017-12-01', quarterLabel: 'Q4 2017 [In-Sample Training]', customerCount: 26682 },
+  { id: '2017-09-01', label: '2017-09-01', quarterLabel: 'Q3 2017 [In-Sample Training]', customerCount: 19338 },
+  { id: '2017-06-01', label: '2017-06-01', quarterLabel: 'Q2 2017 [In-Sample Training]', customerCount: 10955 },
+  { id: 'all', label: 'All Timelines', quarterLabel: '5 Snapshots Cumulative', customerCount: 130914 },
 ];
 
 interface TimelineContextType {
@@ -55,7 +55,7 @@ interface TimelineContextType {
 const TimelineContext = createContext<TimelineContextType | undefined>(undefined);
 
 export function TimelineProvider({ children }: { children: ReactNode }) {
-  const [activeTimeline, setActiveTimeline] = useState<string>('all');
+  const [activeTimeline, setActiveTimeline] = useState<string>('2018-06-01');
   const [timelineMetrics, setTimelineMetrics] = useState<Record<string, TimelineMetrics>>({});
   const [isLoading, setIsLoading] = useState(true);
 

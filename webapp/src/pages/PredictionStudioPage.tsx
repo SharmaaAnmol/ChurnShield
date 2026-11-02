@@ -2232,6 +2232,11 @@ export function PredictionStudioPage() {
                             Pushes to Repeat Purchase
                           </span>
                         </div>
+
+                        <div className="rounded-lg bg-[#090B09] p-2.5 border border-[#29332B] text-[10.5px] text-[#A6AEA5] leading-relaxed">
+                          <span className="text-[#F2F0E8] font-semibold">Note on Sparse Regional Features: </span>
+                          State indicators with low representation (such as Mato Grosso do Sul, MS, &lt;0.8% volume) have wider parameter variance due to rare repeat events in finite lookback windows. Production systems should apply hierarchical Bayesian shrinkage or geographic pooling.
+                        </div>
                       </div>
                     )}
 
@@ -2295,6 +2300,11 @@ export function PredictionStudioPage() {
                             </p>
                           </div>
                         )}
+
+                        <div className="rounded-lg bg-[#C48232]/10 border border-[#C48232]/30 p-2.5 text-[10.5px] text-[#A6AEA5] leading-relaxed">
+                          <span className="text-[#F2F0E8] font-semibold">Causal Inference Caveat: </span>
+                          What-if simulations illustrate model response under hypothesized feature values. Because models learn observational associations, real-world treatment effect must be verified via randomized controlled A/B testing prior to capital allocation.
+                        </div>
                       </div>
                     )}
 

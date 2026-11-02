@@ -130,7 +130,7 @@ async def get_model_info():
         inactivity_formula="inactivity_risk_score = 1.0 - repeat_purchase_probability",
         decision_threshold=0.5,
         primary_selection_metric=champ.get("primary_selection_metric", "Average Precision (PR-AUC)"),
-        validation_pr_auc=champ.get("validation_cohort_pr_auc", 0.0112),
+        validation_pr_auc=champ.get("validation_cohort_pr_auc", 0.0173),
         test_pr_auc=champ.get("test_cohort_pr_auc", 0.0117),
         pr_auc_lift_over_dummy=champ.get("test_pr_auc_lift_over_dummy", 1.7),
         features_count=len(EXPECTED_FEATURE_ORDER),

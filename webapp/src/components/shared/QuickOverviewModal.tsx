@@ -170,7 +170,7 @@ export function QuickOverviewModal({ isOpen, onClose }: QuickOverviewModalProps)
               <span className="text-[10px] font-tech text-[#447A56] font-semibold block uppercase">Criterion 1</span>
               <h4 className="text-xs font-semibold text-[#F2F0E8]">PR-AUC Over ROC-AUC</h4>
               <p className="text-[11px] text-[#A6AEA5] leading-relaxed">
-                ROC-AUC is deceptive when negatives dominate (FPR stays small). PR-AUC directly tracks precision vs. recall on rare repeat buyers, achieving a <strong className="text-[#447A56]">+3.2× lift</strong> over baseline.
+                ROC-AUC is deceptive when negatives dominate (FPR stays small). PR-AUC directly tracks precision vs. recall on rare repeat buyers, achieving a <strong className="text-[#447A56]">+1.70× out-of-sample lift</strong> (+1.63× in top decile).
               </p>
             </div>
 
@@ -184,9 +184,9 @@ export function QuickOverviewModal({ isOpen, onClose }: QuickOverviewModalProps)
 
             <div className="rounded-xl bg-[#090B09] p-3.5 border border-[#29332B] space-y-1.5">
               <span className="text-[10px] font-tech text-[#447A56] font-semibold block uppercase">Criterion 3</span>
-              <h4 className="text-xs font-semibold text-[#F2F0E8]">Smooth Probability Calibration</h4>
+              <h4 className="text-xs font-semibold text-[#F2F0E8]">Balanced Risk-Ranking Calibration</h4>
               <p className="text-[11px] text-[#A6AEA5] leading-relaxed">
-                Inverse-frequency class balancing avoids artificial probability compression, yielding continuous probabilities that translate directly into financial ROI decisions.
+                Inverse-frequency class balancing prevents probability collapse on rare 0.69% repeaters, creating a well-spread continuous risk index for decile ranking and prioritization.
               </p>
             </div>
           </div>
@@ -261,20 +261,21 @@ export function QuickOverviewModal({ isOpen, onClose }: QuickOverviewModalProps)
 
   const modalElement = (
     <div
-      className="fixed inset-0 z-[9999] overflow-y-auto bg-black/85 backdrop-blur-md flex min-h-screen items-center justify-center p-3 sm:p-6 text-left"
+      className="fixed inset-0 z-[9999] overflow-y-auto bg-black/85 backdrop-blur-md"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 15 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 15 }}
-        transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full max-w-2xl max-h-[88vh] my-auto rounded-2xl border border-[#29332B] bg-[#111611] shadow-2xl flex flex-col overflow-hidden text-left"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="overview-modal-title"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="flex min-h-full items-center justify-center p-3 sm:p-6 text-left">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 15 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 15 }}
+          transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="relative w-full max-w-2xl max-h-[85vh] my-auto rounded-2xl border border-[#29332B] bg-[#111611] shadow-2xl flex flex-col overflow-hidden text-left"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="overview-modal-title"
+          onClick={(e) => e.stopPropagation()}
+        >
         {/* Top Header */}
         <div className="flex items-center justify-between px-5 sm:px-6 py-3.5 border-b border-[#29332B] bg-[#090B09] shrink-0">
           <div className="flex items-center gap-3">
@@ -376,6 +377,7 @@ export function QuickOverviewModal({ isOpen, onClose }: QuickOverviewModalProps)
           </div>
         </div>
       </motion.div>
+      </div>
     </div>
   );
 

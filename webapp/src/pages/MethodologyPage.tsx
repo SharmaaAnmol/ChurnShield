@@ -90,10 +90,10 @@ export function MethodologyPage() {
       icon: Award,
       badge: 'Scikit-Learn',
       variant: 'crimson',
-      summary: 'Balanced Logistic Regression optimizing PR-AUC (+3.2× lift) under severe 99.3% imbalance.',
+      summary: 'Balanced Logistic Regression optimizing PR-AUC (+1.70× out-of-sample test lift, +1.63× top-decile re-engagement lift) under severe 99.31% imbalance.',
       inputs: ['21 engineered features x_i', 'Inverse-frequency class balancing weights w_j = N / (2 · N_j)'],
       outputs: ['Continuous probability P(repeat) ∈ [0, 1]', 'Log-odds z = β_0 + Σ β_i z_i', 'Inactivity Risk Score (1 - P)'],
-      keyTechnique: 'Inverse-frequency class balancing prevents probability collapse on rare 0.69% positive repeaters. Exact linear coefficients enable instant in-browser explainability.',
+      keyTechnique: 'Inverse-frequency class balancing prevents probability collapse on rare 0.69% positive repeaters. Predictions serve as a calibrated relative risk-ranking index for prioritizing outreach, with exact linear log-odds attribution (β_i · z_i).',
     },
     {
       id: 4,
@@ -443,6 +443,25 @@ export function MethodologyPage() {
                 <span className="text-[#F2F0E8] font-medium">Mandatory A/B Testing: </span> Prior to allocating commercial
                 budget, the retention team must run a randomized controlled trial (treatment vs holdout control group)
                 to compute true incremental lift.
+              </div>
+            </div>
+
+            <div className="flex items-start gap-2.5">
+              <span className="font-tech text-[#C48232] font-bold">4.</span>
+              <div>
+                <span className="text-[#F2F0E8] font-medium">Balanced-Space Calibration: </span> Because the model was trained
+                with inverse-frequency weighting (<code className="text-[#447A56] font-tech text-[11px]">class_weight='balanced'</code>), predicted probabilities
+                are shifted to a balanced relative-risk scale (mean ~50%, Brier loss = 0.2279). They are mathematically optimal
+                for decile prioritization and risk ranking, but do not represent unweighted raw posteriors.
+              </div>
+            </div>
+
+            <div className="flex items-start gap-2.5">
+              <span className="font-tech text-[#C48232] font-bold">5.</span>
+              <div>
+                <span className="text-[#F2F0E8] font-medium">Sparse Categorical Levels: </span> States with small transaction counts
+                (e.g., Mato Grosso do Sul, MS, &lt;0.8% order share) have high parameter variance in finite training windows.
+                In production, Bayesian shrinkage or hierarchical state pooling is recommended.
               </div>
             </div>
           </CardContent>

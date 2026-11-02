@@ -198,22 +198,23 @@ The codebase automatically searches multiple acquisition tiers:
 - **Champion ROC-AUC:** **0.5849** (Random guessing: 0.5000)
 - **Minority Class Recall:** **42.59%** (Captures 115 returning customers who would otherwise be lost)
 - **Balanced Accuracy:** **55.75%**
-- **Brier Score Loss:** **0.2279** (Well-calibrated probabilities)
+- **Brier Score Loss:** **0.2279** (Balanced-space risk score for ranking; reflects class_weight='balanced' scaling rather than unweighted posterior probabilities)
 
 ---
 
 ## 8. Retention Prioritization & Business ROI Simulation
 
-### 8.1 Retention Policy Simulation (Test Cohort)
-Under a realistic retention team outreach capacity of **20% of eligible customers** (7,833 customers contacted):
-- **Inactive Customers Captured:** 7,799 out of 7,833 (**99.57% concentration**)
-- **Self-Retaining Customers Spared:** Only 34 repeat buyers contacted unnecessarily
-- **Inactivity Capture Rate:** 20.05% of all inactive customers in the population
-
-### 8.2 Re-Engagement Campaign Lift
-If marketing targets customers with the **highest repeat purchase propensity** (lowest inactivity risk):
-- **Top 10% Decile:** Delivers a **1.63x lift** over random marketing (Precision: 1.12% vs 0.69% base rate).
+### 8.1 Re-Engagement Targeting Power (The Core Lift Evidence)
+When marketing targets customers with the **highest repeat purchase propensity** (lowest inactivity risk):
+- **Top 10% Decile:** Delivers a **1.63x lift** over random marketing (Precision: 1.12% vs 0.69% base rate, capturing 44 returning buyers).
 - **Top 20% Decile:** Delivers a **1.41x lift** over random marketing.
+- **Scientific Significance:** Under severe 99.31% majority class imbalance, concentrating returning customers with a 1.63x lift provides genuine commercial value over untargeted mass blast campaigns.
+
+### 8.2 Inactivity Outreach Policy Simulation (Test Cohort)
+Under a retention team outreach capacity of **20% of eligible customers** (7,833 customers contacted):
+- **Inactive Customers Captured:** 7,799 out of 7,833 (99.57% concentration; note that this tracks the population base rate of 99.31% with 1.003x lift)
+- **Self-Retaining Customers Spared:** Only 34 repeat buyers contacted unnecessarily (preventing coupon margin cannibalization)
+- **Inactivity Capture Rate:** 20.05% of all inactive customers in the population
 
 ### 8.3 Financial Scenario Projections
 Under stated scenario assumptions:
