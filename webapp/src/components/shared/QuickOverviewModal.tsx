@@ -261,16 +261,16 @@ export function QuickOverviewModal({ isOpen, onClose }: QuickOverviewModalProps)
 
   const modalElement = (
     <div
-      className="fixed inset-0 z-[9999] overflow-y-auto bg-black/85 backdrop-blur-md"
+      className="fixed inset-0 z-[9999] overflow-y-auto bg-black/85 backdrop-blur-md p-3 sm:p-6 flex items-start sm:items-center justify-center"
       onClick={onClose}
     >
-      <div className="flex min-h-full items-center justify-center p-3 sm:p-6 text-left">
+      <div className="w-full max-w-2xl my-auto py-2">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 15 }}
+          initial={{ opacity: 0, scale: 0.96, y: 12 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 15 }}
+          exit={{ opacity: 0, scale: 0.96, y: 12 }}
           transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-full max-w-2xl max-h-[85vh] my-auto rounded-2xl border border-[#29332B] bg-[#111611] shadow-2xl flex flex-col overflow-hidden text-left"
+          className="relative w-full max-h-[88vh] rounded-2xl border border-[#29332B] bg-[#111611] shadow-2xl flex flex-col overflow-hidden text-left"
           role="dialog"
           aria-modal="true"
           aria-labelledby="overview-modal-title"
