@@ -41,7 +41,7 @@ def main():
     df["order_count_bucket"] = df["order_count"].clip(upper=3).map({1: "1", 2: "2", 3: "3+"})
 
     spend_edges = [0, 50, 100, 200, 500, np.inf]
-    spend_labels = ["<$50", "$50–100", "$100–200", "$200–500", "$500+"]
+    spend_labels = ["<$50", "$50–100", "$100–200", "$200–500", "$500+"]  # "$" by project choice; values are unconverted Olist amounts
     df["spend_bucket"] = pd.cut(df["total_spend"], spend_edges, labels=spend_labels, right=False)
 
     freight_edges = [0, 0.1, 0.2, 0.3, 0.5, np.inf]

@@ -40,6 +40,9 @@
   --color-signal: #b8325a;     /* "at risk" / the thing to look at */
   --color-signal-wash: #f5d9df;
   --color-off: #c8a9ad;
+  /* chart series, validated with the dataviz palette checker (CVD + contrast) on --color-sheet */
+  --color-chart-1: #0b7a55;
+  --color-chart-2: #7a4a9e;
   --font-display: 'Cormorant Garamond', Georgia, serif;
   --font-ui: 'Archivo', system-ui, sans-serif;
 }
@@ -59,6 +62,8 @@
   --color-signal: #ff8aab;
   --color-signal-wash: #3a1f2a;
   --color-off: #6e5562;
+  --color-chart-1: #38a578;
+  --color-chart-2: #a47ddb;
   --plate-bg: radial-gradient(120% 90% at 70% 20%, #5a3d4b 0%, #46303c 55%, #3b2631 100%);
 }
 

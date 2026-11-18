@@ -62,7 +62,7 @@ The professor's requirement: **every number shown must come from this GitHub rep
 
 Known and left as is:
 - `model_metadata.json` (written by the notebook) says 7,833 customers contacted, but the holdout file flags 7,832.
-- The money in Olist is Brazilian reais (R$). The old pages show `$`, and the new pages must use R$.
+- Currency is shown as `$` across the site (project choice). The amounts are the dataset's own values, unconverted.
 
 ## Schedule
 
@@ -86,8 +86,7 @@ Known and left as is:
 - [x] Data audit: every served file regenerated from repo artifacts (`export_webapp_data.py --check`)
 - [x] App shell (`SiteShell`) + Home (`pages/site/HomePage.tsx`)
 - [x] Dark mode "Plum night": header toggle, follows the OS setting until the viewer picks one, remembered per browser. Every new page must be checked in both modes.
-- [ ] The data (EDA)
-- [ ] Try the model
+- [x] The data (EDA): `pages/site/DataPage.tsx`, FIG. 1–8 in three parts (who the customers are / what predicts a return / what doesn't). Every takeaway sentence is computed from `eda.json`, every figure has a hover tooltip and a "Show the numbers" table, and chart colours pass the dataviz colour-blindness check in both themes.- [ ] Try the model
 - [ ] Results + Customers
 - [ ] Remove old pages and Render config, then deploy
 
