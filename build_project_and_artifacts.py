@@ -14,8 +14,6 @@ import numpy as np
 import pandas as pd
 import sklearn
 
-from churnshield_features import state_to_region
-
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, FunctionTransformer
@@ -379,6 +377,18 @@ print(f"  - Training Cohorts (2017-06, 2017-09, 2017-12): N = {len(train_df):6d}
 print(f"  - Validation Cohort (2018-03-01)              : N = {len(val_df):6d}, Repeats = {val_df[target_col].sum():3d} ({val_df[target_col].mean():.2%})")
 print(f"  - Final Test Cohort (2018-06-01)              : N = {len(test_df):6d}, Repeats = {test_df[target_col].sum():3d} ({test_df[target_col].mean():.2%})")
 
+# Brazil's 5 official (IBGE) regions. The model reads a customer's region, not their state: per state,
+# some groups are too small (none of the 370 MS training customers came back -> a -4.0 weight). See Step 6b.
+# The map is stored inside the saved pipeline, so loading it needs no extra code.
+STATE_TO_REGION = {
+    **dict.fromkeys(['AC', 'AM', 'AP', 'PA', 'RO', 'RR', 'TO'], 'North'),
+    **dict.fromkeys(['AL', 'BA', 'CE', 'MA', 'PB', 'PE', 'PI', 'RN', 'SE'], 'Northeast'),
+    **dict.fromkeys(['DF', 'GO', 'MS', 'MT'], 'Center-West'),
+    **dict.fromkeys(['ES', 'MG', 'RJ', 'SP'], 'Southeast'),
+    **dict.fromkeys(['PR', 'RS', 'SC'], 'South'),
+}
+assert len(STATE_TO_REGION) == 27
+
 # Leakage-Free Preprocessing Pipeline
 preprocessor = ColumnTransformer(
     transformers=[
@@ -388,7 +398,8 @@ preprocessor = ColumnTransformer(
         ]), num_cols),
         ('cat', Pipeline([
             # State -> one of Brazil's 5 regions: per-state groups were too small (see Step 6b).
-            ('region', FunctionTransformer(state_to_region, feature_names_out='one-to-one')),
+            ('region', FunctionTransformer(pd.DataFrame.replace, kw_args={'to_replace': STATE_TO_REGION},
+                                           feature_names_out='one-to-one')),
             ('imputer', SimpleImputer(strategy='most_frequent')),
             ('ohe', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
         ]), cat_cols)

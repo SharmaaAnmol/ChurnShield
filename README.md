@@ -142,7 +142,6 @@ In commercial e-commerce, customer acquisition cost (CAC) typically outpaces ret
 AI_Project/
 ├── ChurnShield_Customer_Inactivity_Prediction.ipynb  # Main deliverable: executed, Colab-ready notebook
 ├── build_project_and_artifacts.py                   # The same pipeline as one script: data audit -> features -> models -> artifacts
-├── build_notebook.py                                 # Generates and executes the notebook
 ├── export_webapp_data.py                             # Builds every file in webapp/public/data/ from the artifacts (--check verifies)
 ├── export_eda.py                                     # EDA aggregates for the website (called by export_webapp_data.py)
 ├── artifacts/                                        # Pipeline outputs: feature store, metrics, model comparison, predictions

@@ -35,7 +35,6 @@ from sklearn.metrics import (average_precision_score, balanced_accuracy_score,
                              confusion_matrix, recall_score, roc_auc_score)
 
 import export_eda
-from churnshield_features import STATE_TO_REGION
 
 warnings.filterwarnings("ignore")
 
@@ -75,6 +74,7 @@ def model_weights(pipe) -> dict:
     coef = clf.coef_[0]
     n = len(num_cols)
     region_w = {str(r): float(coef[n + i]) for i, r in enumerate(ohe.categories_[0])}
+    state_to_region = ct.named_transformers_["cat"].named_steps["region"].kw_args["to_replace"]
     return {
         "intercept": float(clf.intercept_[0]),
         "num_weights": {
@@ -83,9 +83,9 @@ def model_weights(pipe) -> dict:
             for i, col in enumerate(num_cols)
         },
         # The pipeline maps state -> region before one-hot encoding, so every state carries its region's weight.
-        "cat_weights": {s: region_w[r] for s, r in sorted(STATE_TO_REGION.items())},
+        "cat_weights": {s: region_w[r] for s, r in sorted(state_to_region.items())},
         "region_weights": region_w,
-        "state_region": dict(sorted(STATE_TO_REGION.items())),
+        "state_region": dict(sorted(state_to_region.items())),
         "cat_default": str(cat_imputer.statistics_[0]),
     }
 

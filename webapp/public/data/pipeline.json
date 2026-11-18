@@ -49,7 +49,7 @@
       "cv_pr_auc_std": 0.0006,
       "val_pr_auc": 0.0183,
       "val_roc_auc": 0.573,
-      "fit_time_seconds": 1.4
+      "fit_time_seconds": 1.39
     },
     {
       "model": "Extra Trees",
@@ -57,7 +57,7 @@
       "cv_pr_auc_std": 0.0009,
       "val_pr_auc": 0.0151,
       "val_roc_auc": 0.5764,
-      "fit_time_seconds": 0.74
+      "fit_time_seconds": 0.81
     },
     {
       "model": "Gradient Boosting",
@@ -65,7 +65,7 @@
       "cv_pr_auc_std": 0.0013,
       "val_pr_auc": 0.0133,
       "val_roc_auc": 0.5596,
-      "fit_time_seconds": 17.63
+      "fit_time_seconds": 16.83
     },
     {
       "model": "HistGradientBoosting",
@@ -73,7 +73,7 @@
       "cv_pr_auc_std": 0.0015,
       "val_pr_auc": 0.011,
       "val_roc_auc": 0.5072,
-      "fit_time_seconds": 4.3
+      "fit_time_seconds": 4.19
     },
     {
       "model": "Decision Tree",
@@ -81,7 +81,7 @@
       "cv_pr_auc_std": 0.0004,
       "val_pr_auc": 0.0109,
       "val_roc_auc": 0.5145,
-      "fit_time_seconds": 0.62
+      "fit_time_seconds": 0.7
     },
     {
       "model": "Random Forest",
@@ -89,7 +89,7 @@
       "cv_pr_auc_std": 0.0002,
       "val_pr_auc": 0.0103,
       "val_roc_auc": 0.5233,
-      "fit_time_seconds": 1.35
+      "fit_time_seconds": 1.36
     },
     {
       "model": "Dummy Classifier",
@@ -97,7 +97,7 @@
       "cv_pr_auc_std": 0.0004,
       "val_pr_auc": 0.0083,
       "val_roc_auc": 0.5,
-      "fit_time_seconds": 0.27
+      "fit_time_seconds": 0.36
     }
   ],
   "location_fix": {
