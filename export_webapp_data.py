@@ -12,6 +12,7 @@ repository. Nothing is typed in by hand:
       -> timeline_metrics.json (pipeline scored on every cohort of the feature store)
       -> customer_predictions.csv (seeded random sample of scored customers)
   artifacts/curated_customer_snapshots.csv -> eda.json (via export_eda.py)
+  curated snapshots + pipeline -> examples.json (rule-picked real test customers)
 
 Usage:
   python export_webapp_data.py          # regenerate the files
@@ -115,6 +116,41 @@ def cohort_metrics(cid: str, g: pd.DataFrame, label: str, split: str) -> dict:
     }
 
 
+def pick_examples(df: pd.DataFrame, features: list) -> dict:
+    """Real held-out customers for the Try-the-model presets, chosen by fixed rules (no hand-picking)."""
+    t = df[df["observation_date"] == "2018-06-01"]
+    risk = t["inactivity_risk_score"]
+    back = t[t[Y] == 1]
+    rules = [
+        ("lowest", "Lowest risk in the test cohort", risk.idxmin()),
+        ("typical", "Closest to the cohort's median risk", (risk - risk.median()).abs().idxmin()),
+        ("returner", "A customer who did come back (median risk among returners)",
+         (back["inactivity_risk_score"] - back["inactivity_risk_score"].median()).abs().idxmin()),
+        ("highest", "Highest risk in the test cohort", risk.idxmax()),
+    ]
+    out = []
+    for key, rule, i in rules:
+        r = t.loc[i]
+        out.append({
+            "key": key, "rule": rule, "customer_unique_id": r["customer_unique_id"],
+            "observation_date": r["observation_date"], "came_back": int(r[Y]),
+            "repeat_purchase_probability": round(float(r["repeat_purchase_probability"]), 6),
+            "inactivity_risk_score": round(float(r["inactivity_risk_score"]), 6),
+            "features": {c: (r[c] if c == "customer_state" else round(float(r[c]), 6)) for c in features},
+        })
+    assert len({e["customer_unique_id"] for e in out}) == len(out), "example rules picked the same customer twice"
+    flagged = t.loc[t["priority_retention_target_20pct"] == 1, "inactivity_risk_score"]
+    return {
+        "cohort": "2018-06-01",
+        "cohort_customers": int(len(t)),
+        "cohort_repeat_rate": round(float(t[Y].mean()), 5),
+        "contact_list_size": int(len(flagged)),
+        # lowest risk that still made the cohort's top-20% contact list
+        "contact_threshold": round(float(flagged.min()), 6),
+        "customers": out,
+    }
+
+
 def export_to(out: Path) -> None:
     out.mkdir(parents=True, exist_ok=True)
 
@@ -147,6 +183,8 @@ def export_to(out: Path) -> None:
     sample = df.loc[np.concatenate(picked)].sort_values(["observation_date", "inactivity_risk_score"], ascending=[True, False])
     sample[EXPORT_COLUMNS].round({"repeat_purchase_probability": 4, "inactivity_risk_score": 4}).to_csv(
         out / "customer_predictions.csv", index=False)
+
+    (out / "examples.json").write_text(json.dumps(pick_examples(df, features), indent=2))
 
     export_eda.OUT = out / "eda.json"
     export_eda.main()

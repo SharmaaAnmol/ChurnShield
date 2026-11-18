@@ -86,7 +86,8 @@ Known and left as is:
 - [x] Data audit: every served file regenerated from repo artifacts (`export_webapp_data.py --check`)
 - [x] App shell (`SiteShell`) + Home (`pages/site/HomePage.tsx`)
 - [x] Dark mode "Plum night": header toggle, follows the OS setting until the viewer picks one, remembered per browser. Every new page must be checked in both modes.
-- [x] The data (EDA): `pages/site/DataPage.tsx`, FIG. 1–8 in three parts (who the customers are / what predicts a return / what doesn't). Every takeaway sentence is computed from `eda.json`, every figure has a hover tooltip and a "Show the numbers" table, and chart colours pass the dataviz colour-blindness check in both themes.- [ ] Try the model
+- [x] The data (EDA): `pages/site/DataPage.tsx`, FIG. 1–8 in three parts (who the customers are / what predicts a return / what doesn't). Every takeaway sentence is computed from `eda.json`, every figure has a hover tooltip and a "Show the numbers" table, and chart colours pass the dataviz colour-blindness check in both themes.
+- [x] Try the model: `pages/site/TryModelPage.tsx`. Presets are 4 real held-out customers picked by fixed rules (`examples.json`), never made-up personas. 5 inputs; dependent features are recomputed with the notebook's definitions (`lib/data/customer-edit.ts`). Shows the score, the contact-list decision, what really happened, the push from each input (FIG. 2, plus all 21 features) and a plain action. Scored by `/api/predict`, with the in-browser engine as the fallback. `npm run check:api` also checks the presets reproduce sklearn and every edit stays valid API input.
 - [ ] Results + Customers
 - [ ] Remove old pages and Render config, then deploy
 
@@ -94,6 +95,6 @@ Known and left as is:
 
 1. **Home:** "Online shops lose most buyers after one order. We predict who won't come back in the next 90 days, so the shop knows who to win back."
 2. **The data:** "97.7% buy once. People with 3+ orders come back 16× more often. That's what the model learns."
-3. **Try the model:** change days since last order and recent orders, and watch the score and the reasons change.
+3. **Try the model:** pick "Typical" (a real test customer), then change days since last order and recent orders, and watch the score and the reasons change. Point out "What really happened": the model ranks, it doesn't know the future.
 4. **Results:** "The model finds returners 1.7× better than guessing, on data it never saw. The signal is real but modest, and here's why."
 5. **Customers:** the ranked list a retention team would actually use.

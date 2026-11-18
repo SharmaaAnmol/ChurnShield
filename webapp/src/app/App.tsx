@@ -4,8 +4,8 @@ import { AppShell } from '../components/layout/AppShell';
 import { SiteShell } from '../components/layout/SiteShell';
 import { HomePage } from '../pages/site/HomePage';
 import { DataPage } from '../pages/site/DataPage';
+import { TryModelPage } from '../pages/site/TryModelPage';
 import { OverviewPage } from '../pages/OverviewPage';
-import { PredictionStudioPage } from '../pages/PredictionStudioPage';
 import { CustomerExplorerPage } from '../pages/CustomerExplorerPage';
 import { ModelPerformancePage } from '../pages/ModelPerformancePage';
 import { FeatureInsightsPage } from '../pages/FeatureInsightsPage';
@@ -46,6 +46,8 @@ export function App() {
           <Route element={<SiteShell />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/data" element={<DataPage />} />
+            <Route path="/prediction-studio" element={<TryModelPage />} />
+            <Route path="/predict" element={<Navigate to="/prediction-studio" replace />} />
           </Route>
           <Route
             element={
@@ -56,8 +58,6 @@ export function App() {
             }
           >
             <Route path="/overview-old" element={<OverviewPage />} />
-            <Route path="/prediction-studio" element={<PredictionStudioPage />} />
-            <Route path="/predict" element={<Navigate to="/prediction-studio" replace />} />
             <Route path="/customers" element={<CustomerExplorerPage />} />
             <Route path="/model" element={<ModelPerformancePage />} />
             <Route path="/features" element={<FeatureInsightsPage />} />
