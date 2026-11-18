@@ -3,7 +3,7 @@
  * Runs the exported weights of the trained sklearn Balanced Logistic Regression
  * (same math as backend/app/services/predictor.py) and returns the same response shape.
  */
-import { runLocalModelInference } from '../src/lib/data/model-inference-engine';
+import { runLocalModelInference } from '../src/lib/data/model-inference-engine.js'; // Node ESM on Vercel needs the extension
 
 // Bounds mirror backend/app/schemas.py (the pydantic contract).
 const BOUNDS: Record<string, [number, number, boolean?]> = {

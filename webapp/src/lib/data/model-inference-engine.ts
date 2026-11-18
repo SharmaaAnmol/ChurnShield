@@ -4,7 +4,7 @@
  * pipeline (identical to churnshield_pipeline.joblib with 0.0000000000 numerical error).
  * Ensures instantaneous, responsive visual feedback and guaranteed prediction execution even offline.
  */
-import modelWeights from '../../../public/data/model_weights.json';
+import modelWeights from '../../../public/data/model_weights.json' with { type: 'json' }; // attribute required by Node ESM (Vercel function)
 
 export interface ModelWeights {
   intercept: number;
