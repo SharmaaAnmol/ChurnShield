@@ -172,6 +172,9 @@ export function CustomersPage() {
                 <tr>
                   <td colSpan={9} className="px-4 py-8 text-center text-ink-2">
                     No customers in this sample match these filters.
+                    {listOnly && tier !== 'All' && tier !== 'High' && (
+                      <> The contact list holds the riskiest 20%, so untick "Contact list only" to see {tier.toLowerCase()}-risk customers.</>
+                    )}
                   </td>
                 </tr>
               )}
