@@ -88,8 +88,11 @@ Known and left as is:
 - [x] Dark mode "Plum night": header toggle, follows the OS setting until the viewer picks one, remembered per browser. Every new page must be checked in both modes.
 - [x] The data (EDA): `pages/site/DataPage.tsx`, FIG. 1–8 in three parts (who the customers are / what predicts a return / what doesn't). Every takeaway sentence is computed from `eda.json`, every figure has a hover tooltip and a "Show the numbers" table, and chart colours pass the dataviz colour-blindness check in both themes.
 - [x] Try the model: `pages/site/TryModelPage.tsx`. Presets are 4 real held-out customers picked by fixed rules (`examples.json`), never made-up personas. 5 inputs; dependent features are recomputed with the notebook's definitions (`lib/data/customer-edit.ts`). Shows the score, the contact-list decision, what really happened, the push from each input (FIG. 2, plus all 21 features) and a plain action. Scored by `/api/predict`, with the in-browser engine as the fallback. `npm run check:api` also checks the presets reproduce sklearn and every edit stays valid API input.
-- [ ] Results + Customers
-- [ ] Remove old pages and Render config, then deploy
+- [x] Results (`pages/site/ResultsPage.tsx`, FIG. 1–5): time-based split, test confusion matrix, lift over guessing per snapshot (training snapshots marked as flattering), why scores bunch near 50%, permutation importance, known limitations. Every number from `evaluation_metrics.json`, `timeline_metrics.json`, `feature_importance.json` or `model_summary.json`.
+- [x] Customers (`pages/site/CustomersPage.tsx`): ranked sample from `customer_predictions.csv`, filter by snapshot, tier and contact list, with the real outcome shown. Labelled as a seeded 800-per-snapshot sample.
+- [x] Old pages, sidebar shell, animation kits, old dark theme and 13 unused packages removed; old URLs (`/predict`, `/features`, `/methodology`) redirect. Main JS bundle 466 kB → 104 kB.
+- [x] Branch pushed; Vercel preview build succeeded (18 Nov).
+- [ ] Day 6: merge to `main` so the production URL updates, check live `/api/predict`, copy pass, demo run-through
 
 ## Demo script (draft)
 

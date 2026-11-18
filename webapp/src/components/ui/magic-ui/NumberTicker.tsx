@@ -1,1 +1,0 @@
-export { NumberTicker } from '../NumberTicker';

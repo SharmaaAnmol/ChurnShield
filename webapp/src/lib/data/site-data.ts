@@ -58,10 +58,29 @@ export interface ModelSummary {
   known_limitations: string[];
 }
 
+export interface Evaluation {
+  evaluation_cohort: string;
+  test_population_size: number;
+  actual_repeat_purchasers: number;
+  metrics: Record<string, number>;
+  dummy_baseline_metrics: { average_precision_pr_auc: number; roc_auc: number };
+  pr_auc_lift_over_dummy: number;
+  confusion_matrix: { tn: number; fp: number; fn: number; tp: number };
+}
+
+export interface Importance {
+  feature: string;
+  importance_mean: number;
+  importance_std: number;
+  rank: number;
+}
+
 export interface SiteData {
   eda: Eda;
   timeline: Record<string, CohortMetrics>;
   summary: ModelSummary;
+  evaluation: Evaluation;
+  importance: Importance[];
 }
 
 /** File names, shown on the page as the source of each figure. */
@@ -69,7 +88,35 @@ export const SOURCES = {
   eda: 'eda.json',
   timeline: 'timeline_metrics.json',
   summary: 'model_summary.json',
+  evaluation: 'evaluation_metrics.json',
+  importance: 'feature_importance.json',
+  customers: 'customer_predictions.csv',
 } as const;
+
+/** Plain-English names for the model's 21 inputs. */
+export const FEATURE_LABELS: Record<string, string> = {
+  order_count: 'Number of orders',
+  total_spend: 'Total spend',
+  avg_order_value: 'Average order value',
+  median_order_value: 'Typical (median) order value',
+  order_value_std: 'How much order values vary',
+  total_items: 'Items bought',
+  avg_items_per_order: 'Items per order',
+  total_freight: 'Shipping paid',
+  distinct_products: 'Different products',
+  distinct_sellers: 'Different sellers',
+  orders_recent_90d: 'Orders in the last 90 days',
+  spend_recent_90d: 'Spend in the last 90 days',
+  freight_ratio: 'Shipping as a share of spend',
+  recency_days: 'Days since last order',
+  tenure_days: 'Days since first order',
+  has_multiple_orders: 'Has more than one order',
+  avg_inter_order_days: 'Average days between orders',
+  std_inter_order_days: 'How regular the gaps are',
+  order_ratio_recent_vs_earlier: 'Share of orders that were recent',
+  spend_ratio_recent_vs_earlier: 'Share of spend that was recent',
+  customer_state: 'State',
+};
 
 async function getJson<T>(file: string): Promise<T> {
   const res = await fetch(`/data/${file}`);
@@ -84,7 +131,9 @@ function loadSiteData(): Promise<SiteData> {
     getJson<Eda>(SOURCES.eda),
     getJson<Record<string, CohortMetrics>>(SOURCES.timeline),
     getJson<ModelSummary>(SOURCES.summary),
-  ]).then(([eda, timeline, summary]) => ({ eda, timeline, summary }));
+    getJson<Evaluation>(SOURCES.evaluation),
+    getJson<Importance[]>(SOURCES.importance),
+  ]).then(([eda, timeline, summary, evaluation, importance]) => ({ eda, timeline, summary, evaluation, importance }));
   cache.catch(() => (cache = null)); // let a later visit retry after a failed load
   return cache;
 }
