@@ -92,8 +92,9 @@ export interface PredictionResult {
   explanation: PredictionExplanation;
 }
 
-const RAW_API_BASE_URL = ((import.meta as any).env?.VITE_API_BASE_URL as string) || 'http://localhost:8000';
-export const API_BASE_URL = RAW_API_BASE_URL.replace(/\/+$/, '');
+// Same-origin Vercel Functions (webapp/api/*). Under plain `vite dev` they don't exist,
+// and the Prediction Studio falls back to the identical in-browser engine.
+export const API_BASE_URL = '';
 
 export class ApiError extends Error {
   status?: number;
@@ -131,28 +132,6 @@ export async function checkBackendHealth(): Promise<{ isOnline: boolean; health?
       error: err.name === 'AbortError' ? 'Connection timed out' : 'Service offline or unreachable',
     };
   }
-}
-
-/**
- * Fetches verified feature schema from the backend.
- */
-export async function fetchModelSchema(): Promise<ModelSchema> {
-  const res = await fetch(`${API_BASE_URL}/api/model-schema`);
-  if (!res.ok) {
-    throw new ApiError(`Failed to fetch model schema: HTTP ${res.status}`, res.status);
-  }
-  return res.json();
-}
-
-/**
- * Fetches model info and metrics.
- */
-export async function fetchModelInfo(): Promise<ModelInfo> {
-  const res = await fetch(`${API_BASE_URL}/api/model-info`);
-  if (!res.ok) {
-    throw new ApiError(`Failed to fetch model info: HTTP ${res.status}`, res.status);
-  }
-  return res.json();
 }
 
 /**

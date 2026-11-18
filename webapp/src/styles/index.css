@@ -26,6 +26,80 @@
   --font-serif: 'Cormorant Garamond', Georgia, serif;
   --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Atelier theme (from the Flipwright design system), used by the redesigned pages.
+     The dark tokens above stay until the old pages are deleted (ROADMAP day 5). */
+  --color-paper: #f1e1de;      /* page ground */
+  --color-sheet: #fbf4f2;      /* card / figure face */
+  --color-ink: #2c1822;        /* text, frames, primary button */
+  --color-ink-2: #6a4a59;      /* captions, secondary text */
+  --color-rule: #dcbcbc;       /* hairlines, chart grid */
+  --color-wash: #ead2cf;       /* recessed faces, hover */
+  --color-route: #0b6e4f;      /* the one accent: links, primary action, italic headline words */
+  --color-route-wash: #d6e9e0;
+  --color-signal: #b8325a;     /* "at risk" / the thing to look at */
+  --color-signal-wash: #f5d9df;
+  --color-off: #c8a9ad;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-ui: 'Archivo', system-ui, sans-serif;
+}
+
+/* Dark mode "Plum night": the atelier palette with the lights off.
+   index.html sets data-theme before first paint (saved choice, else the OS setting). */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-paper: #1c1217;
+  --color-sheet: #261920;
+  --color-ink: #f6e7e9;
+  --color-ink-2: #c9aab5;
+  --color-rule: #45303b;
+  --color-wash: #321f29;
+  --color-route: #7fd6ae;
+  --color-route-wash: #1f3a2f;
+  --color-signal: #ff8aab;
+  --color-signal-wash: #3a1f2a;
+  --color-off: #6e5562;
+  --plate-bg: radial-gradient(120% 90% at 70% 20%, #5a3d4b 0%, #46303c 55%, #3b2631 100%);
+}
+
+/* Deep plum plate for hero figures; content inside flips to light line work. */
+.plate {
+  --color-ink: #fbf1f0;
+  --color-ink-2: #ecd3d6;
+  --color-signal: #ffc2d4;
+  --color-route: #a8ecc9;
+  color: #fbf1f0;
+  background: var(--plate-bg, radial-gradient(120% 90% at 70% 20%, #9a7684 0%, #7a5868 55%, #654654 100%));
+}
+
+/* Cormorant defaults to old-style figures, which draw "01" like "OI". */
+.font-display {
+  font-variant-numeric: lining-nums;
+}
+
+/* "FIG. 1  Caption" under every chart */
+.fig-caption {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--color-ink-2);
+}
+.fig-caption b {
+  font-weight: 800;
+  font-stretch: 118%;
+  letter-spacing: 0.05em;
+  color: var(--color-ink);
+  margin-right: 0.5em;
+}
+
+/* Small uppercase label voice, e.g. "A DIGITAL ELECTRONICS COURSE YOU CAN TOUCH" */
+.eyebrow {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  font-stretch: 115%;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-2);
 }
 
 :root {

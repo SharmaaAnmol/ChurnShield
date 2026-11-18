@@ -3,6 +3,7 @@
     "timelineId": "2017-06-01",
     "label": "2017-06-01",
     "quarterLabel": "Q2 2017 [In-Sample Training]",
+    "split": "train",
     "totalCustomersEvaluated": 10955,
     "actualRepeatPurchasers": 97,
     "actualInactiveCustomers": 10858,
@@ -16,8 +17,8 @@
     "recommendedContactCount": 2191,
     "riskDistribution": {
       "highRisk": 259,
-      "moderateRisk": 10340,
-      "lowRisk": 356
+      "moderateRisk": 10339,
+      "lowRisk": 357
     },
     "confusionMatrix": {
       "tn": 6349,
@@ -30,6 +31,7 @@
     "timelineId": "2017-09-01",
     "label": "2017-09-01",
     "quarterLabel": "Q3 2017 [In-Sample Training]",
+    "split": "train",
     "totalCustomersEvaluated": 19338,
     "actualRepeatPurchasers": 186,
     "actualInactiveCustomers": 19152,
@@ -40,7 +42,7 @@
     "recall": 0.4785,
     "balancedAccuracy": 0.5666,
     "prAucLiftOverDummy": 3.48,
-    "recommendedContactCount": 3868,
+    "recommendedContactCount": 3867,
     "riskDistribution": {
       "highRisk": 475,
       "moderateRisk": 18291,
@@ -57,6 +59,7 @@
     "timelineId": "2017-12-01",
     "label": "2017-12-01",
     "quarterLabel": "Q4 2017 [In-Sample Training]",
+    "split": "train",
     "totalCustomersEvaluated": 26682,
     "actualRepeatPurchasers": 236,
     "actualInactiveCustomers": 26446,
@@ -70,8 +73,8 @@
     "recommendedContactCount": 5336,
     "riskDistribution": {
       "highRisk": 639,
-      "moderateRisk": 25162,
-      "lowRisk": 881
+      "moderateRisk": 25161,
+      "lowRisk": 882
     },
     "confusionMatrix": {
       "tn": 16354,
@@ -84,6 +87,7 @@
     "timelineId": "2018-03-01",
     "label": "2018-03-01",
     "quarterLabel": "Q1 2018 [Validation Cohort]",
+    "split": "validation",
     "totalCustomersEvaluated": 34777,
     "actualRepeatPurchasers": 287,
     "actualInactiveCustomers": 34490,
@@ -111,6 +115,7 @@
     "timelineId": "2018-06-01",
     "label": "2018-06-01",
     "quarterLabel": "Q2 2018 [Held-Out Test]",
+    "split": "test",
     "totalCustomersEvaluated": 39162,
     "actualRepeatPurchasers": 270,
     "actualInactiveCustomers": 38892,
@@ -123,8 +128,8 @@
     "prAucLiftOverDummy": 1.7,
     "recommendedContactCount": 7832,
     "riskDistribution": {
-      "highRisk": 963,
-      "moderateRisk": 37285,
+      "highRisk": 962,
+      "moderateRisk": 37286,
       "lowRisk": 914
     },
     "confusionMatrix": {
@@ -136,29 +141,30 @@
   },
   "all": {
     "timelineId": "all",
-    "label": "All Timelines (130k Cumulative)",
-    "quarterLabel": "5 Snapshots Cumulative",
+    "label": "All 5 snapshots (130k)",
+    "quarterLabel": "All 5 snapshots (130k)",
+    "split": "all",
     "totalCustomersEvaluated": 130914,
     "actualRepeatPurchasers": 1076,
     "actualInactiveCustomers": 129838,
     "baseRepeatPurchaseRate": 0.008219,
     "baseInactivityRate": 0.991781,
-    "prAuc": 0.0185,
-    "rocAuc": 0.582,
-    "recall": 0.468,
-    "balancedAccuracy": 0.551,
-    "prAucLiftOverDummy": 2.2,
-    "recommendedContactCount": 26183,
+    "prAuc": 0.0172,
+    "rocAuc": 0.5802,
+    "recall": 0.4638,
+    "balancedAccuracy": 0.5552,
+    "prAucLiftOverDummy": 2.09,
+    "recommendedContactCount": 26181,
     "riskDistribution": {
-      "highRisk": 3194,
-      "moderateRisk": 124000,
-      "lowRisk": 3720
+      "highRisk": 3193,
+      "moderateRisk": 123999,
+      "lowRisk": 3722
     },
     "confusionMatrix": {
-      "tn": 88600,
-      "fp": 41238,
-      "fn": 573,
-      "tp": 504
+      "tn": 83970,
+      "fp": 45868,
+      "fn": 577,
+      "tp": 499
     }
   }
 }

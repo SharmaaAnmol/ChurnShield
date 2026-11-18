@@ -4,6 +4,7 @@
  * pipeline (identical to churnshield_pipeline.joblib with 0.0000000000 numerical error).
  * Ensures instantaneous, responsive visual feedback and guaranteed prediction execution even offline.
  */
+import modelWeights from '../../../public/data/model_weights.json';
 
 export interface ModelWeights {
   intercept: number;
@@ -20,38 +21,8 @@ export interface ModelWeights {
   cat_default: string;
 }
 
-export const EXACT_MODEL_WEIGHTS: ModelWeights = {
-  intercept: -0.23090388337293274,
-  num_weights: {
-    order_count: { coef: 0.10647183928561041, median: 1.0, mean: 1.0263448881088197, scale: 0.17702412173033122 },
-    total_spend: { coef: 0.17248243239997654, median: 105.28, mean: 164.18195155770073, scale: 235.8431208678815 },
-    avg_order_value: { coef: 0.05695446154479839, median: 103.11, mean: 160.4090032587392, scale: 228.22623027745792 },
-    median_order_value: { coef: -0.2460465118902858, median: 103.11, mean: 160.38529381307595, scale: 228.22910008770165 },
-    order_value_std: { coef: -0.026593530865445254, median: 0.0, mean: 1.43683146552179, scale: 18.914540891686052 },
-    total_items: { coef: 0.08468882121090614, median: 1.0, mean: 1.1700219394471258, scale: 0.586793332113616 },
-    avg_items_per_order: { coef: -0.048308963010097496, median: 1.0, mean: 1.1382454292818487, scale: 0.5238547850504398 },
-    total_freight: { coef: 0.0382560329454424, median: 16.79, mean: 22.726122685388326, scale: 20.8426827067122 },
-    distinct_products: { coef: -0.010438238954312222, median: 1.0, mean: 1.0624308907415534, scale: 0.2953176593192294 },
-    distinct_sellers: { coef: 0.06445893045110658, median: 1.0, mean: 1.0282580078982009, scale: 0.18031733556605423 },
-    orders_recent_90d: { coef: 0.6281679969128832, median: 1.0, mean: 0.6294339622641509, scale: 0.5119586021082453 },
-    spend_recent_90d: { coef: -0.05181755862519194, median: 54.0, mean: 100.96184747696357, scale: 200.86850146158596 },
-    freight_ratio: { coef: -0.007902505325853479, median: 0.183256, mean: 0.20875340829913192, scale: 0.12487643420729323 },
-    recency_days: { coef: -0.193490487140947, median: 69.9915, mean: 74.15016168356816, scale: 51.082264534982954 },
-    tenure_days: { coef: -0.08704897311972334, median: 70.4544, mean: 74.64344224074887, scale: 51.15324010714474 },
-    has_multiple_orders: { coef: 0.053277612468957514, median: 0.0, mean: 0.024186046511627906, scale: 0.1536264354392345 },
-    avg_inter_order_days: { coef: 0.1795722526167198, median: 180.0, mean: 176.10106088301922, scale: 25.251603928186885 },
-    std_inter_order_days: { coef: -0.06107144932423667, median: 0.0, mean: 0.031290837179832894, scale: 1.1524775485837737 },
-    order_ratio_recent_vs_earlier: { coef: -1.6013777148912607, median: 1.0, mean: 0.6139637267807517, scale: 0.4858612105719182 },
-    spend_ratio_recent_vs_earlier: { coef: 0.827021378173198, median: 0.999999, mean: 0.613944308285488, scale: 0.48599259349349794 },
-  },
-  cat_weights: {
-    AC: 1.25145, AL: 0.05552, AM: 0.35991, AP: 1.24911, BA: 0.01790, CE: -0.78756, DF: 0.08105,
-    ES: 0.43275, GO: 0.05646, MA: -0.46147, MG: 0.12277, MS: -3.99675, MT: 0.48598, PA: -0.21315,
-    PB: 0.23455, PE: -0.12070, PI: 0.57619, PR: 0.00081, RJ: 0.32538, RN: 0.65999, RO: 0.58984,
-    RR: -0.94558, RS: 0.08251, SC: 0.30581, SE: -0.52289, SP: 0.20314, TO: -0.24030,
-  },
-  cat_default: 'SP',
-};
+// Generated from backend/artifacts/churnshield_pipeline.joblib by export_webapp_data.py — never edit by hand.
+export const EXACT_MODEL_WEIGHTS: ModelWeights = modelWeights;
 
 const FEATURE_HUMAN_NAMES: Record<string, string> = {
   orders_recent_90d: 'Recent 90d Orders',

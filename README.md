@@ -2,7 +2,7 @@
 
 [![Live Webapp](https://img.shields.io/badge/Live%20Platform-churn--shield--omega.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://churn-shield-omega.vercel.app)
 [![Open In Colab](https://img.shields.io/badge/Google%20Colab-Run%20Notebook-F9AB00?style=for-the-badge&logo=googlecolab&logoColor=white)](https://colab.research.google.com/github/SharmaaAnmol/ChurnShield/blob/main/ChurnShield_Customer_Inactivity_Prediction.ipynb)
-[![FastAPI](https://img.shields.io/badge/FastAPI-ML%20Backend-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://churnshield-api.onrender.com)
+[![Prediction API](https://img.shields.io/badge/Prediction%20API-Vercel%20Function-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://churn-shield-omega.vercel.app/api/health)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey?style=for-the-badge)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
@@ -13,7 +13,7 @@
 
 ## 1. Live Web Application & Interactive Prediction Studio
 
-ChurnShield includes a deployed, production-grade web application backed by our trained Scikit-Learn pipeline running on FastAPI:
+ChurnShield includes a deployed web application. Predictions are served by a Vercel Function (`webapp/api/predict.ts`) that runs the exact weights of the trained Scikit-Learn pipeline. The original FastAPI service in `backend/` is kept as the reference implementation. See [ROADMAP.md](ROADMAP.md) for the redesign plan.
 
 👉 **Launch Platform:** [https://churn-shield-omega.vercel.app](https://churn-shield-omega.vercel.app)
 
@@ -135,7 +135,7 @@ AI_Project/
 │   ├── public/data/                                  # Empirical Evaluated Dataset Metrics & Scored Customers
 │   └── vercel.json                                   # SPA Route Rewrite Configuration
 │
-├── backend/                                          # Production FastAPI ML Inference Backend (Deployed on Render)
+├── backend/                                          # Reference FastAPI implementation (no longer deployed)
 │   ├── app/
 │   │   ├── main.py                                   # FastAPI Server & Endpoints
 │   │   ├── schemas.py                                # Pydantic v2 Feature Schemas & Validation
@@ -149,13 +149,12 @@ AI_Project/
 │   └── tests/test_api.py                             # Automated Pytest Suite (10/10 Passing)
 │
 ├── docs/                                             # Deployment & Architecture Guides
-│   ├── DEPLOYMENT_GUIDE.md                           # Step-by-Step Render & Vercel Manual
+│   ├── DEPLOYMENT_GUIDE.md                           # Deployment notes (Render section is legacy)
 │   └── PREDICTION_STUDIO_ARCHITECTURE.md             # Prediction Studio Technical Blueprint
 │
 ├── ChurnShield_Customer_Inactivity_Prediction.ipynb  # Master Deliverable: Executed Colab-Ready Notebook
 ├── ChurnShield_Technical_Documentation.md           # Comprehensive Technical Architecture & Engineering Documentation
 ├── ChurnShield_Technical_Documentation.pdf          # Polished Printable System Design Whitepaper (PDF)
-├── render.yaml                                       # Render Blueprint Deployment Configuration
 ├── requirements.txt                                  # Root Python Dependencies
 └── artifacts/                                        # Master Analytical Artifacts (Evaluations & CSVs)
 ```

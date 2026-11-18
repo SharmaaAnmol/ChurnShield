@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppShell } from '../components/layout/AppShell';
+import { SiteShell } from '../components/layout/SiteShell';
+import { HomePage } from '../pages/site/HomePage';
+import { DataPage } from '../pages/site/DataPage';
 import { OverviewPage } from '../pages/OverviewPage';
 import { PredictionStudioPage } from '../pages/PredictionStudioPage';
 import { CustomerExplorerPage } from '../pages/CustomerExplorerPage';
@@ -39,6 +42,11 @@ export function App() {
     <TimelineProvider>
       <BrowserRouter>
         <Routes>
+          {/* Redesigned pages (ROADMAP.md). Old pages below move over one by one. */}
+          <Route element={<SiteShell />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/data" element={<DataPage />} />
+          </Route>
           <Route
             element={
               <AppShell
@@ -47,7 +55,7 @@ export function App() {
               />
             }
           >
-            <Route path="/" element={<OverviewPage />} />
+            <Route path="/overview-old" element={<OverviewPage />} />
             <Route path="/prediction-studio" element={<PredictionStudioPage />} />
             <Route path="/predict" element={<Navigate to="/prediction-studio" replace />} />
             <Route path="/customers" element={<CustomerExplorerPage />} />

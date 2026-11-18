@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check:api": "esbuild scripts/api-parity.check.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/api-parity.mjs --log-level=warning && node node_modules/.cache/api-parity.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
