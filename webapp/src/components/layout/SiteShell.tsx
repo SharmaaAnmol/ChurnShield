@@ -65,6 +65,10 @@ export function SiteShell() {
   const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
+    const page = NAV.find((n) => n.to === pathname && n.to !== "/");
+    document.title = page
+      ? `${page.label} · ChurnShield`
+      : "ChurnShield — Who won't come back?";
   }, [pathname]);
 
   return (
