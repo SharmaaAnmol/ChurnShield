@@ -11,17 +11,30 @@
 
 ---
 
-## 1. Live Web Application & Interactive Prediction Studio
+## 1. Live Web Application
 
-ChurnShield includes a deployed web application. Predictions are served by a Vercel Function (`webapp/api/predict.ts`) that runs the exact weights of the trained Scikit-Learn pipeline. The original FastAPI service in `backend/` is kept as the reference implementation. See [ROADMAP.md](ROADMAP.md) for the redesign plan.
+**[churn-shield-omega.vercel.app](https://churn-shield-omega.vercel.app)** explains the project in six steps. Each page answers one question:
 
-👉 **Launch Platform:** [https://churn-shield-omega.vercel.app](https://churn-shield-omega.vercel.app)
+| Step | Page | Question it answers |
+|---|---|---|
+| 1 | Home (`/`) | What is the problem, and what does ChurnShield do? |
+| 2 | The data (`/data`) | What do the customers look like, and what hints that someone will come back? (8 EDA figures) |
+| 3 | Try the model (`/prediction-studio`) | What does the model say about one real customer, and why? |
+| 4 | Results (`/model`) | How do we know it works on customers it never saw? |
+| 5 | Customers (`/customers`) | Who should the shop contact first? |
+| 6 | How it's built (`/how-its-built`) | Which steps and tools turn the raw data into this site? |
 
-### Core Capabilities:
-- **Executive Surveillance Dashboard:** Dynamic timeline switching across **130,914 customers** spanning 5 rolling quarterly snapshots (`2017-06`, `2017-09`, `2017-12`, `2018-03`, `2018-06`, and cumulative `All 130k`).
-- **Interactive Prediction Studio:** Real-time customer inference with an interactive lifecycle timeline diagram, dynamic recency pin, Multidimensional Radar Chart (Recharts), What-If Retention Simulator, Feature Impact Waterfall, and Logistic Sigmoid probability curve.
-- **Customer Retention Explorer:** High-speed data grid of scored customer records with multi-dimensional filtering by snapshot timeline, risk tier, Brazilian state, and priority outreach targets (Top 20%).
-- **Model Performance & Validation Rigor:** Live confusion matrices, PR-AUC scores, and class-imbalance diagnostics across all empirical test cohorts.
+Every number on the site is generated from this repository by `export_webapp_data.py`; `python export_webapp_data.py --check` proves the served files match. Predictions come from a Vercel Function (`webapp/api/predict.ts`) running the exact weights of the trained scikit-learn pipeline; `npm run check:api` (in `webapp/`) proves it matches scikit-learn. The original FastAPI service in `backend/` is kept as the reference implementation. See [ROADMAP.md](ROADMAP.md) for how the site was redesigned.
+
+### Technology stack
+
+| Layer | Tools | Used for |
+|---|---|---|
+| Data & modelling | Python, Jupyter (Google Colab), pandas, NumPy, scikit-learn, joblib, matplotlib, seaborn, kagglehub | Downloading and auditing the data, building the 130,914-row feature store, training and comparing 7 models, evaluation, figures |
+| Website | React 18, TypeScript, Vite, Tailwind CSS 4, Recharts, React Router, PapaParse, Lucide | The six pages, charts, light/dark themes |
+| Hosting & deployment | GitHub, Vercel, Vercel Functions (Node.js) | Source and history; every push to `main` builds and deploys the site and `/api/predict`, `/api/health` |
+| Reference API & tests | FastAPI, pydantic, uvicorn, pytest | Original Python API in `backend/` with its test suite |
+| Data integrity checks | `export_webapp_data.py --check`, `npm run check:api` | Site data matches the repo artifacts; API matches scikit-learn |
 
 ---
 
@@ -127,36 +140,26 @@ In commercial e-commerce, customer acquisition cost (CAC) typically outpaces ret
 
 ```
 AI_Project/
-├── webapp/                                           # Production React + TypeScript + Vite Frontend (Deployed on Vercel)
-│   ├── src/
-│   │   ├── pages/                                    # Overview, Prediction Studio, Customer Explorer, etc.
-│   │   ├── lib/api/prediction-client.ts              # Production API Client (VITE_API_BASE_URL)
-│   │   └── lib/context/TimelineContext.tsx           # Multi-Timeline Cohort State Provider
-│   ├── public/data/                                  # Empirical Evaluated Dataset Metrics & Scored Customers
-│   └── vercel.json                                   # SPA Route Rewrite Configuration
-│
-├── backend/                                          # Reference FastAPI implementation (no longer deployed)
-│   ├── app/
-│   │   ├── main.py                                   # FastAPI Server & Endpoints
-│   │   ├── schemas.py                                # Pydantic v2 Feature Schemas & Validation
-│   │   └── services/predictor.py                     # Scikit-Learn Pipeline Wrapper
-│   ├── artifacts/                                    # Bundled Serialized Model & Weight Matrices
-│   │   ├── churnshield_pipeline.joblib               # Champion Balanced Logistic Regression Model
-│   │   ├── model_weights.json                        # Exact Weights for Parity Inference
-│   │   ├── feature_schema.json                       # 21-Feature Specification
-│   │   └── model_metadata.json                       # Hyperparameters & Provenance
-│   ├── requirements.txt                              # Backend Dependencies
-│   └── tests/test_api.py                             # Automated Pytest Suite (10/10 Passing)
-│
-├── docs/                                             # Deployment & Architecture Guides
-│   ├── DEPLOYMENT_GUIDE.md                           # Deployment notes (Render section is legacy)
-│   └── PREDICTION_STUDIO_ARCHITECTURE.md             # Prediction Studio Technical Blueprint
-│
-├── ChurnShield_Customer_Inactivity_Prediction.ipynb  # Master Deliverable: Executed Colab-Ready Notebook
-├── ChurnShield_Technical_Documentation.md           # Comprehensive Technical Architecture & Engineering Documentation
-├── ChurnShield_Technical_Documentation.pdf          # Polished Printable System Design Whitepaper (PDF)
-├── requirements.txt                                  # Root Python Dependencies
-└── artifacts/                                        # Master Analytical Artifacts (Evaluations & CSVs)
+├── ChurnShield_Customer_Inactivity_Prediction.ipynb  # Main deliverable: executed, Colab-ready notebook
+├── build_project_and_artifacts.py                   # The same pipeline as one script: data audit -> features -> models -> artifacts
+├── build_notebook.py                                 # Generates and executes the notebook
+├── export_webapp_data.py                             # Builds every file in webapp/public/data/ from the artifacts (--check verifies)
+├── export_eda.py                                     # EDA aggregates for the website (called by export_webapp_data.py)
+├── artifacts/                                        # Pipeline outputs: feature store, metrics, model comparison, predictions
+├── data/                                             # Olist CSVs (downloaded, not committed)
+├── webapp/                                           # Website: React + TypeScript + Vite, deployed on Vercel
+│   ├── src/pages/site/                               # Home, Data, Try the model, Results, Customers, How it's built
+│   ├── src/lib/data/                                 # Data loading, in-browser model, customer editing rules
+│   ├── api/                                          # Vercel Functions: predict.ts, health.ts
+│   ├── scripts/                                      # API parity check (npm run check:api)
+│   ├── public/data/                                  # Generated data files the site displays (see its README)
+│   └── vercel.json                                   # Routing for the single-page app
+├── backend/                                          # Reference FastAPI implementation and pytest suite (not deployed)
+│   └── artifacts/churnshield_pipeline.joblib         # The trained scikit-learn pipeline
+├── docs/                                             # Deployment guide, report images; docs/archive/ holds pre-redesign notes
+├── ChurnShield_Technical_Documentation.md / .pdf     # Full technical write-up
+├── ROADMAP.md                                        # Redesign plan, decisions and demo script
+└── requirements.txt                                  # Python dependencies
 ```
 
 ---

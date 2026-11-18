@@ -1,0 +1,103 @@
+{
+  "raw_tables": [
+    {
+      "file": "olist_orders_dataset.csv",
+      "rows": 99441
+    },
+    {
+      "file": "olist_customers_dataset.csv",
+      "rows": 99441
+    },
+    {
+      "file": "olist_order_items_dataset.csv",
+      "rows": 112650
+    },
+    {
+      "file": "olist_order_payments_dataset.csv",
+      "rows": 103886
+    },
+    {
+      "file": "olist_order_reviews_dataset.csv",
+      "rows": 99224
+    },
+    {
+      "file": "olist_products_dataset.csv",
+      "rows": 32951
+    },
+    {
+      "file": "olist_sellers_dataset.csv",
+      "rows": 3095
+    },
+    {
+      "file": "olist_geolocation_dataset.csv",
+      "rows": 1000163
+    },
+    {
+      "file": "product_category_name_translation.csv",
+      "rows": 71
+    }
+  ],
+  "date_range": [
+    "2016-09-04",
+    "2018-10-17"
+  ],
+  "orders_with_items": 98666,
+  "model_comparison": [
+    {
+      "model": "Logistic Regression",
+      "cv_pr_auc_mean": 0.0178,
+      "cv_pr_auc_std": 0.0012,
+      "val_pr_auc": 0.0173,
+      "val_roc_auc": 0.5543,
+      "fit_time_seconds": 0.98
+    },
+    {
+      "model": "Extra Trees",
+      "cv_pr_auc_mean": 0.0128,
+      "cv_pr_auc_std": 0.0002,
+      "val_pr_auc": 0.0168,
+      "val_roc_auc": 0.5892,
+      "fit_time_seconds": 0.61
+    },
+    {
+      "model": "Gradient Boosting",
+      "cv_pr_auc_mean": 0.0147,
+      "cv_pr_auc_std": 0.0021,
+      "val_pr_auc": 0.0145,
+      "val_roc_auc": 0.5634,
+      "fit_time_seconds": 16.53
+    },
+    {
+      "model": "Random Forest",
+      "cv_pr_auc_mean": 0.0121,
+      "cv_pr_auc_std": 0.0,
+      "val_pr_auc": 0.0115,
+      "val_roc_auc": 0.533,
+      "fit_time_seconds": 1.01
+    },
+    {
+      "model": "HistGradientBoosting",
+      "cv_pr_auc_mean": 0.0132,
+      "cv_pr_auc_std": 0.0015,
+      "val_pr_auc": 0.0112,
+      "val_roc_auc": 0.5169,
+      "fit_time_seconds": 3.2
+    },
+    {
+      "model": "Decision Tree",
+      "cv_pr_auc_mean": 0.011,
+      "cv_pr_auc_std": 0.0006,
+      "val_pr_auc": 0.0109,
+      "val_roc_auc": 0.5145,
+      "fit_time_seconds": 0.46
+    },
+    {
+      "model": "Dummy Classifier",
+      "cv_pr_auc_mean": 0.0092,
+      "cv_pr_auc_std": 0.0004,
+      "val_pr_auc": 0.0083,
+      "val_roc_auc": 0.5,
+      "fit_time_seconds": 0.22
+    }
+  ]
+}

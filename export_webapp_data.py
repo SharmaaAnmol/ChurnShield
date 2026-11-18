@@ -13,6 +13,7 @@ repository. Nothing is typed in by hand:
       -> customer_predictions.csv (seeded random sample of scored customers)
   artifacts/curated_customer_snapshots.csv -> eda.json (via export_eda.py)
   curated snapshots + pipeline -> examples.json (rule-picked real test customers)
+  artifacts/data_quality_report.json + model_comparison.csv -> pipeline.json
 
 Usage:
   python export_webapp_data.py          # regenerate the files
@@ -116,6 +117,20 @@ def cohort_metrics(cid: str, g: pd.DataFrame, label: str, split: str) -> dict:
     }
 
 
+def pipeline_facts() -> dict:
+    """Facts for the How-it's-built page: raw tables profiled and the model bake-off."""
+    dq = json.loads((ART / "data_quality_report.json").read_text())
+    ji = dq["join_integrity"]
+    mc = pd.read_csv(ART / "model_comparison.csv")
+    return {
+        "raw_tables": [{"file": f, "rows": t["rows"]} for f, t in dq["tables_profiled"].items()],
+        "date_range": [ji["min_order_purchase_timestamp"][:10], ji["max_order_purchase_timestamp"][:10]],
+        "orders_with_items": ji["orders_with_qualifying_items"],
+        "model_comparison": mc[["model", "cv_pr_auc_mean", "cv_pr_auc_std", "val_pr_auc", "val_roc_auc", "fit_time_seconds"]]
+        .sort_values("val_pr_auc", ascending=False).to_dict("records"),
+    }
+
+
 def pick_examples(df: pd.DataFrame, features: list) -> dict:
     """Real held-out customers for the Try-the-model presets, chosen by fixed rules (no hand-picking)."""
     t = df[df["observation_date"] == "2018-06-01"]
@@ -184,6 +199,7 @@ def export_to(out: Path) -> None:
     sample[EXPORT_COLUMNS].round({"repeat_purchase_probability": 4, "inactivity_risk_score": 4}).to_csv(
         out / "customer_predictions.csv", index=False)
 
+    (out / "pipeline.json").write_text(json.dumps(pipeline_facts(), indent=2))
     (out / "examples.json").write_text(json.dumps(pick_examples(df, features), indent=2))
 
     export_eda.OUT = out / "eda.json"

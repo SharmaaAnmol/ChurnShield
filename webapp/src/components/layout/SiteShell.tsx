@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { Moon, Shield, Sun } from "lucide-react";
 
 const NAV = [
@@ -8,6 +8,7 @@ const NAV = [
   { to: "/prediction-studio", label: "Try the model" },
   { to: "/model", label: "Results" },
   { to: "/customers", label: "Customers" },
+  { to: "/how-its-built", label: "How it's built" },
 ];
 
 type Theme = "light" | "dark";
@@ -60,6 +61,12 @@ function ThemeToggle() {
 }
 
 export function SiteShell() {
+  // A new page starts at the top, otherwise "Next" links land at the bottom of the next page.
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   return (
     <div className="min-h-screen bg-paper text-ink font-ui selection:bg-route-wash">
       <header className="border-b-[1.5px] border-ink">
@@ -132,7 +139,19 @@ export function SiteShell() {
             .
           </p>
           <p>
-            Data: Olist Brazilian E-Commerce Public Dataset (CC BY-NC-SA 4.0).
+            Data: Olist Brazilian E-Commerce Public Dataset (CC BY-NC-SA 4.0) ·{" "}
+            <a
+              href="https://github.com/SharmaaAnmol/ChurnShield"
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-route"
+            >
+              GitHub
+            </a>{" "}
+            ·{" "}
+            <NavLink to="/how-its-built" className="font-semibold text-route">
+              How it's built
+            </NavLink>
           </p>
         </div>
       </footer>

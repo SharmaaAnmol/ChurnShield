@@ -66,7 +66,7 @@ function Intro({ data }: { data: SiteData }) {
   ];
   return (
     <section className={`${WRAP} py-16 lg:py-20`}>
-      <Eyebrow>Results</Eyebrow>
+      <Eyebrow>Step 4 of 6 · Results</Eyebrow>
       <div className="mt-5 grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:items-end">
         <h1 className="font-display text-[44px] font-semibold leading-[1.02] sm:text-[64px]">
           Does it <em className="text-route">work?</em>

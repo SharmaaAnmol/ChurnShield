@@ -5,6 +5,7 @@ import { DataPage } from '../pages/site/DataPage';
 import { TryModelPage } from '../pages/site/TryModelPage';
 import { ResultsPage } from '../pages/site/ResultsPage';
 import { CustomersPage } from '../pages/site/CustomersPage';
+import { HowItsBuiltPage } from '../pages/site/HowItsBuiltPage';
 
 export function App() {
   return (
@@ -16,6 +17,7 @@ export function App() {
           <Route path="/prediction-studio" element={<TryModelPage />} />
           <Route path="/model" element={<ResultsPage />} />
           <Route path="/customers" element={<CustomersPage />} />
+          <Route path="/how-its-built" element={<HowItsBuiltPage />} />
           {/* old URLs */}
           <Route path="/predict" element={<Navigate to="/prediction-studio" replace />} />
           <Route path="/features" element={<Navigate to="/model" replace />} />

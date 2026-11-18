@@ -12,6 +12,7 @@ export function HomePage() {
     <>
       <Hero data={data} />
       <ThreeSteps data={data} />
+      <SiteGuide />
       <Windows data={data} />
       <Findings data={data} />
     </>
@@ -27,7 +28,7 @@ function Hero({ data }: { data: SiteData }) {
   return (
     <section className={`${WRAP} grid items-center gap-12 py-16 lg:grid-cols-[1fr_1.05fr] lg:py-24`}>
       <div className="max-w-[620px]">
-        <Eyebrow>A customer-retention model for online shops</Eyebrow>
+        <Eyebrow>Step 1 of 6 · A customer-retention model for online shops</Eyebrow>
         <h1 className="mt-5 font-display text-[44px] font-semibold leading-[1.02] sm:text-[64px] lg:text-[76px]">
           Most shoppers buy once. <em className="font-semibold text-route">We find who won't come back.</em>
         </h1>
@@ -135,6 +136,42 @@ function ThreeSteps({ data }: { data: SiteData }) {
               <span className="font-mono text-[28px] font-semibold text-route">{s.stat}</span>{' '}
               <span className="text-[14px] text-ink-2">{s.statLabel}</span>
             </p>
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+const GUIDE = [
+  { to: '/data', title: 'The data', q: 'What do the customers look like, and what hints that someone will come back?' },
+  { to: '/prediction-studio', title: 'Try the model', q: 'What does the model say about one real customer, and why?' },
+  { to: '/model', title: 'Results', q: 'How do we know it works on customers it never saw?' },
+  { to: '/customers', title: 'Customers', q: 'Who should the shop contact first?' },
+  { to: '/how-its-built', title: "How it's built", q: 'Which steps and tools turn raw data into this site?' },
+];
+
+function SiteGuide() {
+  return (
+    <section className={`${WRAP} pt-20`}>
+      <h2 className="font-display text-[36px] font-semibold leading-none sm:text-[44px]">
+        How to read <em className="text-route">this site</em>
+      </h2>
+      <p className="mt-4 max-w-[640px] text-[16px] leading-[1.6] text-ink-2">
+        Each page answers one question, in order. Follow them left to right, or jump to the one you need.
+      </p>
+      <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        {GUIDE.map((g, i) => (
+          <li key={g.to}>
+            <Link
+              to={g.to}
+              className="group flex h-full flex-col rounded-[14px] border border-rule bg-sheet p-5 transition-colors hover:border-ink"
+            >
+              <span className="font-mono text-[12px] text-ink-2">Step {i + 2}</span>
+              <span className="mt-1 text-[18px] font-bold">{g.title}</span>
+              <span className="mt-2 flex-1 text-[14px] leading-[1.5] text-ink-2">{g.q}</span>
+              <ArrowRight className="mt-4 h-4 w-4 text-route transition-transform group-hover:translate-x-1" aria-hidden />
+            </Link>
           </li>
         ))}
       </ol>

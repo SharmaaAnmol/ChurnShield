@@ -34,7 +34,7 @@ function Intro({ data }: { data: SiteData }) {
   ];
   return (
     <section className={`${WRAP} py-16 lg:py-20`}>
-      <Eyebrow>Exploratory data analysis</Eyebrow>
+      <Eyebrow>Step 2 of 6 · Exploratory data analysis</Eyebrow>
       <div className="mt-5 grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:items-end">
         <h1 className="font-display text-[44px] font-semibold leading-[1.02] sm:text-[64px]">
           What the data <em className="text-route">shows</em>

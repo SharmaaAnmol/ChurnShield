@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import Papa from 'papaparse';
 import { Eyebrow, DataState } from '../../components/site/Figure';
 import { useSiteData, SOURCES, pct, num } from '../../lib/data/site-data';
@@ -70,7 +71,7 @@ export function CustomersPage() {
   return (
     <>
       <section className={`${WRAP} py-16 lg:py-20`}>
-        <Eyebrow>Customers</Eyebrow>
+        <Eyebrow>Step 5 of 6 · Customers</Eyebrow>
         <div className="mt-5 grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:items-end">
           <h1 className="font-display text-[44px] font-semibold leading-[1.02] sm:text-[64px]">
             Who to <em className="text-route">contact first</em>
@@ -190,13 +191,25 @@ export function CustomersPage() {
         </div>
         <p className="mt-3 font-mono text-[12px] text-ink-2">source: data/{SOURCES.customers}</p>
 
-        <p className="mt-12 text-[15px] text-ink-2">
+        <p className="mt-10 text-[15px] text-ink-2">
           Want to see why a customer scores the way they do?{' '}
           <Link to="/prediction-studio" className="font-semibold text-route">
             Try the model
           </Link>
           .
         </p>
+        <Link
+          to="/how-its-built"
+          className="group mt-10 flex flex-wrap items-center justify-between gap-4 rounded-[18px] border border-rule bg-sheet p-6 hover:border-ink-2 sm:p-8"
+        >
+          <span>
+            <span className="eyebrow">Next</span>
+            <span className="mt-2 block font-display text-[30px] font-semibold leading-tight">
+              What is it built with? <em className="text-route">How it's built.</em>
+            </span>
+          </span>
+          <ArrowRight className="transition-transform group-hover:translate-x-1" aria-hidden />
+        </Link>
       </section>
     </>
   );

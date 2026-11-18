@@ -92,7 +92,9 @@ Known and left as is:
 - [x] Customers (`pages/site/CustomersPage.tsx`): ranked sample from `customer_predictions.csv`, filter by snapshot, tier and contact list, with the real outcome shown. Labelled as a seeded 800-per-snapshot sample.
 - [x] Old pages, sidebar shell, animation kits, old dark theme and 13 unused packages removed; old URLs (`/predict`, `/features`, `/methodology`) redirect. Main JS bundle 466 kB → 104 kB.
 - [x] Branch pushed; Vercel preview build succeeded (18 Nov).
-- [ ] Day 6: merge to `main` so the production URL updates, check live `/api/predict`, copy pass, demo run-through
+- [x] Merged to `main`; production live. Fixed `/api/predict` crashing on Vercel (Node ESM needs `.js` import extensions and a JSON import attribute).
+- [x] Day 6 clarity pass: new **How it's built** page (step 6: six-step pipeline with the file each step writes, the 7-model comparison from `model_comparison.csv`, the full technology stack with versions read from `model_summary.json` and `package.json`, how a prediction is served, the integrity checks). Every page now says "Step n of 6", Home has a "How to read this site" guide, every page links to the next, pages open at the top, footer links to GitHub. README (site map, tech stack, structure) and `docs/DEPLOYMENT_GUIDE.md` rewritten for Vercel; pre-redesign docs moved to `docs/archive/`.
+- [ ] Demo run-through on the live site (phone + laptop)
 
 ## Demo script (draft)
 
@@ -101,3 +103,4 @@ Known and left as is:
 3. **Try the model:** pick "Typical" (a real test customer), then change days since last order and recent orders, and watch the score and the reasons change. Point out "What really happened": the model ranks, it doesn't know the future.
 4. **Results:** "The model finds returners 1.7× better than guessing, on data it never saw. The signal is real but modest, and here's why."
 5. **Customers:** the ranked list a retention team would actually use.
+6. **How it's built:** "Python and scikit-learn do the data science in the notebook; a script exports the results; React shows them; Vercel hosts the site and the prediction API. Every number traces back to the repository." 

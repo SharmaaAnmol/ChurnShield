@@ -56,6 +56,7 @@ export interface ModelSummary {
   feature_schema: { numerical_features: string[]; categorical_features: string[] };
   champion_model: { model_type: string; test_cohort_pr_auc: number; validation_cohort_pr_auc: number };
   known_limitations: string[];
+  environment: Record<string, string>;
 }
 
 export interface Evaluation {
@@ -75,12 +76,27 @@ export interface Importance {
   rank: number;
 }
 
+export interface Pipeline {
+  raw_tables: Array<{ file: string; rows: number }>;
+  date_range: [string, string];
+  orders_with_items: number;
+  model_comparison: Array<{
+    model: string;
+    cv_pr_auc_mean: number;
+    cv_pr_auc_std: number;
+    val_pr_auc: number;
+    val_roc_auc: number;
+    fit_time_seconds: number;
+  }>;
+}
+
 export interface SiteData {
   eda: Eda;
   timeline: Record<string, CohortMetrics>;
   summary: ModelSummary;
   evaluation: Evaluation;
   importance: Importance[];
+  pipeline: Pipeline;
 }
 
 /** File names, shown on the page as the source of each figure. */
@@ -91,6 +107,9 @@ export const SOURCES = {
   evaluation: 'evaluation_metrics.json',
   importance: 'feature_importance.json',
   customers: 'customer_predictions.csv',
+  pipeline: 'pipeline.json',
+  examples: 'examples.json',
+  weights: 'model_weights.json',
 } as const;
 
 /** Plain-English names for the model's 21 inputs. */
@@ -133,7 +152,15 @@ function loadSiteData(): Promise<SiteData> {
     getJson<ModelSummary>(SOURCES.summary),
     getJson<Evaluation>(SOURCES.evaluation),
     getJson<Importance[]>(SOURCES.importance),
-  ]).then(([eda, timeline, summary, evaluation, importance]) => ({ eda, timeline, summary, evaluation, importance }));
+    getJson<Pipeline>(SOURCES.pipeline),
+  ]).then(([eda, timeline, summary, evaluation, importance, pipeline]) => ({
+    eda,
+    timeline,
+    summary,
+    evaluation,
+    importance,
+    pipeline,
+  }));
   cache.catch(() => (cache = null)); // let a later visit retry after a failed load
   return cache;
 }
