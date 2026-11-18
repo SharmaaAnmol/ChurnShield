@@ -88,6 +88,25 @@ export interface Pipeline {
     val_roc_auc: number;
     fit_time_seconds: number;
   }>;
+  /** State-level vs region-level location encoding, from artifacts/location_fix_comparison.json. */
+  location_fix: Record<'before' | 'after', LocationFixSide>;
+}
+
+export interface LocationFixSide {
+  encoding: string;
+  location_categories: number;
+  largest_location_weight: { category: string; log_odds: number };
+  val_pr_auc: number;
+  test_pr_auc: number;
+  test_roc_auc: number;
+  ms_train_customers: number;
+  ms_train_returners: number;
+  ms_test_customers: number;
+  ms_test_returners: number;
+  ms_test_min_risk: number;
+  ms_test_median_risk: number;
+  high_tier_customers: number;
+  high_tier_top_states: Record<string, number>;
 }
 
 export interface SiteData {

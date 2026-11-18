@@ -59,19 +59,15 @@
       "random_state": 42
     },
     "primary_selection_metric": "Average Precision (PR-AUC)",
-    "validation_cohort_pr_auc": 0.0173,
-    "test_cohort_pr_auc": 0.0117,
-    "test_pr_auc_lift_over_dummy": 1.7,
-    "calibration_note": "Probabilities are balanced-space relative risk scores (trained with class_weight='balanced') optimized for decile ranking rather than unweighted posterior probabilities."
+    "validation_cohort_pr_auc": 0.0183,
+    "test_cohort_pr_auc": 0.0123,
+    "test_pr_auc_lift_over_dummy": 1.78
   },
   "retention_prioritization_policy": {
     "frozen_policy_name": "Top 20% highest inactivity risk",
     "outreach_capacity_pct": 20.0,
-    "test_cohort_inactivity_capture_rate": 0.2005,
-    "test_cohort_lift": 1.0026,
-    "reengagement_top_decile_lift": 1.63,
-    "reengagement_top_decile_precision": 0.0112,
-    "test_cohort_base_rate": 0.0069
+    "test_cohort_inactivity_capture_rate": 0.2007,
+    "test_cohort_lift": 1.0033
   },
   "business_impact_scenario": {
     "assumptions": {
@@ -81,21 +77,21 @@
       "months_of_value_preserved": 3.0
     },
     "test_cohort_scenario_results": {
-      "customers_contacted": 7833,
-      "total_campaign_expenditure_brl": 39165.0,
-      "estimated_retained_customers": 390.0,
-      "gross_contribution_margin_preserved_brl": 46800.0,
-      "net_financial_benefit_brl": 7635.0,
-      "estimated_roi_ratio": 0.19
+      "customers_contacted": 7832,
+      "total_campaign_expenditure_brl": 39160.0,
+      "estimated_retained_customers": 390.2,
+      "gross_contribution_margin_preserved_brl": 46824.0,
+      "net_financial_benefit_brl": 7664.0,
+      "estimated_roi_ratio": 0.2
     },
     "cautionary_note": "These financial outcomes are scenario estimates under stated assumptions. Historical observational data does not prove that outreach causes retention."
   },
   "environment": {
-    "python_version": "1.9.1",
-    "pandas_version": "2.3.1",
-    "numpy_version": "2.3.2",
-    "scikit_learn_version": "1.9.1",
-    "joblib_version": "1.6.0"
+    "python_version": "1.9.0",
+    "pandas_version": "3.0.3",
+    "numpy_version": "2.4.6",
+    "scikit_learn_version": "1.9.0",
+    "joblib_version": "1.5.3"
   },
   "known_limitations": [
     "Inactivity is a proxy for churn, not conclusive proof of permanent customer abandonment.",

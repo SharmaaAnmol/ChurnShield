@@ -27,6 +27,7 @@ export function ResultsPage() {
       <WhatItCatches data={data} cohorts={cohorts} />
       <WhyFifty data={data} />
       <WhatItUses data={data} />
+      <FlawFixed data={data} />
       <Limits data={data} />
       <section className={`${WRAP} pb-24`}>
         <Link
@@ -343,11 +344,109 @@ function TierChart({ tiers, total }: { tiers: Tier[]; total: number }) {
   );
 }
 
+/** Before/after of the state -> region change, all from artifacts/location_fix_comparison.json. */
+const signed = (x: number, d: number) => x.toFixed(d).replace('-', '−');
+
+function FlawFixed({ data }: { data: SiteData }) {
+  const { before: b, after: a } = data.pipeline.location_fix;
+  const topStates = (r: typeof b) =>
+    Object.entries(r.high_tier_top_states)
+      .slice(0, 2)
+      .map(([s, n]) => `${num(n)} ${s}`)
+      .join(', ');
+  const rows: Array<[string, string, string]> = [
+    ['How location is read', b.encoding, a.encoding],
+    [
+      'Strongest location weight (log-odds)',
+      `${signed(b.largest_location_weight.log_odds, 2)} (${b.largest_location_weight.category})`,
+      `${signed(a.largest_location_weight.log_odds, 2)} (${a.largest_location_weight.category})`,
+    ],
+    ['Lowest risk of any MS customer', pct(b.ms_test_min_risk, 1), pct(a.ms_test_min_risk, 1)],
+    [
+      'High-risk tier (70%+)',
+      `${num(b.high_tier_customers)} · mostly ${topStates(b)}`,
+      `${num(a.high_tier_customers)} · no single state`,
+    ],
+    ['Validation PR-AUC (used to choose)', b.val_pr_auc.toFixed(4), a.val_pr_auc.toFixed(4)],
+    ['Test PR-AUC (checked once)', b.test_pr_auc.toFixed(4), a.test_pr_auc.toFixed(4)],
+  ];
+  return (
+    <section className={`${WRAP} pb-16`}>
+      <SectionHead eyebrow="Part 5 · A flaw we caught" title={<>One state was scored as a <em className="text-route">lost cause</em></>}>
+        <p>
+          Looking at the riskiest customers, we noticed they nearly all lived in the same two states. In the training
+          snapshots, none of the {num(b.ms_train_customers)} customers from Mato Grosso do Sul (MS) came back, so the
+          model learned a weight of {signed(b.largest_location_weight.log_odds, 1)} for MS: every MS customer scored at
+          least {pct(b.ms_test_min_risk, 1)} risk just for living there, though {b.ms_test_returners} of the{' '}
+          {num(b.ms_test_customers)} in the test snapshot did come back.
+        </p>
+        <p className="mt-3">
+          A few hundred customers with no returners is too little to judge a whole state. So the model now reads the
+          customer's <b className="text-ink">region</b> (Brazil's five official regions) instead of the state, which
+          pools small states with their neighbours. We chose this on the validation snapshot, then checked the test
+          snapshot once. Every number on this site comes from the fixed model.
+        </p>
+      </SectionHead>
+      <Figure n={6} source={SOURCES.pipeline} className="mt-8" caption="The same model with location read per state (before) and per region (after).">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[520px] border-collapse text-left text-[15px]">
+            <thead>
+              <tr className="border-b-[1.5px] border-ink text-[13px] uppercase tracking-[0.08em] text-ink-2">
+                <th className="py-3 pr-4 font-semibold"></th>
+                <th className="py-3 pr-4 font-semibold">Before</th>
+                <th className="py-3 font-semibold text-route">After</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(([k, before, after]) => (
+                <tr key={k} className="border-b border-rule transition-colors hover:bg-wash">
+                  <th scope="row" className="py-3 pr-4 font-semibold">{k}</th>
+                  <td className="py-3 pr-4 font-mono text-[14px] text-ink-2">{before}</td>
+                  <td className="py-3 font-mono text-[14px] font-semibold">{after}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <MsRiskBars before={b.ms_test_median_risk} after={a.ms_test_median_risk} n={b.ms_test_customers} />
+      </Figure>
+    </section>
+  );
+}
+
+/** Median risk of the MS test customers, before vs after; grows in when the figure is seen. */
+function MsRiskBars({ before, after, n }: { before: number; after: number; n: number }) {
+  const seen = useFigureInView();
+  const bars: Array<[string, number, string]> = [
+    ['Before', before, 'var(--color-off)'],
+    ['After', after, 'var(--color-chart-1)'],
+  ];
+  return (
+    <div className="mt-6">
+      <p className="text-[14px] font-semibold">Typical (median) risk of the {num(n)} MS test customers</p>
+      <div className="mt-3 grid gap-2">
+        {bars.map(([k, v, bg], i) => (
+          <div key={k} className="grid grid-cols-[56px_1fr] items-center gap-3 text-[13px]">
+            <span className="text-ink-2">{k}</span>
+            <div className="relative h-7 rounded-[6px] bg-wash">
+              <span
+                className="absolute inset-y-0 left-0 rounded-[6px]"
+                style={{ width: seen ? `${v * 100}%` : 0, background: bg, ...growStyle(i * 3) }}
+              />
+              <span className="absolute inset-y-0 right-2 grid place-items-center font-mono text-[13px] font-semibold">{pct(v, 1)}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Limits({ data }: { data: SiteData }) {
   const { summary } = data;
   return (
     <section className={`${WRAP} pb-16`}>
-      <SectionHead eyebrow="Part 5 · Limits" title={<>What it <em className="text-route">can't</em> tell you</>}>
+      <SectionHead eyebrow="Part 6 · Limits" title={<>What it <em className="text-route">can't</em> tell you</>}>
         <p>Recorded with the model's metadata in the repository, and worth saying out loud.</p>
       </SectionHead>
       <ul className="mt-8 grid gap-4 md:grid-cols-3">

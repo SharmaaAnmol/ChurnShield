@@ -68,8 +68,8 @@ The master notebook [`ChurnShield_Customer_Inactivity_Prediction.ipynb`](ChurnSh
    - *Manual Upload Fallback:* If running in an air-gapped network, upload `archive.zip` or the three core CSVs (`olist_orders_dataset.csv`, `olist_customers_dataset.csv`, `olist_order_items_dataset.csv`) to the Colab files panel; the notebook detects and auto-extracts them.
 6. **Data Quality Audit & Gates:** Observe the execution of the 10-point Feature Matrix Gate certifying zero nulls, zero infinities, and no temporal lookahead bias.
 7. **Exploratory Data Analysis:** Inspect the 14 high-resolution EDA figures visualizing customer growth, log-spend skew, purchasing momentum, and class imbalance.
-8. **Chronological Model Benchmark:** Review the rolling-origin cross-validation results across 7 architectures. Observe that **Balanced Logistic Regression** achieves the highest Average Precision (PR-AUC: 0.0173 on validation vs. 0.0083 baseline).
-9. **Final Holdout Evaluation & ROI Calculator:** Review the untouched June 2018 test cohort performance (PR-AUC: 0.0117, 1.70x baseline lift), probability calibration curves, and interactive business ROI scenarios.
+8. **Chronological Model Benchmark:** Review the rolling-origin cross-validation results across 7 architectures. Observe that **Balanced Logistic Regression** achieves the highest Average Precision (PR-AUC: 0.0183 on validation vs. 0.0083 baseline).
+9. **Final Holdout Evaluation & ROI Calculator:** Review the untouched June 2018 test cohort performance (PR-AUC: 0.0123, 1.78x baseline lift), probability calibration curves, and interactive business ROI scenarios.
 10. **1-Click Artifacts Download:** Run the final cell in Section 16 to package all generated artifacts into `churnshield_artifacts.zip` and download it to your local machine via `files.download('churnshield_artifacts.zip')`.
 
 ---
@@ -117,7 +117,7 @@ In commercial e-commerce, customer acquisition cost (CAC) typically outpaces ret
   [ Step 6: 7-Model Benchmark & Tuning ] ──> Champion: Balanced Logistic Regression
                 │
                 ▼
-  [ Step 7: Untouched Test Cohort (2018-06) ] ──> PR-AUC: 0.0117 (1.70x Baseline Lift)
+  [ Step 7: Untouched Test Cohort (2018-06) ] ──> PR-AUC: 0.0123 (1.78x Baseline Lift)
                 │
                 ▼
   [ Step 8: Inactivity Scoring & Outreach Policies ] ──> Top 20% Capacity Allocation
@@ -183,12 +183,12 @@ The codebase automatically searches multiple acquisition tiers:
 
 | Model Architecture | CV PR-AUC (Mean±Std) | Val PR-AUC | Val ROC-AUC | Val Recall | Val Balanced Acc | Val F1 | Fit Time (s) |
 |:-------------------|:--------------------:|:----------:|:-----------:|:----------:|:----------------:|:------:|:------------:|
-| **Balanced Logistic Regression** | **0.0178 ± 0.0012** | **0.0173** | **0.5543** | **44.60%** | **54.09%** | **0.0197** | 1.0s |
-| **Extra Trees Classifier** | 0.0128 ± 0.0002 | 0.0168 | 0.5892 | 26.13% | 0.5620 | 0.0294 | 0.6s |
-| **Gradient Boosting Classifier** | 0.0147 ± 0.0021 | 0.0145 | 0.5634 | 0.35% | 50.15% | 0.0065 | 16.5s |
-| **Random Forest Classifier** | 0.0121 ± 0.0000 | 0.0115 | 0.5330 | 20.21% | 53.77% | 0.0246 | 1.0s |
-| **HistGradientBoosting** | 0.0132 ± 0.0015 | 0.0112 | 0.5169 | 28.92% | 54.08% | 0.0220 | 3.2s |
-| **Decision Tree Classifier** | 0.0110 ± 0.0006 | 0.0109 | 0.5145 | 40.42% | 51.10% | 0.0171 | 0.5s |
+| **Balanced Logistic Regression** | **0.0168 ± 0.0006** | **0.0183** | **0.5730** | **45.30%** | **54.70%** | **0.0203** | 1.8s |
+| **Extra Trees Classifier** | 0.0118 ± 0.0009 | 0.0151 | 0.5764 | 29.27% | 55.12% | 0.0242 | 0.8s |
+| **Gradient Boosting Classifier** | 0.0134 ± 0.0013 | 0.0133 | 0.5596 | 0.00% | 49.97% | 0.0000 | 17.4s |
+| **Random Forest Classifier** | 0.0113 ± 0.0002 | 0.0103 | 0.5233 | 16.38% | 52.20% | 0.0210 | 1.4s |
+| **HistGradientBoosting** | 0.0130 ± 0.0015 | 0.0110 | 0.5072 | 26.83% | 53.21% | 0.0208 | 4.3s |
+| **Decision Tree Classifier** | 0.0112 ± 0.0004 | 0.0109 | 0.5145 | 40.42% | 51.10% | 0.0171 | 0.6s |
 | **Dummy Classifier (Baseline)** | 0.0092 ± 0.0004 | 0.0083 | 0.5000 | 0.00% | 50.00% | 0.0000 | 0.2s |
 
 *Primary Metric:* Average Precision (PR-AUC). Balanced Logistic Regression achieved the highest Average Precision, outperforming the baseline by **over 2.0x**.
@@ -196,11 +196,11 @@ The codebase automatically searches multiple acquisition tiers:
 ### 7.2 Final Holdout Evaluation (Untouched Test Cohort: 2018-06-01 | $N = 39,162$)
 
 - **Base Repeat Rate:** 0.6894% (Severe 99.31% majority class imbalance)
-- **Champion PR-AUC:** **0.0117** vs Dummy Baseline **0.0069** (**1.70x Baseline Lift**)
-- **Champion ROC-AUC:** **0.5849** (Random guessing: 0.5000)
-- **Minority Class Recall:** **42.59%** (Captures 115 returning customers who would otherwise be lost)
-- **Balanced Accuracy:** **55.75%**
-- **Brier Score Loss:** **0.2279** (Balanced-space risk score for ranking; reflects class_weight='balanced' scaling rather than unweighted posterior probabilities)
+- **Champion PR-AUC:** **0.0123** vs Dummy Baseline **0.0069** (**1.78x Baseline Lift**)
+- **Champion ROC-AUC:** **0.5899** (Random guessing: 0.5000)
+- **Minority Class Recall:** **41.85%** (Captures 113 returning customers who would otherwise be lost)
+- **Balanced Accuracy:** **56.15%**
+- **Brier Score Loss:** **0.2296** (Balanced-space risk score for ranking; reflects class_weight='balanced' scaling rather than unweighted posterior probabilities)
 
 ---
 
@@ -208,9 +208,9 @@ The codebase automatically searches multiple acquisition tiers:
 
 ### 8.1 Re-Engagement Targeting Power (The Core Lift Evidence)
 When marketing targets customers with the **highest repeat purchase propensity** (lowest inactivity risk):
-- **Top 10% Decile:** Delivers a **1.63x lift** over random marketing (Precision: 1.12% vs 0.69% base rate, capturing 44 returning buyers).
+- **Top 10% Decile:** Delivers a **1.93x lift** over random marketing (Precision: 1.33% vs 0.69% base rate, capturing 52 returning buyers).
 - **Top 20% Decile:** Delivers a **1.41x lift** over random marketing.
-- **Scientific Significance:** Under severe 99.31% majority class imbalance, concentrating returning customers with a 1.63x lift provides genuine commercial value over untargeted mass blast campaigns.
+- **Scientific Significance:** Under severe 99.31% majority class imbalance, concentrating returning customers with a 1.93x lift provides genuine commercial value over untargeted mass blast campaigns.
 
 ### 8.2 Inactivity Outreach Policy Simulation (Test Cohort)
 Under a retention team outreach capacity of **20% of eligible customers** (7,833 customers contacted):

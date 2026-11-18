@@ -17,7 +17,11 @@ export interface ModelWeights {
       scale: number;
     }
   >;
+  /** Per state, the weight of its region (the pipeline encodes state as region). */
   cat_weights: Record<string, number>;
+  region_weights: Record<string, number>;
+  state_region: Record<string, string>;
+  /** Region used when the state is missing. */
   cat_default: string;
 }
 
@@ -225,12 +229,13 @@ export function runLocalModelInference(values: Record<string, any>): ClientInfer
     });
   }
 
-  const state = values.customer_state || w.cat_default;
-  const stateEffect = w.cat_weights[state] ?? 0.0;
+  const state = values.customer_state || '';
+  const region = w.state_region[state] ?? w.cat_default;
+  const stateEffect = w.region_weights[region] ?? 0.0;
   logit += stateEffect;
   contributions.push({
     feature: 'customer_state',
-    label: `State (${state})`,
+    label: state ? `State (${state}, ${region})` : `Region (${region})`,
     impact: stateEffect,
     direction: stateEffect >= 0 ? 'repeat' : 'churn',
     valueDisplay: state,

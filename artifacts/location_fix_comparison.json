@@ -1,0 +1,48 @@
+{
+  "before": {
+    "encoding": "27 states",
+    "location_categories": 27,
+    "largest_location_weight": {
+      "category": "MS",
+      "log_odds": -4.0066
+    },
+    "val_pr_auc": 0.0173,
+    "test_pr_auc": 0.0117,
+    "test_roc_auc": 0.5848,
+    "ms_train_customers": 370,
+    "ms_train_returners": 0,
+    "ms_test_customers": 307,
+    "ms_test_returners": 3,
+    "ms_test_min_risk": 0.9592,
+    "ms_test_median_risk": 0.9867,
+    "high_tier_customers": 962,
+    "high_tier_top_states": {
+      "CE": 495,
+      "MS": 307,
+      "MA": 72
+    }
+  },
+  "after": {
+    "encoding": "5 regions (IBGE)",
+    "location_categories": 5,
+    "largest_location_weight": {
+      "category": "Northeast",
+      "log_odds": -0.1712
+    },
+    "val_pr_auc": 0.0183,
+    "test_pr_auc": 0.0123,
+    "test_roc_auc": 0.5899,
+    "ms_train_customers": 370,
+    "ms_train_returners": 0,
+    "ms_test_customers": 307,
+    "ms_test_returners": 3,
+    "ms_test_min_risk": 0.2904,
+    "ms_test_median_risk": 0.5605,
+    "high_tier_customers": 17,
+    "high_tier_top_states": {
+      "MA": 2,
+      "SP": 2,
+      "SC": 2
+    }
+  }
+}

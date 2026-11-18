@@ -14,9 +14,11 @@ import numpy as np
 import pandas as pd
 import sklearn
 
+from churnshield_features import state_to_region
+
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, FunctionTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.dummy import DummyClassifier
 from sklearn.linear_model import LogisticRegression
@@ -385,6 +387,22 @@ preprocessor = ColumnTransformer(
             ('scaler', StandardScaler())
         ]), num_cols),
         ('cat', Pipeline([
+            # State -> one of Brazil's 5 regions: per-state groups were too small (see Step 6b).
+            ('region', FunctionTransformer(state_to_region, feature_names_out='one-to-one')),
+            ('imputer', SimpleImputer(strategy='most_frequent')),
+            ('ohe', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
+        ]), cat_cols)
+    ]
+)
+
+# The previous version one-hot encoded the 27 states directly; kept only for the Step 6b comparison.
+state_level_preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', Pipeline([
+            ('imputer', SimpleImputer(strategy='median')),
+            ('scaler', StandardScaler())
+        ]), num_cols),
+        ('cat', Pipeline([
             ('imputer', SimpleImputer(strategy='most_frequent')),
             ('ohe', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
         ]), cat_cols)
@@ -511,7 +529,7 @@ for c_val in c_candidates:
     tuning_records.append({'C': c_val, 'cv_pr_mean': np.mean(cv_prs), 'val_pr': v_pr})
     print(f"  - Logistic Regression C={c_val:5.2f} | CV PR-AUC: {np.mean(cv_prs):.4f} | Val Cohort PR-AUC: {v_pr:.4f}")
 
-# C=1.0 delivers strong cross-validation PR-AUC (0.0178) and validation PR-AUC (0.0173), over 2.0x higher than Dummy (0.0083)
+# C=1.0 keeps the setting chosen before the region change, so Step 6b compares location handling alone.
 CHAMPION_MODEL_NAME = "Balanced Logistic Regression"
 CHAMPION_HYPERPARAMS = {
     "C": 1.0,
@@ -527,6 +545,58 @@ champion_pipeline = Pipeline([
 ])
 champion_pipeline.fit(train_df[feature_cols], train_df[target_col])
 print(f"Champion Model '{CHAMPION_MODEL_NAME}' trained successfully.")
+
+
+# -----------------------------------------------------------------------------
+# 6b. LOCATION FIX: STATE-LEVEL vs REGION-LEVEL ENCODING
+# -----------------------------------------------------------------------------
+# The state-level model learned a -4.0 log-odds weight for Mato Grosso do Sul (MS): none of its
+# 370 training customers came back, so every MS customer scored ~96%+ risk for living there.
+# Regions pool small states with their neighbours. Chosen on validation; test reported once here.
+print("\n[Step 6b] Comparing state-level and region-level location encoding...")
+
+state_level_pipeline = Pipeline([
+    ('prep', state_level_preprocessor),
+    ('clf', LogisticRegression(**CHAMPION_HYPERPARAMS))
+])
+state_level_pipeline.fit(train_df[feature_cols], train_df[target_col])
+
+def location_summary(pipe, label):
+    ohe = pipe.named_steps['prep'].named_transformers_['cat'].named_steps['ohe']
+    loc_w = pipe.named_steps['clf'].coef_[0][len(num_cols):]
+    k = int(np.argmax(np.abs(loc_w)))
+    test_risk = 1.0 - pipe.predict_proba(test_df[feature_cols])[:, 1]
+    is_ms = (test_df['customer_state'] == 'MS').to_numpy()
+    high = test_risk >= 0.70
+    high_states = test_df.loc[high, 'customer_state'].value_counts()
+    train_ms = train_df[train_df['customer_state'] == 'MS']
+    return {
+        "encoding": label,
+        "location_categories": int(len(ohe.categories_[0])),
+        "largest_location_weight": {"category": str(ohe.categories_[0][k]), "log_odds": round(float(loc_w[k]), 4)},
+        "val_pr_auc": round(float(average_precision_score(val_df[target_col], pipe.predict_proba(val_df[feature_cols])[:, 1])), 4),
+        "test_pr_auc": round(float(average_precision_score(test_df[target_col], 1.0 - test_risk)), 4),
+        "test_roc_auc": round(float(roc_auc_score(test_df[target_col], 1.0 - test_risk)), 4),
+        "ms_train_customers": int(len(train_ms)),
+        "ms_train_returners": int(train_ms[target_col].sum()),
+        "ms_test_customers": int(is_ms.sum()),
+        "ms_test_returners": int(test_df.loc[is_ms, target_col].sum()),
+        "ms_test_min_risk": round(float(test_risk[is_ms].min()), 4),
+        "ms_test_median_risk": round(float(np.median(test_risk[is_ms])), 4),
+        "high_tier_customers": int(high.sum()),
+        "high_tier_top_states": {str(k2): int(v) for k2, v in high_states.head(3).items()},
+    }
+
+location_fix = {
+    "before": location_summary(state_level_pipeline, "27 states"),
+    "after": location_summary(champion_pipeline, "5 regions (IBGE)"),
+}
+with open(os.path.join(ARTIFACTS_DIR, "location_fix_comparison.json"), "w") as f:
+    json.dump(location_fix, f, indent=2)
+for side in ("before", "after"):
+    r = location_fix[side]
+    print(f"  - {r['encoding']:17s} | val PR-AUC {r['val_pr_auc']:.4f} | largest location weight "
+          f"{r['largest_location_weight']['log_odds']:+.2f} ({r['largest_location_weight']['category']}) | MS min risk {r['ms_test_min_risk']:.1%}")
 
 
 # -----------------------------------------------------------------------------
@@ -615,8 +685,9 @@ holdout_pred_df = pd.DataFrame({
 
 # Add frozen 20% outreach policy flag (Top 20% highest inactivity risk)
 k_test = int(len(test_df) * 0.20)
-risk_cutoff_test = holdout_pred_df['inactivity_risk_score'].nlargest(k_test).min()
-holdout_pred_df['priority_retention_target_20pct'] = (holdout_pred_df['inactivity_risk_score'] >= risk_cutoff_test).astype(int)
+# Exactly k customers by unrounded score (a cut-off on the rounded column can let ties add extra ones).
+holdout_pred_df['priority_retention_target_20pct'] = 0
+holdout_pred_df.loc[np.argsort(-test_inactivity_scores, kind='stable')[:k_test], 'priority_retention_target_20pct'] = 1
 
 holdout_path = os.path.join(ARTIFACTS_DIR, "holdout_predictions.csv")
 holdout_pred_df.to_csv(holdout_path, index=False)
@@ -627,6 +698,12 @@ print(f"Holdout predictions saved to {holdout_path}")
 # 8. RETENTION PRIORITIZATION POLICIES & BUSINESS IMPACT SIMULATION
 # -----------------------------------------------------------------------------
 print("\n[Step 8/10] Evaluating Retention Prioritization Policies & Financial Impact...")
+
+def top_k_mask(scores, k):
+    """Exactly the k highest scores (a quantile cut-off can let ties add extra customers)."""
+    mask = np.zeros(len(scores), dtype=bool)
+    mask[np.argsort(-np.asarray(scores), kind='stable')[:k]] = True
+    return mask
 
 # Priority evaluations on Validation Cohort
 val_probs = champion_pipeline.predict_proba(val_df[feature_cols])[:, 1]
@@ -639,8 +716,7 @@ base_inactive_val = tot_inactive_val / n_val
 policy_results_val = {}
 for pct in [10, 20, 30]:
     k = int(n_val * pct / 100)
-    cutoff = float(np.quantile(val_inactivity, 1.0 - pct / 100.0))
-    selected_mask = val_inactivity >= cutoff
+    selected_mask = top_k_mask(val_inactivity, k)
     captured_inactive = int(val_inactive_true[selected_mask].sum())
     captured_repeat = int((val_df[target_col][selected_mask] == 1).sum())
     inactivity_rate = float(captured_inactive / selected_mask.sum())
@@ -660,7 +736,7 @@ n_test = len(test_df)
 tot_inactive_test = (test_df[target_col] == 0).sum()
 base_inactive_test = tot_inactive_test / n_test
 k_20_test = int(n_test * 0.20)
-top_20_mask_test = test_inactivity_scores >= np.quantile(test_inactivity_scores, 0.80)
+top_20_mask_test = top_k_mask(test_inactivity_scores, k_20_test)
 captured_inactive_test = int((test_df[target_col] == 0)[top_20_mask_test].sum())
 captured_repeat_test = int((test_df[target_col] == 1)[top_20_mask_test].sum())
 concentration_test = float(captured_inactive_test / top_20_mask_test.sum())
@@ -683,7 +759,7 @@ repeat_lift_records = {}
 tot_repeats_test = int(test_df[target_col].sum())
 for pct in [10, 20, 30]:
     k_rep = int(n_test * pct / 100)
-    rep_mask = test_probs >= np.quantile(test_probs, 1.0 - pct / 100.0)
+    rep_mask = top_k_mask(test_probs, k_rep)
     rep_captured = int(test_df[target_col][rep_mask].sum())
     prec = float(rep_captured / rep_mask.sum())
     rec = float(rep_captured / tot_repeats_test)
@@ -809,7 +885,7 @@ model_metadata = {
         "model_type": CHAMPION_MODEL_NAME,
         "hyperparameters": CHAMPION_HYPERPARAMS,
         "primary_selection_metric": "Average Precision (PR-AUC)",
-        "validation_cohort_pr_auc": round(val_pr, 4),
+        "validation_cohort_pr_auc": location_fix["after"]["val_pr_auc"],  # the champion's own score (val_pr is the last loop model's)
         "test_cohort_pr_auc": round(test_pr_auc, 4),
         "test_pr_auc_lift_over_dummy": round(test_pr_auc / dummy_pr_test, 2)
     },
@@ -847,6 +923,12 @@ rest_probs = restored_pipe.predict_proba(sample_input)[:, 1]
 
 assert np.allclose(orig_probs, rest_probs, atol=1e-7), "Restored pipeline outputs do not match original!"
 print("Verification Assertion Passed: Restored model pipeline reproduces identical probabilities bit-for-bit.")
+
+# The backend (and export_webapp_data.py) read their own copies.
+import shutil
+shutil.copyfile(model_bundle_path, os.path.join("backend", "artifacts", "churnshield_pipeline.joblib"))
+shutil.copyfile(metadata_path, os.path.join("backend", "artifacts", "model_metadata.json"))
+print("Copied the pipeline and metadata to backend/artifacts/")
 
 print("\n" + "=" * 80)
 print("CHURNSHIELD PIPELINE EXECUTION COMPLETED SUCCESSFULLY!")

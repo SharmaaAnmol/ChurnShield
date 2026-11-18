@@ -61,7 +61,7 @@ The professor's requirement: **every number shown must come from this GitHub rep
 - The browser had a hand-typed copy of the weights, with state weights rounded. It now imports `model_weights.json`.
 
 Known and left as is:
-- `model_metadata.json` (written by the notebook) says 7,833 customers contacted, but the holdout file flags 7,832.
+- ~~`model_metadata.json` says 7,833 customers contacted, but the holdout file flags 7,832.~~ Fixed: every top-N% pick now takes exactly N%.
 - Currency is shown as `$` across the site (project choice). The amounts are the dataset's own values, unconverted.
 
 ## Schedule
@@ -94,6 +94,7 @@ Known and left as is:
 - [x] Branch pushed; Vercel preview build succeeded (18 Nov).
 - [x] Merged to `main`; production live. Fixed `/api/predict` crashing on Vercel (Node ESM needs `.js` import extensions and a JSON import attribute).
 - [x] Day 6 clarity pass: new **How it's built** page (step 6: six-step pipeline with the file each step writes, the 7-model comparison from `model_comparison.csv`, the full technology stack with versions read from `model_summary.json` and `package.json`, how a prediction is served, the integrity checks). Every page now says "Step n of 6", Home has a "How to read this site" guide, every page links to the next, pages open at the top, footer links to GitHub. README (site map, tech stack, structure) and `docs/DEPLOYMENT_GUIDE.md` rewritten for Vercel; pre-redesign docs moved to `docs/archive/`.
+- [x] Location fix: every Mato Grosso do Sul customer scored 96%+ risk because none of its 370 training customers came back (state weight −4.0). The model now reads the customer's region (5 IBGE regions) instead of the state: validation PR-AUC 0.0173 → 0.0183, test 0.0117 → 0.0123, largest location weight −0.17. Before/after shown on Results (Part 5) from `artifacts/location_fix_comparison.json`. Also fixed: metadata's validation PR-AUC came from the wrong model.
 - [x] Interaction pass (no new packages): figures fade up and charts draw in when scrolled into view; hovering a bar dims the others and shows its numbers; the Try-the-model score counts to its new value and the reason bars glide; cards lift on hover and buttons press in. Respects "reduce motion".
 - [ ] Demo run-through on the live site (phone + laptop)
 

@@ -159,7 +159,7 @@ $$\text{Observation Window } [T - 180\text{d}, T) \implies \text{Snapshot Date }
 +-------------------------------------------------------------------------------+
 |                   LEAKAGE-FREE SCIKIT-LEARN PIPELINE                          |
 |   - Numerical Features   : SimpleImputer(median) -> StandardScaler()          |
-|   - Categorical Feature  : SimpleImputer(most_frequent) -> OneHotEncoder()    |
+|   - Categorical Feature  : state -> region, SimpleImputer -> OneHotEncoder()  |
 |   - Pipeline encapsulation ensures transformations fit ONLY on training data  |
 +-------------------------------------------------------------------------------+
                                         |
@@ -175,14 +175,14 @@ $$\text{Observation Window } [T - 180\text{d}, T) \implies \text{Snapshot Date }
 +-------------------------------------------------------------------------------+
 |              CHAMPION SELECTION & HYPERPARAMETER TUNING                       |
 |   - Champion: Balanced Logistic Regression (C = 1.0, class_weight='balanced') |
-|   - Val PR-AUC: 0.0173 | Val ROC-AUC: 0.5543 | Val Recall: 44.60%             |
+|   - Val PR-AUC: 0.0183 | Val ROC-AUC: 0.5730 | Val Recall: 45.30%             |
 +-------------------------------------------------------------------------------+
                                         |
                                         v
 +-------------------------------------------------------------------------------+
 |               FINAL EVALUATION ON UNTOUCHED JUNE 2018 TEST SET                |
-|   - Test PR-AUC: 0.0117 (1.70x lift over Dummy baseline 0.0069)               |
-|   - Test ROC-AUC: 0.5849 | Test Minority Recall: 42.59% | Brier Loss: 0.2279  |
+|   - Test PR-AUC: 0.0123 (1.78x lift over Dummy baseline 0.0069)               |
+|   - Test ROC-AUC: 0.5899 | Test Minority Recall: 41.85% | Brier Loss: 0.2296  |
 +-------------------------------------------------------------------------------+
                                         |
                                         v
@@ -477,13 +477,13 @@ Below is the complete, sequential walkthrough of all **21 Code Cells** and **24 
 * **Purpose:** Evaluates the champion pipeline on the untouched held-out test cohort ($N = 39,162$). Computes Confusion Matrix, Precision-Recall Curve, ROC Curve, and classification report. Compares against the Dummy baseline.
 * **Outputs:**
   - Base Repeat Rate: **0.6894%**
-  - Average Precision (PR-AUC): **0.0117 vs Dummy 0.0069 (1.70x lift)**
+  - Average Precision (PR-AUC): **0.0123 vs Dummy 0.0069 (1.78x lift)**
   - ROC-AUC: **0.5849**
   - Minority Class Recall: **42.59%** (115 out of 270 returning customers caught)
   - Confusion Matrix: TN=26,802, FP=12,090, FN=155, TP=115.
   - Saves `artifacts/final_test_metrics.json` and `artifacts/holdout_predictions.csv`.
 * **System Design & Implementation Rationale:** *Why is precision so low (0.0094) while recall is high (42.59%)?*  
-  *Answer:* Because repeat purchase is an extreme 0.69% minority event. Balanced weighting intentionally trades off precision to achieve high recall, ensuring the retention team captures 42.6% of returning buyers rather than missing all of them. For retention campaigns, ranking by probability is far more important than raw binary thresholding.
+  *Answer:* Because repeat purchase is an extreme 0.69% minority event. Balanced weighting intentionally trades off precision to achieve high recall, ensuring the retention team captures 41.9% of returning buyers rather than missing all of them. For retention campaigns, ranking by probability is far more important than raw binary thresholding.
 
 ---
 
@@ -500,16 +500,16 @@ Below is the complete, sequential walkthrough of all **21 Code Cells** and **24 
 ### Cell 32 [CODE #15]: Retention Prioritization Policies & Lift Evaluation
 * **Purpose:** Evaluates retention capacity policies: contacting the top 10%, 20%, and 30% highest inactivity risk customers on the test set. Also assesses re-engagement campaigns targeting top repeat propensity.
 * **Outputs:**
-  - Inactivity outreach at top 20% capacity contacts 7,832 customers, capturing 7,798 inactive buyers (**99.57% concentration**).
-  - Re-engagement campaign on top 10% repeat propensity yields **1.63x lift** over random outreach.
+  - Inactivity outreach at top 20% capacity contacts 7,832 customers, capturing 7,804 inactive buyers (**99.64% concentration**).
+  - Re-engagement campaign on top 10% repeat propensity yields **1.93x lift** over random outreach.
 * **System Design & Implementation Rationale:** *What does "Lift" mean in your retention evaluation?*  
-  *Answer:* Lift measures how much better the model performs compared to random guessing. A lift of 1.63x means the top 10% model-selected group contains 63% more repeat buyers than a randomly selected 10% group.
+  *Answer:* Lift measures how much better the model performs compared to random guessing. A lift of 1.93x means the top 10% model-selected group contains 93% more repeat buyers than a randomly selected 10% group.
 
 ---
 
 ### Cell 33 [CODE #16]: Calibration Reliability Curve & Inactivity Score Distribution
 * **Purpose:** Plots the probability calibration reliability curve and histogram of Inactivity Risk Scores on the test cohort with the 80th percentile cutoff marked.
-* **Output:** Brier score loss = **0.2279** and high-resolution calibration plots.
+* **Output:** Brier score loss = **0.2296** and high-resolution calibration plots.
 
 ---
 
@@ -1047,7 +1047,7 @@ The notebook benchmarks **7 distinct classification architectures** (Cell 24 / C
   The loss function penalizes a false negative **~110 times more severely** than a false positive, forcing the decision boundary to identify minority repeat buyers.
 * **Strengths:** Highly stable, produces well-calibrated probabilities, resistant to overfitting, extremely fast, fully explainable via regression coefficients.
 * **Weaknesses:** Assumes linear log-odds relationship; cannot capture complex feature interactions without explicit interaction terms.
-* **Actual Experimental Finding:** **Selected as Champion.** Validation PR-AUC: **0.0173**, Val ROC-AUC: **0.5543**, Val Recall: **44.60%**.
+* **Actual Experimental Finding:** **Selected as Champion.** Validation PR-AUC: **0.0183**, Val ROC-AUC: **0.5730**, Val Recall: **45.30%**.
 
 ---
 

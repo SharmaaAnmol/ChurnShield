@@ -13,7 +13,7 @@ repository. Nothing is typed in by hand:
       -> customer_predictions.csv (seeded random sample of scored customers)
   artifacts/curated_customer_snapshots.csv -> eda.json (via export_eda.py)
   curated snapshots + pipeline -> examples.json (rule-picked real test customers)
-  artifacts/data_quality_report.json + model_comparison.csv -> pipeline.json
+  artifacts/data_quality_report.json + model_comparison.csv + location_fix_comparison.json -> pipeline.json
 
 Usage:
   python export_webapp_data.py          # regenerate the files
@@ -35,6 +35,7 @@ from sklearn.metrics import (average_precision_score, balanced_accuracy_score,
                              confusion_matrix, recall_score, roc_auc_score)
 
 import export_eda
+from churnshield_features import STATE_TO_REGION
 
 warnings.filterwarnings("ignore")
 
@@ -73,6 +74,7 @@ def model_weights(pipe) -> dict:
     cat_imputer = ct.named_transformers_["cat"].named_steps["imputer"]
     coef = clf.coef_[0]
     n = len(num_cols)
+    region_w = {str(r): float(coef[n + i]) for i, r in enumerate(ohe.categories_[0])}
     return {
         "intercept": float(clf.intercept_[0]),
         "num_weights": {
@@ -80,7 +82,10 @@ def model_weights(pipe) -> dict:
                   "mean": float(scaler.mean_[i]), "scale": float(scaler.scale_[i])}
             for i, col in enumerate(num_cols)
         },
-        "cat_weights": {str(s): float(coef[n + i]) for i, s in enumerate(ohe.categories_[0])},
+        # The pipeline maps state -> region before one-hot encoding, so every state carries its region's weight.
+        "cat_weights": {s: region_w[r] for s, r in sorted(STATE_TO_REGION.items())},
+        "region_weights": region_w,
+        "state_region": dict(sorted(STATE_TO_REGION.items())),
         "cat_default": str(cat_imputer.statistics_[0]),
     }
 
@@ -128,6 +133,7 @@ def pipeline_facts() -> dict:
         "orders_with_items": ji["orders_with_qualifying_items"],
         "model_comparison": mc[["model", "cv_pr_auc_mean", "cv_pr_auc_std", "val_pr_auc", "val_roc_auc", "fit_time_seconds"]]
         .sort_values("val_pr_auc", ascending=False).to_dict("records"),
+        "location_fix": json.loads((ART / "location_fix_comparison.json").read_text()),
     }
 
 

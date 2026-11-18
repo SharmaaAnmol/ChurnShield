@@ -20,4 +20,4 @@ python export_webapp_data.py --check  # fail if anything here differs from what 
 | customer_predictions.csv | seeded random sample (800 per cohort, seed 42) of those scored customers |
 | eda.json | aggregates of artifacts/curated_customer_snapshots.csv |
 | examples.json | 4 real test-cohort customers picked by fixed rules (lowest, median, returner median, highest risk), with all 21 features, the sklearn score and the real outcome; plus the top-20% contact cut-off |
-| pipeline.json | raw table row counts and date range (artifacts/data_quality_report.json) and the 7-model comparison (artifacts/model_comparison.csv) |
+| pipeline.json | raw table row counts and date range (artifacts/data_quality_report.json) and the 7-model comparison (artifacts/model_comparison.csv); plus the before/after location fix from artifacts/location_fix_comparison.json |

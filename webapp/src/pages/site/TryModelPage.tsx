@@ -273,7 +273,7 @@ function Inputs({ f, set }: { f: Features; set: (k: InputKey, v: number | string
             className="w-full rounded-[10px] border border-rule bg-paper px-3 py-2.5 font-mono text-[15px] focus:border-ink focus:outline-none"
           />
         </Field>
-        <Field label="State">
+        <Field label="State" hint={`The model reads its region: ${W.state_region[String(f.customer_state)] ?? W.cat_default}.`}>
           <select
             value={String(f.customer_state)}
             onChange={(e) => set('customer_state', e.target.value)}
