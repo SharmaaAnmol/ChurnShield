@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { Figure, Eyebrow, DataState } from '../../components/site/Figure';
+import { Figure, Eyebrow, DataState, WhenSeen } from '../../components/site/Figure';
 import { useSiteData, SOURCES, pct, num, type SiteData } from '../../lib/data/site-data';
 
 const WRAP = 'mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-10';
@@ -40,13 +40,13 @@ function Hero({ data }: { data: SiteData }) {
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
             to="/prediction-studio"
-            className="inline-flex items-center gap-2 rounded-full bg-route px-6 py-3 text-[16px] font-semibold text-sheet shadow-[0_10px_24px_-12px_rgb(11_110_79/0.7)] transition-transform hover:-translate-y-px"
+            className="lift inline-flex items-center gap-2 rounded-full bg-route px-6 py-3 text-[16px] font-semibold text-sheet shadow-[0_10px_24px_-12px_rgb(11_110_79/0.7)]"
           >
             Try the model <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
           <Link
             to="/data"
-            className="inline-flex items-center rounded-full border-[1.5px] border-ink px-6 py-3 text-[16px] font-semibold transition-colors hover:bg-wash"
+            className="lift inline-flex items-center rounded-full border-[1.5px] border-ink px-6 py-3 text-[16px] font-semibold hover:bg-wash"
           >
             See the data
           </Link>
@@ -69,12 +69,25 @@ function Hero({ data }: { data: SiteData }) {
           role="img"
           aria-label={`${per1000} of 1,000 dots are highlighted: customers who bought again.`}
         >
-          {Array.from({ length: 1000 }, (_, i) => (
-            <span
-              key={i}
-              className={`aspect-square rounded-full ${lit.has(i) ? 'bg-[#ff8aab] shadow-[0_0_0_3px_rgb(255_138_171/0.25)]' : 'bg-[#fbf1f0]/25'}`}
-            />
-          ))}
+          <WhenSeen>
+            {(seen) =>
+              Array.from({ length: 1000 }, (_, i) => {
+                const on = lit.has(i);
+                return (
+                  <span
+                    key={i}
+                    className={`aspect-square rounded-full ${
+                      on && seen
+                        ? 'dot-pop bg-[#ff8aab] shadow-[0_0_0_3px_rgb(255_138_171/0.25)]'
+                        : 'bg-[#fbf1f0]/25'
+                    }`}
+                    // lit dots light up left to right, top to bottom
+                    style={on ? { animationDelay: `${300 + i * 1.2}ms` } : undefined}
+                  />
+                );
+              })
+            }
+          </WhenSeen>
         </div>
         <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
           <p className="font-mono text-[34px] leading-none">
@@ -165,7 +178,7 @@ function SiteGuide() {
           <li key={g.to}>
             <Link
               to={g.to}
-              className="group flex h-full flex-col rounded-[14px] border border-rule bg-sheet p-5 transition-colors hover:border-ink"
+              className="lift group flex h-full flex-col rounded-[14px] border border-rule bg-sheet p-5 hover:border-ink"
             >
               <span className="font-mono text-[12px] text-ink-2">Step {i + 2}</span>
               <span className="mt-1 text-[18px] font-bold">{g.title}</span>

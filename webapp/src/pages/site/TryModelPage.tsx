@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, RotateCcw } from 'lucide-react';
-import { Figure, Eyebrow } from '../../components/site/Figure';
+import { Figure, Eyebrow, useFigureInView, growStyle } from '../../components/site/Figure';
+import { useTween } from '../../lib/motion';
 import { pct, num, useSiteData } from '../../lib/data/site-data';
 import examplesFile from '../../../public/data/examples.json';
 import { EXACT_MODEL_WEIGHTS as W, runLocalModelInference } from '../../lib/data/model-inference-engine';
@@ -111,7 +112,7 @@ export function TryModelPage() {
                   onClick={() => choose(ex)}
                   aria-pressed={on}
                   title={ex.rule}
-                  className={`rounded-[12px] border px-3 py-3 text-left transition-colors ${
+                  className={`lift rounded-[12px] border px-3 py-3 text-left ${
                     on ? 'border-ink bg-ink text-paper' : 'border-rule bg-paper hover:border-ink-2'
                   }`}
                 >
@@ -156,7 +157,7 @@ export function TryModelPage() {
       <section className={`${WRAP} pb-24`}>
         <Link
           to="/model"
-          className="group flex flex-wrap items-center justify-between gap-4 rounded-[18px] border border-rule bg-sheet p-6 hover:border-ink-2 sm:p-8"
+          className="lift group flex flex-wrap items-center justify-between gap-4 rounded-[18px] border border-rule bg-sheet p-6 hover:border-ink-2 sm:p-8"
         >
           <span>
             <span className="eyebrow">Next</span>
@@ -314,9 +315,7 @@ function Result({
       >
         <p className="text-[14px] text-ink-2">Risk of not buying again in the next 90 days</p>
         <div className="mt-2 flex flex-wrap items-end gap-x-5 gap-y-2">
-          <p className="font-mono text-[64px] font-semibold leading-none sm:text-[80px]" aria-live="polite">
-            {pct(risk, 1)}
-          </p>
+          <ScoreNumber risk={risk} />
           <p className="mb-2 rounded-full border border-current px-3 py-1 text-[13px] font-semibold">
             {tierOf(risk)} risk
           </p>
@@ -359,11 +358,27 @@ function Result({
   );
 }
 
+/** The big risk number counts to its new value; screen readers get only the final value. */
+function ScoreNumber({ risk }: { risk: number }) {
+  const shown = useTween(risk);
+  return (
+    <p className="font-mono text-[64px] font-semibold leading-none tabular-nums sm:text-[80px]">
+      <span aria-hidden>{pct(shown, 1)}</span>
+      <span className="sr-only" aria-live="polite">
+        {pct(risk, 1)}
+      </span>
+    </p>
+  );
+}
+
 function Meter({ risk }: { risk: number }) {
   return (
     <div className="mt-6" aria-hidden>
       <div className="relative h-3 rounded-full bg-current/15">
-        <div className="absolute inset-y-0 left-0 rounded-full bg-[var(--color-route)]" style={{ width: `${risk * 100}%` }} />
+        <div
+          className="absolute inset-y-0 left-0 rounded-full bg-[var(--color-route)]"
+          style={{ width: `${risk * 100}%`, transition: 'width 0.5s cubic-bezier(0.22, 1, 0.36, 1)' }}
+        />
         {[0.4, 0.7].map((t) => (
           <span key={t} className="absolute -inset-y-1 w-px bg-current/60" style={{ left: `${t * 100}%` }} />
         ))}
@@ -402,32 +417,7 @@ function Reasons({ f }: { f: Features }) {
       </p>
 
       <Figure n={2} source="model_weights.json" className="mt-8" caption="Push on the model's score, grouped by input.">
-        <ul className="grid gap-4">
-          {groups.map((g) => {
-            const w = (Math.abs(g.effect) / max) * 50;
-            const back = g.effect >= 0;
-            return (
-              <li key={g.key} className="grid items-center gap-x-4 gap-y-1 sm:grid-cols-[200px_1fr_170px]">
-                <span className="text-[14px] font-semibold">{g.label}</span>
-                <div className="relative h-6">
-                  <span className="absolute inset-y-[-4px] left-1/2 w-px bg-ink-2" />
-                  <span
-                    className="absolute inset-y-0 rounded-[4px]"
-                    style={{
-                      width: `${w}%`,
-                      left: back ? '50%' : `${50 - w}%`,
-                      background: back ? 'var(--color-chart-1)' : 'var(--color-chart-2)',
-                    }}
-                  />
-                </div>
-                <span className="text-[13px] text-ink-2">
-                  <span className="font-mono text-ink">{g.effect >= 0 ? '+' : '−'}{Math.abs(g.effect).toFixed(2)}</span>{' '}
-                  {Math.abs(g.effect) < 0.05 ? 'barely matters' : back ? 'toward coming back' : 'toward not coming back'}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
+        <ReasonBars groups={groups} max={max} />
         <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-ink-2">
           <span className="inline-flex items-center gap-2">
             <span className="h-3 w-3 rounded-[3px] bg-[var(--color-chart-2)]" /> raises the risk
@@ -504,5 +494,44 @@ function Action({ f, risk }: { f: Features; risk: number }) {
         </div>
       </div>
     </section>
+  );
+}
+
+type Group = (typeof GROUPS)[number] & { effect: number };
+
+/** Bars grow in when the figure appears, then glide to new lengths as the inputs change. */
+function ReasonBars({ groups, max }: { groups: Group[]; max: number }) {
+  const seen = useFigureInView();
+  return (
+    <ul className="grid gap-2">
+      {groups.map((g) => {
+        const w = seen ? (Math.abs(g.effect) / max) * 50 : 0;
+        const back = g.effect >= 0;
+        return (
+          <li
+            key={g.key}
+            className="-mx-2 grid items-center gap-x-4 gap-y-1 rounded-[8px] px-2 py-1.5 transition-colors hover:bg-wash sm:grid-cols-[200px_1fr_170px]"
+          >
+            <span className="text-[14px] font-semibold">{g.label}</span>
+            <div className="relative h-6">
+              <span className="absolute inset-y-[-4px] left-1/2 w-px bg-ink-2" />
+              <span
+                className="absolute inset-y-0 rounded-[4px]"
+                style={{
+                  width: `${w}%`,
+                  left: back ? '50%' : `${50 - w}%`,
+                  background: back ? 'var(--color-chart-1)' : 'var(--color-chart-2)',
+                  ...growStyle(0),
+                }}
+              />
+            </div>
+            <span className="text-[13px] text-ink-2">
+              <span className="font-mono text-ink">{g.effect >= 0 ? '+' : '−'}{Math.abs(g.effect).toFixed(2)}</span>{' '}
+              {Math.abs(g.effect) < 0.05 ? 'barely matters' : back ? 'toward coming back' : 'toward not coming back'}
+            </span>
+          </li>
+        );
+      })}
+    </ul>
   );
 }

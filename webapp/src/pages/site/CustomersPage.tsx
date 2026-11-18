@@ -109,7 +109,7 @@ export function CustomersPage() {
                   type="button"
                   aria-pressed={tier === t}
                   onClick={() => setTier(t)}
-                  className={`rounded-full border px-3.5 py-1.5 text-[14px] font-semibold ${
+                  className={`press rounded-full border px-3.5 py-1.5 text-[14px] font-semibold ${
                     tier === t ? 'border-ink bg-ink text-paper' : 'border-rule bg-paper hover:border-ink-2'
                   }`}
                 >
@@ -200,7 +200,7 @@ export function CustomersPage() {
         </p>
         <Link
           to="/how-its-built"
-          className="group mt-10 flex flex-wrap items-center justify-between gap-4 rounded-[18px] border border-rule bg-sheet p-6 hover:border-ink-2 sm:p-8"
+          className="lift group mt-10 flex flex-wrap items-center justify-between gap-4 rounded-[18px] border border-rule bg-sheet p-6 hover:border-ink-2 sm:p-8"
         >
           <span>
             <span className="eyebrow">Next</span>

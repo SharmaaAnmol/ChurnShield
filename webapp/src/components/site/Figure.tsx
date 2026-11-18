@@ -1,4 +1,9 @@
-import type { ReactNode } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
+import { useInView } from '../../lib/motion';
+
+/** True once the surrounding figure has scrolled into view, so charts inside can animate then. */
+const InViewContext = createContext(true);
+export const useFigureInView = () => useContext(InViewContext);
 
 /** A numbered figure: framed body, then "FIG. n  Caption" and the data file it was drawn from. */
 export function Figure({
@@ -16,8 +21,10 @@ export function Figure({
   children: ReactNode;
   className?: string;
 }) {
+  const [ref, seen] = useInView<HTMLElement>(0.2);
   return (
-    <figure className={className}>
+    <figure ref={ref} className={`${className} ${seen ? 'rise-in' : 'opacity-0'}`}>
+      <InViewContext.Provider value={seen}>
       <div
         className={
           plate
@@ -34,6 +41,7 @@ export function Figure({
         </span>
         <span className="font-mono text-[12px]">source: data/{source}</span>
       </figcaption>
+      </InViewContext.Provider>
     </figure>
   );
 }
@@ -51,3 +59,13 @@ export function DataState({ error }: { error: string | null }) {
     </div>
   );
 }
+
+/** Render-prop access to the figure's in-view state, for hand-built charts inside a <Figure>. */
+export function WhenSeen({ children }: { children: (seen: boolean) => ReactNode }) {
+  return <>{children(useFigureInView())}</>;
+}
+
+/** Shared easing for hand-built bars growing from zero. `i` staggers rows. */
+export const growStyle = (i = 0) => ({
+  transition: `width 0.8s cubic-bezier(0.22, 1, 0.36, 1) ${i * 70}ms, left 0.8s cubic-bezier(0.22, 1, 0.36, 1) ${i * 70}ms, opacity 0.2s ease`,
+});

@@ -2,9 +2,10 @@
  * Theme-aware Recharts building blocks for the redesigned pages.
  * Colours are CSS variables, so the same chart works in light and Plum-night dark mode.
  */
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
   Bar,
+  Cell,
   BarChart,
   CartesianGrid,
   LabelList,
@@ -19,6 +20,8 @@ import {
 } from 'recharts';
 import type { RateRow } from '../../lib/data/site-data';
 import { num } from '../../lib/data/site-data';
+import { useFigureInView } from './Figure';
+import { reducedMotion } from '../../lib/motion';
 
 const C = {
   series1: 'var(--color-chart-1)',
@@ -28,6 +31,27 @@ const C = {
   rule: 'var(--color-rule)',
   wash: 'var(--color-wash)',
 };
+/** Bars grow / lines draw when the figure scrolls into view. */
+export const ANIM = () => ({ isAnimationActive: !reducedMotion(), animationDuration: 900, animationEasing: 'ease-out' as const });
+
+/** Hovering a bar dims the others so the one you point at stands out. */
+export function useHoverIndex() {
+  const [active, setActive] = useState<number | null>(null);
+  return {
+    opacity: (i: number) => (active === null || active === i ? 1 : 0.4),
+    handlers: {
+      onMouseMove: (st: any) => setActive(typeof st?.activeTooltipIndex === 'number' ? st.activeTooltipIndex : null),
+      onMouseLeave: () => setActive(null),
+    },
+  };
+}
+
+/** Holds the chart's space until the figure is on screen, so its entrance animation is seen. */
+export function Stage({ height, children }: { height: number; children: ReactNode }) {
+  const seen = useFigureInView();
+  return seen ? <>{children}</> : <div style={{ height }} aria-hidden />;
+}
+
 const TICK = { fill: C.ink2, fontSize: 12, fontFamily: 'Archivo, system-ui, sans-serif' };
 const MONO = { fill: C.ink, fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 };
 
@@ -95,9 +119,11 @@ export function RateBars({
   xLabel: string;
   height?: number;
 }) {
+  const hover = useHoverIndex();
   return (
+    <Stage height={height}>
     <ResponsiveContainer width="100%" height={height}>
-      <BarChart data={rows} margin={{ top: 28, right: 64, left: 0, bottom: 20 }} barCategoryGap="22%">
+      <BarChart data={rows} margin={{ top: 28, right: 64, left: 0, bottom: 20 }} barCategoryGap="22%" {...hover.handlers}>
         <CartesianGrid vertical={false} stroke={C.rule} />
         <XAxis
           dataKey="bucket"
@@ -116,19 +142,26 @@ export function RateBars({
           strokeWidth={1.5}
           label={<AvgLabel text={`avg ${ratePct(average)}`} />}
         />
-        <Bar dataKey="repeat_rate" fill={C.series1} radius={[4, 4, 0, 0]} maxBarSize={72} isAnimationActive={false}>
+        <Bar dataKey="repeat_rate" fill={C.series1} radius={[4, 4, 0, 0]} maxBarSize={72} {...ANIM()}>
+          {rows.map((r, i) => (
+            <Cell key={r.bucket} fillOpacity={hover.opacity(i)} style={{ transition: 'fill-opacity 0.2s' }} />
+          ))}
           <LabelList dataKey="repeat_rate" position="top" formatter={ratePct} style={MONO} />
         </Bar>
       </BarChart>
     </ResponsiveContainer>
+    </Stage>
   );
 }
 
 /** Horizontal repeat-rate bars for a ranked list (e.g. states): labels stay readable on phones. */
 export function RateRankBars({ rows, average, xLabel }: { rows: RateRow[]; average: number; xLabel: string }) {
+  const hover = useHoverIndex();
+  const height = rows.length * 34 + 70;
   return (
-    <ResponsiveContainer width="100%" height={rows.length * 34 + 70}>
-      <BarChart data={rows} layout="vertical" margin={{ top: 24, right: 56, left: 0, bottom: 20 }} barCategoryGap="22%">
+    <Stage height={height}>
+    <ResponsiveContainer width="100%" height={height}>
+      <BarChart data={rows} layout="vertical" margin={{ top: 24, right: 56, left: 0, bottom: 20 }} barCategoryGap="22%" {...hover.handlers}>
         <CartesianGrid horizontal={false} stroke={C.rule} />
         <YAxis type="category" dataKey="bucket" tick={TICK} tickLine={false} axisLine={{ stroke: C.ink2 }} width={36} />
         <XAxis
@@ -147,11 +180,15 @@ export function RateRankBars({ rows, average, xLabel }: { rows: RateRow[]; avera
           strokeWidth={1.5}
           label={{ value: `avg ${ratePct(average)}`, position: 'top', ...TICK }}
         />
-        <Bar dataKey="repeat_rate" fill={C.series1} radius={[0, 4, 4, 0]} maxBarSize={22} isAnimationActive={false}>
+        <Bar dataKey="repeat_rate" fill={C.series1} radius={[0, 4, 4, 0]} maxBarSize={22} {...ANIM()}>
+          {rows.map((r, i) => (
+            <Cell key={r.bucket} fillOpacity={hover.opacity(i)} style={{ transition: 'fill-opacity 0.2s' }} />
+          ))}
           <LabelList dataKey="repeat_rate" position="right" formatter={ratePct} style={MONO} />
         </Bar>
       </BarChart>
     </ResponsiveContainer>
+    </Stage>
   );
 }
 
@@ -169,9 +206,11 @@ export function CountBars({
 }) {
   const total = rows.reduce((s, r) => s + r.customers, 0);
   const label = (v: number) => (showShare ? `${((v / total) * 100).toFixed(1)}%` : num(v));
+  const hover = useHoverIndex();
   return (
+    <Stage height={height}>
     <ResponsiveContainer width="100%" height={height}>
-      <BarChart data={rows} margin={{ top: 28, right: 8, left: 0, bottom: 20 }} barCategoryGap="22%">
+      <BarChart data={rows} margin={{ top: 28, right: 8, left: 0, bottom: 20 }} barCategoryGap="22%" {...hover.handlers}>
         <CartesianGrid vertical={false} stroke={C.rule} />
         <XAxis
           dataKey="bucket"
@@ -183,11 +222,15 @@ export function CountBars({
         />
         <YAxis tick={TICK} tickLine={false} axisLine={false} tickFormatter={(v) => num(v)} width={64} />
         <Tooltip content={<CountTip total={showShare ? total : 0} />} cursor={{ fill: C.wash }} />
-        <Bar dataKey="customers" fill={C.series1} radius={[4, 4, 0, 0]} maxBarSize={72} isAnimationActive={false}>
+        <Bar dataKey="customers" fill={C.series1} radius={[4, 4, 0, 0]} maxBarSize={72} {...ANIM()}>
+          {rows.map((r, i) => (
+            <Cell key={r.bucket} fillOpacity={hover.opacity(i)} style={{ transition: 'fill-opacity 0.2s' }} />
+          ))}
           <LabelList dataKey="customers" position="top" formatter={label} style={MONO} />
         </Bar>
       </BarChart>
     </ResponsiveContainer>
+    </Stage>
   );
 }
 
@@ -219,6 +262,7 @@ const money = (v: number) => `$${v >= 100 ? Math.round(v) : v.toFixed(0)}`;
 export function SpendLines({ bins, xLabel, height = 300 }: { bins: SpendBin[]; xLabel: string; height?: number }) {
   const data = bins.map((b) => ({ ...b, label: `${money(b.from)}–${money(b.to)}`, mid: money(Math.sqrt(b.from * b.to)) }));
   return (
+    <Stage height={height}>
     <ResponsiveContainer width="100%" height={height}>
       <LineChart data={data} margin={{ top: 12, right: 12, left: 0, bottom: 20 }}>
         <CartesianGrid vertical={false} stroke={C.rule} />
@@ -247,7 +291,7 @@ export function SpendLines({ bins, xLabel, height = 300 }: { bins: SpendBin[]; x
           strokeWidth={2.5}
           dot={{ r: 3.5, fill: C.series1, strokeWidth: 0 }}
           activeDot={{ r: 6 }}
-          isAnimationActive={false}
+          {...ANIM()}
         />
         <Line
           name="Did not come back"
@@ -257,10 +301,12 @@ export function SpendLines({ bins, xLabel, height = 300 }: { bins: SpendBin[]; x
           strokeDasharray="6 4"
           dot={{ r: 3.5, fill: C.series2, strokeWidth: 0 }}
           activeDot={{ r: 6 }}
-          isAnimationActive={false}
+          {...ANIM()}
+          animationBegin={250}
         />
       </LineChart>
     </ResponsiveContainer>
+    </Stage>
   );
 }
 

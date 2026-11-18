@@ -301,7 +301,7 @@ function NextStep() {
         </div>
         <Link
           to="/prediction-studio"
-          className="inline-flex shrink-0 items-center justify-center rounded-full bg-route px-6 py-3 text-[16px] font-semibold text-sheet"
+          className="lift inline-flex shrink-0 items-center justify-center rounded-full bg-route px-6 py-3 text-[16px] font-semibold text-sheet"
         >
           Try the model
         </Link>

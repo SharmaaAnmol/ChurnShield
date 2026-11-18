@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Github } from 'lucide-react';
-import { Figure, Eyebrow, DataState } from '../../components/site/Figure';
+import { Figure, Eyebrow, DataState, WhenSeen, growStyle } from '../../components/site/Figure';
 import { useSiteData, SOURCES, num, type SiteData } from '../../lib/data/site-data';
 import pkg from '../../../package.json';
 
@@ -36,7 +36,7 @@ export function HowItsBuiltPage() {
           href={REPO_URL}
           target="_blank"
           rel="noreferrer"
-          className="mt-8 inline-flex items-center gap-2 rounded-full border-[1.5px] border-ink px-5 py-2.5 text-[15px] font-semibold hover:bg-wash"
+          className="lift mt-8 inline-flex items-center gap-2 rounded-full border-[1.5px] border-ink px-5 py-2.5 text-[15px] font-semibold hover:bg-wash"
         >
           <Github className="h-4 w-4" aria-hidden /> Open the repository on GitHub
         </a>
@@ -49,7 +49,7 @@ export function HowItsBuiltPage() {
       <section className={`${WRAP} pb-24`}>
         <Link
           to="/"
-          className="group flex flex-wrap items-center justify-between gap-4 rounded-[18px] border border-rule bg-sheet p-6 hover:border-ink-2 sm:p-8"
+          className="lift group flex flex-wrap items-center justify-between gap-4 rounded-[18px] border border-rule bg-sheet p-6 hover:border-ink-2 sm:p-8"
         >
           <span>
             <span className="eyebrow">Back to the start</span>
@@ -161,12 +161,17 @@ function ModelChoice({ data }: { data: SiteData }) {
         </p>
       </SectionHead>
       <Figure n={2} source={SOURCES.pipeline} className="mt-8" caption="Validation PR-AUC per candidate model (higher is better).">
-        <ul className="grid gap-3">
-          {rows.map((r) => {
+        <WhenSeen>
+          {(seen) => (
+        <ul className="grid gap-1">
+          {rows.map((r, i) => {
             const win = r === best;
             const base = r === dummy;
             return (
-              <li key={r.model} className="grid items-center gap-x-4 gap-y-1 sm:grid-cols-[210px_1fr_80px]">
+              <li
+                key={r.model}
+                className="-mx-2 grid items-center gap-x-4 gap-y-1 rounded-[8px] px-2 py-1.5 transition-colors hover:bg-wash sm:grid-cols-[210px_1fr_80px]"
+              >
                 <span className={`text-[14px] ${win ? 'font-bold' : 'font-semibold'}`}>
                   {r.model}
                   {win && <span className="ml-2 rounded-full bg-route px-2 py-0.5 text-[11px] text-sheet">chosen</span>}
@@ -176,7 +181,8 @@ function ModelChoice({ data }: { data: SiteData }) {
                   <span
                     className="absolute inset-y-0 left-0 rounded-r-[4px]"
                     style={{
-                      width: `${(r.val_pr_auc / max) * 100}%`,
+                      width: seen ? `${(r.val_pr_auc / max) * 100}%` : 0,
+                      ...growStyle(i),
                       background: win ? 'var(--color-chart-1)' : base ? 'var(--color-off)' : 'var(--color-chart-2)',
                     }}
                   />
@@ -186,6 +192,8 @@ function ModelChoice({ data }: { data: SiteData }) {
             );
           })}
         </ul>
+          )}
+        </WhenSeen>
         <details className="mt-5 text-[14px]">
           <summary className="cursor-pointer select-none font-semibold text-route">Show the numbers</summary>
           <div className="mt-3 overflow-x-auto">

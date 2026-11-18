@@ -94,6 +94,7 @@ Known and left as is:
 - [x] Branch pushed; Vercel preview build succeeded (18 Nov).
 - [x] Merged to `main`; production live. Fixed `/api/predict` crashing on Vercel (Node ESM needs `.js` import extensions and a JSON import attribute).
 - [x] Day 6 clarity pass: new **How it's built** page (step 6: six-step pipeline with the file each step writes, the 7-model comparison from `model_comparison.csv`, the full technology stack with versions read from `model_summary.json` and `package.json`, how a prediction is served, the integrity checks). Every page now says "Step n of 6", Home has a "How to read this site" guide, every page links to the next, pages open at the top, footer links to GitHub. README (site map, tech stack, structure) and `docs/DEPLOYMENT_GUIDE.md` rewritten for Vercel; pre-redesign docs moved to `docs/archive/`.
+- [x] Interaction pass (no new packages): figures fade up and charts draw in when scrolled into view; hovering a bar dims the others and shows its numbers; the Try-the-model score counts to its new value and the reason bars glide; cards lift on hover and buttons press in. Respects "reduce motion".
 - [ ] Demo run-through on the live site (phone + laptop)
 
 ## Demo script (draft)

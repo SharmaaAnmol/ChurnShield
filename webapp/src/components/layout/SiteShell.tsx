@@ -49,7 +49,7 @@ function ThemeToggle() {
       }}
       aria-label={`Switch to ${next} mode`}
       title={`Switch to ${next} mode`}
-      className="grid h-10 w-10 shrink-0 place-items-center rounded-full border-[1.5px] border-ink text-ink transition-colors hover:bg-wash"
+      className="grid h-10 w-10 shrink-0 place-items-center rounded-full border-[1.5px] border-ink text-ink press hover:bg-wash"
     >
       {theme === "dark" ? (
         <Sun className="h-[18px] w-[18px]" aria-hidden="true" />
@@ -100,7 +100,7 @@ export function SiteShell() {
                     to={item.to}
                     end={item.end}
                     className={({ isActive }) =>
-                      `block whitespace-nowrap rounded-[6px] px-4 py-2 text-[15px] font-semibold transition-colors ${
+                      `press block whitespace-nowrap rounded-[6px] px-4 py-2 text-[15px] font-semibold ${
                         isActive
                           ? "bg-ink text-sheet"
                           : "text-ink hover:bg-wash"

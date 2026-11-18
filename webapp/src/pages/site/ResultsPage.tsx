@@ -1,8 +1,9 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { Bar, BarChart, CartesianGrid, LabelList, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { Figure, Eyebrow, DataState } from '../../components/site/Figure';
+import { Bar, BarChart, Cell, CartesianGrid, LabelList, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Figure, Eyebrow, DataState, useFigureInView, growStyle } from '../../components/site/Figure';
+import { ANIM, Stage, useHoverIndex } from '../../components/site/charts';
 import { useSiteData, SOURCES, FEATURE_LABELS, pct, num, type SiteData, type CohortMetrics } from '../../lib/data/site-data';
 
 const WRAP = 'mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-10';
@@ -30,7 +31,7 @@ export function ResultsPage() {
       <section className={`${WRAP} pb-24`}>
         <Link
           to="/customers"
-          className="group flex flex-wrap items-center justify-between gap-4 rounded-[18px] border border-rule bg-sheet p-6 hover:border-ink-2 sm:p-8"
+          className="lift group flex flex-wrap items-center justify-between gap-4 rounded-[18px] border border-rule bg-sheet p-6 hover:border-ink-2 sm:p-8"
         >
           <span>
             <span className="eyebrow">Next</span>
@@ -130,6 +131,7 @@ function WhatItCatches({ data, cohorts }: { data: SiteData; cohorts: CohortMetri
     { n: cm.fp, t: 'Flagged, but did not come back', d: 'the cost of casting a wide net', strong: false },
     { n: cm.tn, t: 'Not flagged, did not come back', d: 'correctly left alone', strong: false },
   ];
+  const hover = useHoverIndex();
   const rows = cohorts.map((c) => ({ bucket: `${monthYear(c.timelineId)} · ${SPLIT_NAME[c.split]}`, short: monthYear(c.timelineId), lift: c.prAucLiftOverDummy, c }));
   return (
     <section className={`${WRAP} pb-16`}>
@@ -157,8 +159,9 @@ function WhatItCatches({ data, cohorts }: { data: SiteData; cohorts: CohortMetri
           </p>
         </Figure>
         <Figure n={3} source={SOURCES.timeline} caption="How many times better than guessing, on every snapshot (PR-AUC ÷ base rate).">
+          <Stage height={300}>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={rows} margin={{ top: 28, right: 64, left: 0, bottom: 4 }} barCategoryGap="22%">
+            <BarChart data={rows} margin={{ top: 28, right: 64, left: 0, bottom: 4 }} barCategoryGap="22%" {...hover.handlers}>
               <CartesianGrid vertical={false} stroke="var(--color-rule)" />
               <XAxis dataKey="short" tick={TICK} tickLine={false} axisLine={{ stroke: 'var(--color-ink-2)' }} interval={0} />
               <YAxis tick={TICK} tickLine={false} axisLine={false} tickFormatter={(v) => `${v}×`} width={40} domain={[0, 'auto']} allowDecimals={false} />
@@ -174,11 +177,15 @@ function WhatItCatches({ data, cohorts }: { data: SiteData; cohorts: CohortMetri
                   </text>
                 )}
               />
-              <Bar dataKey="lift" fill="var(--color-chart-1)" radius={[4, 4, 0, 0]} maxBarSize={72} isAnimationActive={false}>
+              <Bar dataKey="lift" fill="var(--color-chart-1)" radius={[4, 4, 0, 0]} maxBarSize={72} {...ANIM()}>
+                {rows.map((r, i) => (
+                  <Cell key={r.bucket} fillOpacity={hover.opacity(i)} style={{ transition: 'fill-opacity 0.2s' }} />
+                ))}
                 <LabelList dataKey="lift" position="top" formatter={(v: number) => `${v.toFixed(1)}×`} style={MONO} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
+          </Stage>
           <p className="mt-2 text-[13px] text-ink-2">
             The first three are snapshots it trained on, so they flatter it. The honest number is the last one, the test
             snapshot: {ev.pr_auc_lift_over_dummy.toFixed(1)}×.
@@ -226,24 +233,7 @@ function WhyFifty({ data }: { data: SiteData }) {
         </p>
       </SectionHead>
       <Figure n={4} source={SOURCES.timeline} className="mt-8" caption="Test snapshot customers by inactivity-risk tier.">
-        <div className="flex h-10 overflow-hidden rounded-[8px]" aria-hidden>
-          {tiers.map((t) => (
-            <span key={t.k} style={{ width: `${(t.n / total) * 100}%`, background: t.bg }} className="border-r-2 border-sheet last:border-r-0" />
-          ))}
-        </div>
-        <dl className="mt-5 grid gap-4 sm:grid-cols-3">
-          {tiers.map((t) => (
-            <div key={t.k} className="flex items-start gap-3">
-              <span className="mt-1 h-3 w-3 shrink-0 rounded-[3px]" style={{ background: t.bg }} />
-              <div>
-                <dt className="text-[14px] font-semibold">{t.k}</dt>
-                <dd className="mt-1 font-mono text-[15px]">
-                  {num(t.n)} <span className="text-ink-2">({pct(t.n / total, 1)})</span>
-                </dd>
-              </div>
-            </div>
-          ))}
-        </dl>
+        <TierChart tiers={tiers} total={total} />
         <p className="mt-5 text-[13px] text-ink-2">
           So instead of a fixed cut-off, the team contacts the riskiest 20% of each snapshot:{' '}
           {num(test.recommendedContactCount)} customers in the test snapshot.
@@ -266,9 +256,22 @@ function WhatItUses({ data }: { data: SiteData }) {
         </p>
       </SectionHead>
       <Figure n={5} source={SOURCES.importance} className="mt-8" caption="Top 10 inputs by permutation importance (drop in PR-AUC when shuffled).">
-        <ul className="grid gap-3">
-          {top.map((f) => (
-            <li key={f.feature} className="grid items-center gap-x-4 gap-y-1 sm:grid-cols-[260px_1fr_90px]">
+        <ImportanceBars top={top} max={max} />
+      </Figure>
+    </section>
+  );
+}
+
+function ImportanceBars({ top, max }: { top: SiteData['importance']; max: number }) {
+  const seen = useFigureInView();
+  return (
+        <>
+        <ul className="grid gap-1">
+          {top.map((f, i) => (
+            <li
+              key={f.feature}
+              className="-mx-2 grid items-center gap-x-4 gap-y-1 rounded-[8px] px-2 py-1.5 transition-colors hover:bg-wash sm:grid-cols-[260px_1fr_90px]"
+            >
               <span className="text-[14px]">
                 <span className="font-semibold">{FEATURE_LABELS[f.feature] ?? f.feature}</span>{' '}
                 <span className="font-mono text-[11px] text-ink-2">{f.feature}</span>
@@ -276,12 +279,14 @@ function WhatItUses({ data }: { data: SiteData }) {
               <div className="relative h-5">
                 <span
                   className="absolute inset-y-0 left-0 rounded-r-[4px] bg-[var(--color-chart-1)]"
-                  style={{ width: `${(f.importance_mean / max) * 100}%` }}
+                  style={{ width: seen ? `${(f.importance_mean / max) * 100}%` : 0, ...growStyle(i) }}
                 />
                 {/* whisker: ± one standard deviation across shuffles */}
                 <span
                   className="absolute top-1/2 h-px bg-ink"
                   style={{
+                    opacity: seen ? 1 : 0,
+                    transition: `opacity 0.4s ease ${0.6 + i * 0.07}s`,
                     left: `${(Math.max(0, f.importance_mean - f.importance_std) / max) * 100}%`,
                     width: `${((f.importance_mean + f.importance_std - Math.max(0, f.importance_mean - f.importance_std)) / max) * 100}%`,
                   }}
@@ -292,8 +297,49 @@ function WhatItUses({ data }: { data: SiteData }) {
           ))}
         </ul>
         <p className="mt-4 text-[13px] text-ink-2">The thin line shows ± one standard deviation across repeated shuffles.</p>
-      </Figure>
-    </section>
+        </>
+  );
+}
+
+type Tier = { k: string; n: number; bg: string };
+
+/** Stacked tier bar: segments grow in turn; hovering a segment or its legend entry highlights it. */
+function TierChart({ tiers, total }: { tiers: Tier[]; total: number }) {
+  const seen = useFigureInView();
+  const [on, setOn] = useState<string | null>(null);
+  const dim = (k: string) => (on && on !== k ? 0.35 : 1);
+  return (
+    <>
+      <div className="flex h-10 overflow-hidden rounded-[8px]" onMouseLeave={() => setOn(null)}>
+        {tiers.map((t, i) => (
+          <span
+            key={t.k}
+            title={`${t.k}: ${num(t.n)} (${pct(t.n / total, 1)})`}
+            onMouseEnter={() => setOn(t.k)}
+            style={{ width: seen ? `${(t.n / total) * 100}%` : 0, background: t.bg, opacity: dim(t.k), ...growStyle(i * 3) }}
+            className="cursor-default border-r-2 border-sheet last:border-r-0"
+          />
+        ))}
+      </div>
+      <dl className="mt-5 grid gap-4 sm:grid-cols-3">
+        {tiers.map((t) => (
+          <div
+            key={t.k}
+            onMouseEnter={() => setOn(t.k)}
+            onMouseLeave={() => setOn(null)}
+            className={`-m-2 flex items-start gap-3 rounded-[10px] p-2 transition-colors ${on === t.k ? 'bg-wash' : ''}`}
+          >
+            <span className="mt-1 h-3 w-3 shrink-0 rounded-[3px]" style={{ background: t.bg }} />
+            <div>
+              <dt className="text-[14px] font-semibold">{t.k}</dt>
+              <dd className="mt-1 font-mono text-[15px]">
+                {num(t.n)} <span className="text-ink-2">({pct(t.n / total, 1)})</span>
+              </dd>
+            </div>
+          </div>
+        ))}
+      </dl>
+    </>
   );
 }
 
